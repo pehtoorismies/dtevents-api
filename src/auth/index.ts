@@ -31,15 +31,13 @@ const createAuthZeroUser = async (
   username: string,
   password: string,
 ) => {
-  console.log('----------Create client-------');
-
   // valid user => create to Auth0
-  
+
   const client = await auth0.clientCredentialsGrant({
     audience: `https://${domain}/api/v2/`,
     scope: 'read:users update:users',
   });
-  console.log('----------/// Created client-------', client);
+
   const management = new ManagementClient({
     token: client.access_token,
     domain,

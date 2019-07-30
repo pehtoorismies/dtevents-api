@@ -3,6 +3,8 @@ import { nexusPrismaPlugin } from '@generated/nexus-prisma';
 import { idArg, makeSchema, objectType, stringArg } from '@prisma/nexus';
 import { GraphQLServer } from 'graphql-yoga';
 import { join } from 'path';
+import { formatError } from 'apollo-errors';
+import { requestScopes } from './middleware';
 import { Context } from './types';
 import resolvers from './resolvers';
 
@@ -35,9 +37,22 @@ const schema = makeSchema({
   },
 });
 
+const options = {
+  port: 4000,
+  endpoint: '/graphql',
+  subscriptions: '/subscriptions',
+  playground: '/playground',
+  formatError,
+};
+
 const server = new GraphQLServer({
   schema,
-  context: { photon },
+  context: req => ({ ...req, photon }),
+  middlewares: [requestScopes],
 });
 
-server.start(() => console.log(`🚀 Server ready at http://localhost:4000`));
+server.start(options, ({ port }) =>
+  console.log(
+    `🚀 Server started, listening on port ${port} for incoming requests.`,
+  ),
+);

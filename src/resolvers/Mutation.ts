@@ -18,7 +18,7 @@ export const Mutation = mutationType({
           return authZeroUser;
         } catch (error) {
           console.error(error);
-          return new Error();
+          return new Auth0Error();
         }
       },
     });
