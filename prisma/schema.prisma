@@ -3,7 +3,7 @@ datasource db {
   url      = "mysql://user:password@localhost:3306/db?sslmode=prefer"
 }
 
- generator photonjs {
+generator photonjs {
   provider = "photonjs"
   // output   = "node_modules/@generated/photon"
 }
@@ -14,11 +14,11 @@ generator nexus_prisma {
 }
 
 model User {
-  id    String  @id @default(cuid())
-  username  String @unique
-  name  String?
-  email String  @unique
-  events Event[]
+  id       String  @id @default(cuid())
+  username String  @unique
+  name     String?
+  email    String  @unique
+  events   Event[]
 }
 
 enum EventType {
@@ -37,19 +37,17 @@ enum EventType {
 }
 
 model Event {
-  id    String  @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title String
-  subtitle String
-  date DateTime
-  time String?
-  address String?
-  description String?
-  race Boolean @default(false)
-  type EventType
+  id           String    @id @default(cuid())
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  title        String
+  subtitle     String
+  date         DateTime
+  time         String?
+  address      String?
+  description  String?
+  race         Boolean   @default(false)
+  type         EventType
   participants User[]
-  
+
 }
-
-

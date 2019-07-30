@@ -2,6 +2,11 @@
 ### Do not make changes to this file directly
 
 
+type AuthPayload {
+  token: String!
+  user: User!
+}
+
 """DateTime"""
 scalar DateTime
 
@@ -16,11 +21,32 @@ type Event {
   subtitle: String!
   time: String
   title: String!
+  type: EventType!
   updatedAt: DateTime!
+}
+
+"""Event Types"""
+enum EventType {
+  Cycling
+  Karonkka
+  Meeting
+  Orienteering
+  Other
+  Running
+  Skiing
+  Spinning
+  Swimming
+  TrackRunning
+  Triathlon
+  Ultras
 }
 
 input EventWhereUniqueInput {
   id: ID
+}
+
+type Mutation {
+  login(password: String, username: String): AuthPayload!
 }
 
 """Queries"""

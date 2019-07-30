@@ -9,6 +9,7 @@ export const Event = objectType({
     t.model.updatedAt();
     t.model.title();
     t.model.subtitle();
+    t.model.type();
     t.model.race();
     t.model.date();
     t.model.time();

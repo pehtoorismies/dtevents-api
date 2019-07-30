@@ -17,6 +17,11 @@
   },
   "dependencies": {
     "@prisma/nexus": "^0.0.1",
-    "graphql-yoga": "^1.18.1"
+    "@types/auth0": "^2.9.19",
+    "auth0": "^2.18.0",
+    "dotenv": "^8.0.0",
+    "graphql-yoga": "^1.18.1",
+    "jsonwebtoken": "^8.5.1",
+    "ramda": "^0.26.1"
   }
 }

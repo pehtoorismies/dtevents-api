@@ -8,14 +8,14 @@ import resolvers from './resolvers';
 
 const photon = new Photon();
 
-const { User, Query, Event } = resolvers;
+const { AuthPayload, User, Query, Mutation, Event, EventType } = resolvers;
 
 const nexusPrisma = nexusPrismaPlugin({
   photon: (ctx: Context) => ctx.photon,
 });
 
 const schema = makeSchema({
-  types: [Query, Event, User, nexusPrisma],
+  types: [AuthPayload, Query, Mutation, EventType, Event, User, nexusPrisma],
   outputs: {
     typegen: join(__dirname, '../generated/nexus-typegen.ts'),
     schema: join(__dirname, '/schema.graphql'),

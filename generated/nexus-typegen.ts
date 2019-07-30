@@ -30,10 +30,16 @@ export interface NexusGenInputs {
 }
 
 export interface NexusGenEnums {
+  EventType: photon.EventType
 }
 
 export interface NexusGenRootTypes {
+  AuthPayload: { // root type
+    token: string; // String!
+    user: NexusGenRootTypes['User']; // User!
+  }
   Event: photon.Event;
+  Mutation: {};
   Query: {};
   User: photon.User;
   String: string;
@@ -47,9 +53,14 @@ export interface NexusGenRootTypes {
 export interface NexusGenAllTypes extends NexusGenRootTypes {
   EventWhereUniqueInput: NexusGenInputs['EventWhereUniqueInput'];
   UserWhereUniqueInput: NexusGenInputs['UserWhereUniqueInput'];
+  EventType: NexusGenEnums['EventType'];
 }
 
 export interface NexusGenFieldTypes {
+  AuthPayload: { // field return type
+    token: string; // String!
+    user: NexusGenRootTypes['User']; // User!
+  }
   Event: { // field return type
     address: string | null; // String
     createdAt: any; // DateTime!
@@ -61,7 +72,11 @@ export interface NexusGenFieldTypes {
     subtitle: string; // String!
     time: string | null; // String
     title: string; // String!
+    type: NexusGenEnums['EventType']; // EventType!
     updatedAt: any; // DateTime!
+  }
+  Mutation: { // field return type
+    login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
   }
   Query: { // field return type
     allEvents: NexusGenRootTypes['Event'][] | null; // [Event!]
@@ -86,6 +101,12 @@ export interface NexusGenArgTypes {
       first?: number | null; // Int
       last?: number | null; // Int
       skip?: number | null; // Int
+    }
+  }
+  Mutation: {
+    login: { // args
+      password?: string | null; // String
+      username?: string | null; // String
     }
   }
   Query: {
@@ -126,11 +147,11 @@ export interface NexusGenAbstractResolveReturnTypes {
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "Event" | "Query" | "User";
+export type NexusGenObjectNames = "AuthPayload" | "Event" | "Mutation" | "Query" | "User";
 
 export type NexusGenInputNames = "EventWhereUniqueInput" | "UserWhereUniqueInput";
 
-export type NexusGenEnumNames = never;
+export type NexusGenEnumNames = "EventType";
 
 export type NexusGenInterfaceNames = never;
 
