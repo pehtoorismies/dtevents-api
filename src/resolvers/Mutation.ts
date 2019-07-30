@@ -1,10 +1,38 @@
-import { mutationType, stringArg } from '@prisma/nexus';
+import { mutationType, stringArg, idArg } from '@prisma/nexus';
 import { loginAuthZeroUser, createAuthZeroUser } from '../auth';
 import { config } from '../config';
 import { UserInputError, Auth0Error } from '../errors';
 
 export const Mutation = mutationType({
   definition(t) {
+    t.crud.createOneEvent({
+      alias: 'createEvent',
+    });
+    t.crud.updateOneEvent({
+      alias: 'updateEvent',
+    });
+    t.crud.deleteOneEvent({
+      alias: 'deleteEvent',
+    });
+    // Prevent duplicate joins
+    t.field('joinEvent', {
+      type: 'Event',
+      args: {
+        eventId: idArg(),
+        username: stringArg(),
+      },
+      resolve: (_, { eventId, username }, ctx) => {
+        return ctx.photon.events.update({
+          where: { id: eventId },
+          data: {
+            participants: {
+              connect: { username },
+            },
+          },
+        });
+      },
+    });
+
     t.field('login', {
       type: 'AuthPayload',
       args: {

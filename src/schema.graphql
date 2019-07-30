@@ -22,8 +22,21 @@ type Event {
   subtitle: String!
   time: String
   title: String!
-  type: EventType!
+  type: String!
   updatedAt: DateTime!
+}
+
+input EventCreateInput {
+  address: String
+  date: DateTime!
+  description: String
+  id: ID
+  participants: UserCreateManyWithoutParticipantsInput
+  race: Boolean
+  subtitle: String!
+  time: String
+  title: String!
+  type: String!
 }
 
 """Event Types"""
@@ -42,13 +55,61 @@ enum EventType {
   Ultras
 }
 
+input EventUpdateInput {
+  address: String
+  date: DateTime
+  description: String
+  participants: UserUpdateManyWithoutEventsInput
+  race: Boolean
+  subtitle: String
+  time: String
+  title: String
+  type: String
+}
+
 input EventWhereUniqueInput {
   id: ID
 }
 
 type Mutation {
+  createEvent(data: EventCreateInput!): Event!
+  deleteEvent(where: EventWhereUniqueInput!): Event
+  joinEvent(eventId: ID, username: String): Event!
   login(password: String, username: String): AuthPayload!
   signup(email: String, name: String, password: String, registerSecret: String, username: String): User!
+  updateEvent(data: EventUpdateInput!, where: EventWhereUniqueInput!): Event
+}
+
+input MutationUpdateOneEventFilter {
+  every: MutationUpdateOneEventWhereInput
+  none: MutationUpdateOneEventWhereInput
+  some: MutationUpdateOneEventWhereInput
+}
+
+input MutationUpdateOneEventWhereInput {
+  AND: [MutationUpdateOneEventWhereInput!]
+  auth0Id: StringFilter
+  email: StringFilter
+  events: MutationUpdateOneEventFilter
+  id: StringFilter
+  name: NullableStringFilter
+  NOT: [MutationUpdateOneEventWhereInput!]
+  OR: [MutationUpdateOneEventWhereInput!]
+  username: StringFilter
+}
+
+input NullableStringFilter {
+  contains: String
+  endsWith: String
+  equals: String
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  not: String
+  notIn: [String!]
+  startsWith: String
 }
 
 """Queries"""
@@ -59,6 +120,20 @@ type Query {
   user(where: UserWhereUniqueInput!): User
 }
 
+input StringFilter {
+  contains: String
+  endsWith: String
+  equals: String
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  not: String
+  notIn: [String!]
+  startsWith: String
+}
+
 type User {
   auth0Id: String!
   email: String!
@@ -66,6 +141,61 @@ type User {
   id: ID!
   name: String
   username: String!
+}
+
+input UserCreateManyWithoutParticipantsInput {
+  connect: [UserWhereUniqueInput!]
+  create: [UserCreateWithoutEventsInput!]
+}
+
+input UserCreateWithoutEventsInput {
+  auth0Id: String!
+  email: String!
+  id: ID
+  name: String
+  username: String!
+}
+
+input UserUpdateManyDataInput {
+  auth0Id: String
+  email: String
+  name: String
+  username: String
+}
+
+input UserUpdateManyWithoutEventsInput {
+  connect: [UserWhereUniqueInput!]
+  create: [UserCreateWithoutEventsInput!]
+  delete: [UserWhereUniqueInput!]
+  deleteMany: [MutationUpdateOneEventWhereInput!]
+  disconnect: [UserWhereUniqueInput!]
+  set: [UserWhereUniqueInput!]
+  update: [UserUpdateWithWhereUniqueWithoutEventsInput!]
+  updateMany: [UserUpdateManyWithWhereNestedInput!]
+  upsert: [UserUpsertWithWhereUniqueWithoutEventsInput!]
+}
+
+input UserUpdateManyWithWhereNestedInput {
+  data: UserUpdateManyDataInput!
+  where: MutationUpdateOneEventWhereInput!
+}
+
+input UserUpdateWithoutEventsDataInput {
+  auth0Id: String
+  email: String
+  name: String
+  username: String
+}
+
+input UserUpdateWithWhereUniqueWithoutEventsInput {
+  data: UserUpdateWithoutEventsDataInput!
+  where: UserWhereUniqueInput!
+}
+
+input UserUpsertWithWhereUniqueWithoutEventsInput {
+  create: UserCreateWithoutEventsInput!
+  update: UserUpdateWithoutEventsDataInput!
+  where: UserWhereUniqueInput!
 }
 
 input UserWhereUniqueInput {

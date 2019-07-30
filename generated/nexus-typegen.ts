@@ -19,8 +19,120 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  EventCreateInput: { // input type
+    address?: string | null; // String
+    date: any; // DateTime!
+    description?: string | null; // String
+    id?: string | null; // ID
+    participants?: NexusGenInputs['UserCreateManyWithoutParticipantsInput'] | null; // UserCreateManyWithoutParticipantsInput
+    race?: boolean | null; // Boolean
+    subtitle: string; // String!
+    time?: string | null; // String
+    title: string; // String!
+    type: string; // String!
+  }
+  EventUpdateInput: { // input type
+    address?: string | null; // String
+    date?: any | null; // DateTime
+    description?: string | null; // String
+    participants?: NexusGenInputs['UserUpdateManyWithoutEventsInput'] | null; // UserUpdateManyWithoutEventsInput
+    race?: boolean | null; // Boolean
+    subtitle?: string | null; // String
+    time?: string | null; // String
+    title?: string | null; // String
+    type?: string | null; // String
+  }
   EventWhereUniqueInput: { // input type
     id?: string | null; // ID
+  }
+  MutationUpdateOneEventFilter: { // input type
+    every?: NexusGenInputs['MutationUpdateOneEventWhereInput'] | null; // MutationUpdateOneEventWhereInput
+    none?: NexusGenInputs['MutationUpdateOneEventWhereInput'] | null; // MutationUpdateOneEventWhereInput
+    some?: NexusGenInputs['MutationUpdateOneEventWhereInput'] | null; // MutationUpdateOneEventWhereInput
+  }
+  MutationUpdateOneEventWhereInput: { // input type
+    AND?: NexusGenInputs['MutationUpdateOneEventWhereInput'][] | null; // [MutationUpdateOneEventWhereInput!]
+    auth0Id?: NexusGenInputs['StringFilter'] | null; // StringFilter
+    email?: NexusGenInputs['StringFilter'] | null; // StringFilter
+    events?: NexusGenInputs['MutationUpdateOneEventFilter'] | null; // MutationUpdateOneEventFilter
+    id?: NexusGenInputs['StringFilter'] | null; // StringFilter
+    name?: NexusGenInputs['NullableStringFilter'] | null; // NullableStringFilter
+    NOT?: NexusGenInputs['MutationUpdateOneEventWhereInput'][] | null; // [MutationUpdateOneEventWhereInput!]
+    OR?: NexusGenInputs['MutationUpdateOneEventWhereInput'][] | null; // [MutationUpdateOneEventWhereInput!]
+    username?: NexusGenInputs['StringFilter'] | null; // StringFilter
+  }
+  NullableStringFilter: { // input type
+    contains?: string | null; // String
+    endsWith?: string | null; // String
+    equals?: string | null; // String
+    gt?: string | null; // String
+    gte?: string | null; // String
+    in?: string[] | null; // [String!]
+    lt?: string | null; // String
+    lte?: string | null; // String
+    not?: string | null; // String
+    notIn?: string[] | null; // [String!]
+    startsWith?: string | null; // String
+  }
+  StringFilter: { // input type
+    contains?: string | null; // String
+    endsWith?: string | null; // String
+    equals?: string | null; // String
+    gt?: string | null; // String
+    gte?: string | null; // String
+    in?: string[] | null; // [String!]
+    lt?: string | null; // String
+    lte?: string | null; // String
+    not?: string | null; // String
+    notIn?: string[] | null; // [String!]
+    startsWith?: string | null; // String
+  }
+  UserCreateManyWithoutParticipantsInput: { // input type
+    connect?: NexusGenInputs['UserWhereUniqueInput'][] | null; // [UserWhereUniqueInput!]
+    create?: NexusGenInputs['UserCreateWithoutEventsInput'][] | null; // [UserCreateWithoutEventsInput!]
+  }
+  UserCreateWithoutEventsInput: { // input type
+    auth0Id: string; // String!
+    email: string; // String!
+    id?: string | null; // ID
+    name?: string | null; // String
+    username: string; // String!
+  }
+  UserUpdateManyDataInput: { // input type
+    auth0Id?: string | null; // String
+    email?: string | null; // String
+    name?: string | null; // String
+    username?: string | null; // String
+  }
+  UserUpdateManyWithWhereNestedInput: { // input type
+    data: NexusGenInputs['UserUpdateManyDataInput']; // UserUpdateManyDataInput!
+    where: NexusGenInputs['MutationUpdateOneEventWhereInput']; // MutationUpdateOneEventWhereInput!
+  }
+  UserUpdateManyWithoutEventsInput: { // input type
+    connect?: NexusGenInputs['UserWhereUniqueInput'][] | null; // [UserWhereUniqueInput!]
+    create?: NexusGenInputs['UserCreateWithoutEventsInput'][] | null; // [UserCreateWithoutEventsInput!]
+    delete?: NexusGenInputs['UserWhereUniqueInput'][] | null; // [UserWhereUniqueInput!]
+    deleteMany?: NexusGenInputs['MutationUpdateOneEventWhereInput'][] | null; // [MutationUpdateOneEventWhereInput!]
+    disconnect?: NexusGenInputs['UserWhereUniqueInput'][] | null; // [UserWhereUniqueInput!]
+    set?: NexusGenInputs['UserWhereUniqueInput'][] | null; // [UserWhereUniqueInput!]
+    update?: NexusGenInputs['UserUpdateWithWhereUniqueWithoutEventsInput'][] | null; // [UserUpdateWithWhereUniqueWithoutEventsInput!]
+    updateMany?: NexusGenInputs['UserUpdateManyWithWhereNestedInput'][] | null; // [UserUpdateManyWithWhereNestedInput!]
+    upsert?: NexusGenInputs['UserUpsertWithWhereUniqueWithoutEventsInput'][] | null; // [UserUpsertWithWhereUniqueWithoutEventsInput!]
+  }
+  UserUpdateWithWhereUniqueWithoutEventsInput: { // input type
+    data: NexusGenInputs['UserUpdateWithoutEventsDataInput']; // UserUpdateWithoutEventsDataInput!
+    where: NexusGenInputs['UserWhereUniqueInput']; // UserWhereUniqueInput!
+  }
+  UserUpdateWithoutEventsDataInput: { // input type
+    auth0Id?: string | null; // String
+    email?: string | null; // String
+    name?: string | null; // String
+    username?: string | null; // String
+  }
+  UserUpsertWithWhereUniqueWithoutEventsInput: { // input type
+    create: NexusGenInputs['UserCreateWithoutEventsInput']; // UserCreateWithoutEventsInput!
+    update: NexusGenInputs['UserUpdateWithoutEventsDataInput']; // UserUpdateWithoutEventsDataInput!
+    where: NexusGenInputs['UserWhereUniqueInput']; // UserWhereUniqueInput!
   }
   UserWhereUniqueInput: { // input type
     auth0Id?: string | null; // String
@@ -31,7 +143,7 @@ export interface NexusGenInputs {
 }
 
 export interface NexusGenEnums {
-  EventType: photon.EventType
+  EventType: "Cycling" | "Karonkka" | "Meeting" | "Orienteering" | "Other" | "Running" | "Skiing" | "Spinning" | "Swimming" | "TrackRunning" | "Triathlon" | "Ultras"
 }
 
 export interface NexusGenRootTypes {
@@ -53,7 +165,21 @@ export interface NexusGenRootTypes {
 }
 
 export interface NexusGenAllTypes extends NexusGenRootTypes {
+  EventCreateInput: NexusGenInputs['EventCreateInput'];
+  EventUpdateInput: NexusGenInputs['EventUpdateInput'];
   EventWhereUniqueInput: NexusGenInputs['EventWhereUniqueInput'];
+  MutationUpdateOneEventFilter: NexusGenInputs['MutationUpdateOneEventFilter'];
+  MutationUpdateOneEventWhereInput: NexusGenInputs['MutationUpdateOneEventWhereInput'];
+  NullableStringFilter: NexusGenInputs['NullableStringFilter'];
+  StringFilter: NexusGenInputs['StringFilter'];
+  UserCreateManyWithoutParticipantsInput: NexusGenInputs['UserCreateManyWithoutParticipantsInput'];
+  UserCreateWithoutEventsInput: NexusGenInputs['UserCreateWithoutEventsInput'];
+  UserUpdateManyDataInput: NexusGenInputs['UserUpdateManyDataInput'];
+  UserUpdateManyWithWhereNestedInput: NexusGenInputs['UserUpdateManyWithWhereNestedInput'];
+  UserUpdateManyWithoutEventsInput: NexusGenInputs['UserUpdateManyWithoutEventsInput'];
+  UserUpdateWithWhereUniqueWithoutEventsInput: NexusGenInputs['UserUpdateWithWhereUniqueWithoutEventsInput'];
+  UserUpdateWithoutEventsDataInput: NexusGenInputs['UserUpdateWithoutEventsDataInput'];
+  UserUpsertWithWhereUniqueWithoutEventsInput: NexusGenInputs['UserUpsertWithWhereUniqueWithoutEventsInput'];
   UserWhereUniqueInput: NexusGenInputs['UserWhereUniqueInput'];
   EventType: NexusGenEnums['EventType'];
 }
@@ -75,12 +201,16 @@ export interface NexusGenFieldTypes {
     subtitle: string; // String!
     time: string | null; // String
     title: string; // String!
-    type: NexusGenEnums['EventType']; // EventType!
+    type: string; // String!
     updatedAt: any; // DateTime!
   }
   Mutation: { // field return type
+    createEvent: NexusGenRootTypes['Event']; // Event!
+    deleteEvent: NexusGenRootTypes['Event'] | null; // Event
+    joinEvent: NexusGenRootTypes['Event']; // Event!
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
     signup: NexusGenRootTypes['User']; // User!
+    updateEvent: NexusGenRootTypes['Event'] | null; // Event
   }
   Query: { // field return type
     allEvents: NexusGenRootTypes['Event'][] | null; // [Event!]
@@ -109,6 +239,16 @@ export interface NexusGenArgTypes {
     }
   }
   Mutation: {
+    createEvent: { // args
+      data: NexusGenInputs['EventCreateInput']; // EventCreateInput!
+    }
+    deleteEvent: { // args
+      where: NexusGenInputs['EventWhereUniqueInput']; // EventWhereUniqueInput!
+    }
+    joinEvent: { // args
+      eventId?: string | null; // ID
+      username?: string | null; // String
+    }
     login: { // args
       password?: string | null; // String
       username?: string | null; // String
@@ -119,6 +259,10 @@ export interface NexusGenArgTypes {
       password?: string | null; // String
       registerSecret?: string | null; // String
       username?: string | null; // String
+    }
+    updateEvent: { // args
+      data: NexusGenInputs['EventUpdateInput']; // EventUpdateInput!
+      where: NexusGenInputs['EventWhereUniqueInput']; // EventWhereUniqueInput!
     }
   }
   Query: {
@@ -161,7 +305,7 @@ export interface NexusGenInheritedFields {}
 
 export type NexusGenObjectNames = "AuthPayload" | "Event" | "Mutation" | "Query" | "User";
 
-export type NexusGenInputNames = "EventWhereUniqueInput" | "UserWhereUniqueInput";
+export type NexusGenInputNames = "EventCreateInput" | "EventUpdateInput" | "EventWhereUniqueInput" | "MutationUpdateOneEventFilter" | "MutationUpdateOneEventWhereInput" | "NullableStringFilter" | "StringFilter" | "UserCreateManyWithoutParticipantsInput" | "UserCreateWithoutEventsInput" | "UserUpdateManyDataInput" | "UserUpdateManyWithWhereNestedInput" | "UserUpdateManyWithoutEventsInput" | "UserUpdateWithWhereUniqueWithoutEventsInput" | "UserUpdateWithoutEventsDataInput" | "UserUpsertWithWhereUniqueWithoutEventsInput" | "UserWhereUniqueInput";
 
 export type NexusGenEnumNames = "EventType";
 
