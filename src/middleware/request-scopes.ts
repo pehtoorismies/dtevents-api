@@ -2,6 +2,7 @@ import * as jwt from 'jsonwebtoken';
 import * as R from 'ramda';
 import { getMatchingPubKey, getScopes } from '../util';
 import { config } from '../config';
+import { MalformedJWTError } from '../errors';
 
 const getBearerToken = R.pipe(
   R.defaultTo(''),
@@ -19,7 +20,7 @@ const requestScopes = async (resolve, parent, args, context, info) => {
   // console.log('/***');
 
   const authHeader = context.request.get('Authorization');
-  console.log('auth', authHeader)
+  // console.log('auth', authHeader)
   const jwtToken = getBearerToken(authHeader);
   if (!jwtToken) {
     const result = await resolve(parent, args, context, info);
@@ -27,10 +28,14 @@ const requestScopes = async (resolve, parent, args, context, info) => {
   }
 
   const decodedToken = jwt.decode(jwtToken, { complete: true });
+  // console.log('Decoded token', decodedToken);
+  if (!decodedToken) {
+    return new MalformedJWTError();
+  }
   const kid = String(getKID(decodedToken));
 
   if (!kid) {
-    return new Error('Malformed token');
+    return MalformedJWTError();
   }
   const pubkey = await getMatchingPubKey(kid);
 
@@ -45,7 +50,7 @@ const requestScopes = async (resolve, parent, args, context, info) => {
       ...context,
       scopes,
     };
-    const result = await resolve(root, args, updatedContext, info);
+    const result = await resolve(parent, args, updatedContext, info);
     return result;
   } catch (e) {
     console.error(e);

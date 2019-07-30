@@ -28,6 +28,10 @@
     "graphql-yoga": "^1.18.1",
     "jsonwebtoken": "^8.5.1",
     "ramda": "^0.26.1",
+    "ramda-adjunct": "^2.18.0",
     "request-promise": "^4.2.4"
+  },
+  "resolutions": {
+    "graphql-middleware": "3.0.1"
   }
 }

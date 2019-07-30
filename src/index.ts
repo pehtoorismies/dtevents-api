@@ -4,9 +4,10 @@ import { idArg, makeSchema, objectType, stringArg } from '@prisma/nexus';
 import { GraphQLServer } from 'graphql-yoga';
 import { join } from 'path';
 import { formatError } from 'apollo-errors';
-import { requestScopes } from './middleware';
+import { requestScopes, permissions } from './middleware';
 import { Context } from './types';
 import resolvers from './resolvers';
+
 
 const photon = new Photon();
 
@@ -48,7 +49,7 @@ const options = {
 const server = new GraphQLServer({
   schema,
   context: req => ({ ...req, photon }),
-  middlewares: [requestScopes],
+  middlewares: [requestScopes, permissions],
 });
 
 server.start(options, ({ port }) =>

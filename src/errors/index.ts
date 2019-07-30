@@ -11,3 +11,7 @@ export const Auth0Error = createError('Auth0Error', {
 export const AuthorizationError = createError('AuthorizationError', {
   message: 'Not enough privileges'
 });
+
+export const MalformedJWTError = createError('MalformedJWTError', {
+  message: 'Malformed JSON webtoken'
+});
