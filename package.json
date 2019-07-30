@@ -18,6 +18,7 @@
   "dependencies": {
     "@prisma/nexus": "^0.0.1",
     "@types/auth0": "^2.9.19",
+    "apollo-errors": "^1.9.0",
     "auth0": "^2.18.0",
     "dotenv": "^8.0.0",
     "graphql-yoga": "^1.18.1",

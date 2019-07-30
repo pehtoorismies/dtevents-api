@@ -23,6 +23,7 @@ export interface NexusGenInputs {
     id?: string | null; // ID
   }
   UserWhereUniqueInput: { // input type
+    auth0Id?: string | null; // String
     email?: string | null; // String
     id?: string | null; // ID
     username?: string | null; // String
@@ -35,8 +36,9 @@ export interface NexusGenEnums {
 
 export interface NexusGenRootTypes {
   AuthPayload: { // root type
-    token: string; // String!
-    user: NexusGenRootTypes['User']; // User!
+    accessToken: string; // String!
+    expiresIn: string; // String!
+    idToken: string; // String!
   }
   Event: photon.Event;
   Mutation: {};
@@ -58,8 +60,9 @@ export interface NexusGenAllTypes extends NexusGenRootTypes {
 
 export interface NexusGenFieldTypes {
   AuthPayload: { // field return type
-    token: string; // String!
-    user: NexusGenRootTypes['User']; // User!
+    accessToken: string; // String!
+    expiresIn: string; // String!
+    idToken: string; // String!
   }
   Event: { // field return type
     address: string | null; // String
@@ -77,6 +80,7 @@ export interface NexusGenFieldTypes {
   }
   Mutation: { // field return type
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
+    signup: NexusGenRootTypes['User']; // User!
   }
   Query: { // field return type
     allEvents: NexusGenRootTypes['Event'][] | null; // [Event!]
@@ -85,6 +89,7 @@ export interface NexusGenFieldTypes {
     user: NexusGenRootTypes['User'] | null; // User
   }
   User: { // field return type
+    auth0Id: string; // String!
     email: string; // String!
     events: NexusGenRootTypes['Event'][] | null; // [Event!]
     id: string; // ID!
@@ -106,6 +111,13 @@ export interface NexusGenArgTypes {
   Mutation: {
     login: { // args
       password?: string | null; // String
+      username?: string | null; // String
+    }
+    signup: { // args
+      email?: string | null; // String
+      name?: string | null; // String
+      password?: string | null; // String
+      registerSecret?: string | null; // String
       username?: string | null; // String
     }
   }

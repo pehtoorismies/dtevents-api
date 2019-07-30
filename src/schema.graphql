@@ -3,8 +3,9 @@
 
 
 type AuthPayload {
-  token: String!
-  user: User!
+  accessToken: String!
+  expiresIn: String!
+  idToken: String!
 }
 
 """DateTime"""
@@ -47,6 +48,7 @@ input EventWhereUniqueInput {
 
 type Mutation {
   login(password: String, username: String): AuthPayload!
+  signup(email: String, name: String, password: String, registerSecret: String, username: String): User!
 }
 
 """Queries"""
@@ -58,6 +60,7 @@ type Query {
 }
 
 type User {
+  auth0Id: String!
   email: String!
   events(after: String, before: String, first: Int, last: Int, skip: Int): [Event!]
   id: ID!
@@ -66,6 +69,7 @@ type User {
 }
 
 input UserWhereUniqueInput {
+  auth0Id: String
   email: String
   id: ID
   username: String

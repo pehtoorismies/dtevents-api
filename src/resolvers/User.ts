@@ -8,5 +8,6 @@ export const User = objectType({
     t.model.username();
     t.model.name();
     t.model.events();
+    t.model.auth0Id();
   },
 });

@@ -12,14 +12,13 @@ const auth0 = new AuthenticationClient({
 });
 
 const loginAuthZeroUser = async (username: string, password: string) => {
-  console.log('Sending to auth0', username);
   const authZeroUser = await auth0.passwordGrant({
     password,
     username,
     scope: 'read:events write:events openid profile',
     audience: 'https://graphql-dev.downtown65.com',
   });
-  console.log('Return success', authZeroUser);
+
   return {
     accessToken: authZeroUser.access_token,
     idToken: authZeroUser.id_token,
@@ -32,10 +31,15 @@ const createAuthZeroUser = async (
   username: string,
   password: string,
 ) => {
+  console.log('----------Create client-------');
+
   // valid user => create to Auth0
+  
   const client = await auth0.clientCredentialsGrant({
     audience: `https://${domain}/api/v2/`,
+    scope: 'read:users update:users',
   });
+  console.log('----------/// Created client-------', client);
   const management = new ManagementClient({
     token: client.access_token,
     domain,
