@@ -210,6 +210,7 @@ export interface NexusGenFieldTypes {
     joinEvent: NexusGenRootTypes['Event']; // Event!
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
     signup: NexusGenRootTypes['User']; // User!
+    unjoinEvent: NexusGenRootTypes['Event']; // Event!
     updateEvent: NexusGenRootTypes['Event'] | null; // Event
   }
   Query: { // field return type
@@ -258,6 +259,10 @@ export interface NexusGenArgTypes {
       name?: string | null; // String
       password?: string | null; // String
       registerSecret?: string | null; // String
+      username?: string | null; // String
+    }
+    unjoinEvent: { // args
+      eventId?: string | null; // ID
       username?: string | null; // String
     }
     updateEvent: { // args

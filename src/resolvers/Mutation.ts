@@ -33,6 +33,24 @@ export const Mutation = mutationType({
       },
     });
 
+    t.field('unjoinEvent', {
+      type: 'Event',
+      args: {
+        eventId: idArg(),
+        username: stringArg(),
+      },
+      resolve: (_, { eventId, username }, ctx) => {
+        return ctx.photon.events.update({
+          where: { id: eventId },
+          data: {
+            participants: {
+              disconnect: { username },
+            },
+          },
+        });
+      },
+    });
+
     t.field('login', {
       type: 'AuthPayload',
       args: {

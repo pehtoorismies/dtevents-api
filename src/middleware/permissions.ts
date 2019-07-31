@@ -30,7 +30,7 @@ const rules = {
 
 const permissions = shield({
   Query: {
-    // allUsers: rules.isUserReader,
+    allUsers: rules.isUserReader,
     allEvents: rules.isEventReader,
     event: rules.isEventReader,
     user: rules.isUserReader,
@@ -39,8 +39,8 @@ const permissions = shield({
     createEvent: rules.isEventWriter,
     deleteEvent: rules.isEventWriter,
     updateEvent: rules.isEventWriter,
-    // joinEvent: rules.isEventWriter,
-    // unjoinEvent: rules.isEventWriter,
+    joinEvent: rules.isEventWriter,
+    unjoinEvent: rules.isEventWriter,
   },
 });
 export default permissions;
