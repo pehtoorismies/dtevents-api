@@ -15,6 +15,7 @@ const loginAuthZeroUser = async (username: string, password: string) => {
   const authZeroUser = await auth0.passwordGrant({
     password,
     username,
+    // @ts-ignore: Don't know how to fix
     scope: 'read:events write:events openid profile',
     audience: 'https://graphql-dev.downtown65.com',
   });
@@ -35,6 +36,7 @@ const createAuthZeroUser = async (
 
   const client = await auth0.clientCredentialsGrant({
     audience: `https://${domain}/api/v2/`,
+    // @ts-ignore: Don't know how to fix
     scope: 'read:users update:users',
   });
 
@@ -42,23 +44,19 @@ const createAuthZeroUser = async (
     token: client.access_token,
     domain,
   });
-  const authZeroUser = await management
-    .createUser({
-      connection: 'Username-Password-Authentication',
-      email,
-      password,
+  const authZeroUser = await management.createUser({
+    connection: 'Username-Password-Authentication',
+    email,
+    password,
+    username,
+    verify_email: true,
+    email_verified: false,
+    user_metadata: {
       username,
-      verify_email: true,
-      email_verified: false,
-      user_metadata: {
-        username,
-      },
-      app_metadata: { role: 'USER' },
-    })
-    .catch((err: Error) => {
-      console.error(err);
-      return null;
-    });
+    },
+    app_metadata: { role: 'USER' },
+  });
+
   return authZeroUser;
 };
 

@@ -1,17 +1,19 @@
 import { createError } from 'apollo-errors';
- 
-export const UserInputError = createError('UserInputError', {
-  message: 'Wrong input'
-});
 
-export const Auth0Error = createError('Auth0Error', {
-  message: 'Auth0 error'
-});
+const create = (type: string, defaultMessage: string): any => {
+  return createError(type, {
+    message: defaultMessage,
+    options: {
+      showPath: true,
+      showLocations: true,
+    },
+  });
+};
 
-export const AuthorizationError = createError('AuthorizationError', {
-  message: 'Not enough privileges'
-});
-
-export const MalformedJWTError = createError('MalformedJWTError', {
-  message: 'Malformed JSON webtoken'
-});
+export const UserInputError = create('UserInputError', 'Wrong input');
+export const Auth0Error = create('Auth0Error', 'Auth0 error');
+export const AuthorizationError = create(
+  'UserInputError',
+  'Not enough privileges',
+);
+export const JWTError = create('JWTError', 'JWT error');

@@ -59,6 +59,10 @@ export const Mutation = mutationType({
       },
       resolve: async (_, { username, password }, ctx) => {
         try {
+          if (!username || !password) {
+            return new Auth0Error();
+          }
+          
           const authZeroUser = await loginAuthZeroUser(username, password);
 
           return authZeroUser;
@@ -91,14 +95,20 @@ export const Mutation = mutationType({
               },
             });
           }
-          console.log('Create', email, username);
+
+          if (!email || !username || !password) {
+            return new Auth0Error();
+          }
           const auth0User = await createAuthZeroUser(email, username, password);
-          console.log('stuff coming out', auth0User);
 
           if (!auth0User) {
             return new Auth0Error();
           }
           const { user_id: auth0Id } = auth0User;
+
+          if (!auth0Id) {
+            return new Auth0Error();
+          }
 
           const user = await ctx.photon.users.create({
             data: {
@@ -112,7 +122,7 @@ export const Mutation = mutationType({
           return user;
         } catch (error) {
           console.error(error);
-          return new Error();
+          return new Auth0Error();
         }
       },
     });
