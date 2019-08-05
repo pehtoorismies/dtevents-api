@@ -4,18 +4,29 @@ import { getMatchingPubKey, getScopes } from '../util';
 import { config } from '../config';
 import { JWTError } from '../errors';
 
-const getBearerToken = R.pipe(
-  R.defaultTo(''),
-  R.split('Bearer'),
-  R.last,
-  R.trim,
-);
+const getBearerToken = (header?: string) => {
+  if (!header) {
+    return null;
+  }
+
+  return R.pipe(
+    R.split('Bearer'),
+    R.last,
+    R.trim,
+  )(header);
+};
 
 const getKID = R.path(['header', 'kid']);
 
-const requestScopes = async (resolve, parent, args, context, info) => {
+const requestScopes = async (
+  resolve: any,
+  parent: any,
+  args: any,
+  context: any,
+  info: any,
+) => {
   const authHeader = context.request.get('Authorization');
-  
+
   const jwtToken = getBearerToken(authHeader);
   if (!jwtToken) {
     const result = await resolve(parent, args, context, info);

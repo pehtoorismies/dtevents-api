@@ -1,0 +1,6 @@
+dist/
+node_modules/
+.envrc
+.git/
+.gitignore
+docker-compose.yaml

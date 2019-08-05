@@ -21,6 +21,7 @@ declare global {
 export interface NexusGenInputs {
   EventCreateInput: { // input type
     address?: string | null; // String
+    createdAt?: any | null; // DateTime
     date: any; // DateTime!
     description?: string | null; // String
     id?: string | null; // ID
@@ -30,17 +31,21 @@ export interface NexusGenInputs {
     time?: string | null; // String
     title: string; // String!
     type: string; // String!
+    updatedAt?: any | null; // DateTime
   }
   EventUpdateInput: { // input type
     address?: string | null; // String
+    createdAt?: any | null; // DateTime
     date?: any | null; // DateTime
     description?: string | null; // String
+    id?: string | null; // ID
     participants?: NexusGenInputs['UserUpdateManyWithoutEventsInput'] | null; // UserUpdateManyWithoutEventsInput
     race?: boolean | null; // Boolean
     subtitle?: string | null; // String
     time?: string | null; // String
     title?: string | null; // String
     type?: string | null; // String
+    updatedAt?: any | null; // DateTime
   }
   EventWhereUniqueInput: { // input type
     id?: string | null; // ID
@@ -101,6 +106,7 @@ export interface NexusGenInputs {
   UserUpdateManyDataInput: { // input type
     auth0Id?: string | null; // String
     email?: string | null; // String
+    id?: string | null; // ID
     name?: string | null; // String
     username?: string | null; // String
   }
@@ -126,6 +132,7 @@ export interface NexusGenInputs {
   UserUpdateWithoutEventsDataInput: { // input type
     auth0Id?: string | null; // String
     email?: string | null; // String
+    id?: string | null; // ID
     name?: string | null; // String
     username?: string | null; // String
   }

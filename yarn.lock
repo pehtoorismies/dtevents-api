@@ -1659,6 +1659,18 @@ netmask@^1.0.6:
   resolved "https://registry.yarnpkg.com/netmask/-/netmask-1.0.6.tgz#20297e89d86f6f6400f250d9f4f6b4c1945fcd35"
   integrity sha1-ICl+idhvb2QA8lDZ9Pa0wZRfzTU=
 
+nexus-prisma@^0.3.7:
+  version "0.3.7"
+  resolved "https://registry.yarnpkg.com/nexus-prisma/-/nexus-prisma-0.3.7.tgz#d2a556616bb6d100c1a0b9daff89fd4394666a29"
+  integrity sha512-jkqO0ApnctX8pIzhspsUqaoBEuviWNkCBuz/S9fakC/MqDNKZkLKog519L6BAALmm5YrHts1x2+6tJvCE8MiGQ==
+
+nexus@^0.12.0-beta.6:
+  version "0.12.0-beta.6"
+  resolved "https://registry.yarnpkg.com/nexus/-/nexus-0.12.0-beta.6.tgz#24829f4014365446972fdc066517893f36dd394e"
+  integrity sha512-6eqZslOSZFSMQ3RJSk5EAAkB6uOlg7aYK5AyLMLMVTYX5iY9Tm8GWTHso5+lhmwIqPZHw+kDOYux6rRcYi9heA==
+  dependencies:
+    tslib "^1.9.3"
+
 node-notifier@^5.4.0:
   version "5.4.0"
   resolved "https://registry.yarnpkg.com/node-notifier/-/node-notifier-5.4.0.tgz#7b455fdce9f7de0c63538297354f3db468426e6a"

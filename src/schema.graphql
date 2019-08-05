@@ -28,6 +28,7 @@ type Event {
 
 input EventCreateInput {
   address: String
+  createdAt: DateTime
   date: DateTime!
   description: String
   id: ID
@@ -37,6 +38,7 @@ input EventCreateInput {
   time: String
   title: String!
   type: String!
+  updatedAt: DateTime
 }
 
 """Event Types"""
@@ -57,14 +59,17 @@ enum EventType {
 
 input EventUpdateInput {
   address: String
+  createdAt: DateTime
   date: DateTime
   description: String
+  id: ID
   participants: UserUpdateManyWithoutEventsInput
   race: Boolean
   subtitle: String
   time: String
   title: String
   type: String
+  updatedAt: DateTime
 }
 
 input EventWhereUniqueInput {
@@ -160,6 +165,7 @@ input UserCreateWithoutEventsInput {
 input UserUpdateManyDataInput {
   auth0Id: String
   email: String
+  id: ID
   name: String
   username: String
 }
@@ -184,6 +190,7 @@ input UserUpdateManyWithWhereNestedInput {
 input UserUpdateWithoutEventsDataInput {
   auth0Id: String
   email: String
+  id: ID
   name: String
   username: String
 }

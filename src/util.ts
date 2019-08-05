@@ -9,31 +9,15 @@ export const getScopes = R.pipe(
   R.reject(isEmailOrOpenId),
 );
 
-let pubkeys = {};
-
 export const getMatchingPubKey = async (kid: string) => {
-  if (!(kid in pubkeys)) {
-    const jwks = await rp({
-      method: 'GET',
-      url: `https://${config.auth.domain}/.well-known/jwks.json`,
-    });
-    const data = JSON.parse(jwks);
+  const jwks = await rp({
+    method: 'GET',
+    url: `https://${config.auth.domain}/.well-known/jwks.json`,
+  });
+  const data = JSON.parse(jwks);
 
-    const key = R.find(R.propEq('kid', kid), data.keys);
+  const key = R.find(R.propEq('kid', kid), data.keys);
 
-    const pubkey = key.x5c[0];
-
-    pubkeys = R.assoc(
-      kid,
-      `-----BEGIN CERTIFICATE-----\n${pubkey}\n-----END CERTIFICATE-----`,
-      pubkeys,
-    );
-  }
-  try {
-    return R.prop(kid, pubkeys);
-  } catch (e) {
-    console.error(e);
-    throw new Error('Unknown key id in token');
-  }
+  const pubkey = key.x5c[0];
+  return `-----BEGIN CERTIFICATE-----\n${pubkey}\n-----END CERTIFICATE-----`;
 };
-

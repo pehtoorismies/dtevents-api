@@ -1,16 +1,15 @@
 datasource db {
   provider = "mysql"
-  url      = "mysql://user:password@localhost:3306/db?sslmode=prefer"
+  url       = env("MYSQL_URL")
+  // url      = "mysql://user:password@localhost:3306/db?sslmode=prefer"
 }
 
 generator photonjs {
   provider = "photonjs"
-  // output   = "node_modules/@generated/photon"
 }
 
 generator nexus_prisma {
   provider = "nexus-prisma"
-  // output   = "node_modules/@generated/nexus-prisma"
 }
 
 model User {
