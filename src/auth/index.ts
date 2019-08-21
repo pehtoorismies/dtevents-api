@@ -1,6 +1,7 @@
 import { ManagementClient, AuthenticationClient } from 'auth0';
-// import * as R from 'ramda';
-// import * as jwt from 'jsonwebtoken';
+import * as rp from 'request-promise';
+import * as R from 'ramda';
+import {  Auth0Error } from '../errors';
 import { config } from '../config';
 
 const { domain, clientId, clientSecret } = config.auth;
@@ -60,4 +61,23 @@ const createAuthZeroUser = async (
   return authZeroUser;
 };
 
-export { createAuthZeroUser, loginAuthZeroUser };
+const fetchAuth0Subject = async (accessToken: string) : Promise<string> => {
+  const userInfo = await rp({
+    method: 'GET',
+    url: `https://${domain}/userinfo`,
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+  },
+  });
+  console.log('UserInfo', userInfo);
+  if (!userInfo) {
+    return new Auth0Error({
+      message: 'Cant fetch userInfo',
+    });
+  }
+  const obj = JSON.parse(userInfo);
+
+  return R.prop('sub', obj);
+}
+
+export { createAuthZeroUser, loginAuthZeroUser, fetchAuth0Subject };

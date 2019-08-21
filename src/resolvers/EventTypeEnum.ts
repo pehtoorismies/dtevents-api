@@ -1,7 +1,7 @@
-import { enumType } from '@prisma/nexus';
+import { enumType } from 'nexus';
 
-export const EventType = enumType({
-  name: 'EventType',
+export const EventTypeEnum = enumType({
+  name: 'EventTypeEnum',
   members: [
     'Cycling',
     'Karonkka',
