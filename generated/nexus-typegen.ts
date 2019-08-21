@@ -224,6 +224,8 @@ export interface NexusGenFieldTypes {
     allEvents: NexusGenRootTypes['Event'][] | null; // [Event!]
     allUsers: NexusGenRootTypes['User'][] | null; // [User!]
     event: NexusGenRootTypes['Event'] | null; // Event
+    liveness: boolean; // Boolean!
+    readiness: boolean; // Boolean!
     user: NexusGenRootTypes['User'] | null; // User
   }
   User: { // field return type

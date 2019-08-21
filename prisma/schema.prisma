@@ -1,7 +1,7 @@
 datasource db {
   provider = "mysql"
-  url       = env("MYSQL_URL")
-  // url      = "mysql://user:password@localhost:3306/db?sslmode=prefer"
+  // url       = env("MYSQL_URL")
+  url      = "mysql://user:password@localhost:3306/db?sslmode=prefer"
 }
 
 generator photonjs {
@@ -21,20 +21,20 @@ model User {
   auth0Id  String  @unique
 }
 
-enum EventType {
-  Cycling
-  Karonkka
-  Meeting
-  Orienteering
-  Other
-  Running
-  Skiing
-  Spinning
-  Swimming
-  TrackRunning
-  Triathlon
-  Ultras
-}
+// enum EventType {
+//   Cycling
+//   Karonkka
+//   Meeting
+//   Orienteering
+//   Other
+//   Running
+//   Skiing
+//   Spinning
+//   Swimming
+//   TrackRunning
+//   Triathlon
+//   Ultras
+// }
 
 model Event {
   id           String    @id @default(cuid())
@@ -42,7 +42,7 @@ model Event {
   updatedAt    DateTime  @updatedAt
   title        String
   subtitle     String
-  date         DateTime
+  date         DateTime @default(now())
   time         String?
   address      String?
   description  String?

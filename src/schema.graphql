@@ -123,6 +123,8 @@ type Query {
   allEvents(after: String, before: String, first: Int, last: Int, skip: Int): [Event!]
   allUsers(after: String, before: String, first: Int, last: Int, skip: Int): [User!]
   event(where: EventWhereUniqueInput!): Event
+  liveness: Boolean!
+  readiness: Boolean!
   user(where: UserWhereUniqueInput!): User
 }
 

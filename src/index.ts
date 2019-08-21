@@ -41,6 +41,7 @@ const options = {
   endpoint: '/graphql',
   subscriptions: '/subscriptions',
   playground: '/playground',
+  getEndpoint: true,// enable for liveness/readiness probes
   formatError,
 };
 
