@@ -1,16 +1,60 @@
 import { idArg, objectType, stringArg, booleanArg, inputObjectType } from 'nexus';
 import * as EmailValidator from 'email-validator';
-import { contains, assoc } from 'ramda';
-import { loginAuthZeroUser, createAuthZeroUser, fetchAuth0Subject } from '../auth';
+import { contains, assoc, findIndex, propEq, remove } from 'ramda';
+import { loginAuthZeroUser, createAuthZeroUser } from '../auth';
 import { config } from '../config';
-import { UserInputError, Auth0Error } from '../errors';
+import { UserInputError, Auth0Error, NotFoundError } from '../errors';
 import { AuthPayload } from './AuthPayload';
 import { Event } from './Event';
+import { SimpleUser } from '../db-schema';
+
+interface SimpleUser {
+  username: string;
+  userId: string;
+}
 
 const fetchUserEmail = async (username: string, UserModel: any) => {
   const { email } = await UserModel.findOne({ 'username': username }).select({ email: 1 });
   return email;
 }
+
+const findParticipantIndex = (username: string, participants: SimpleUser[]) => {
+  return findIndex(propEq('username', username))(participants);
+}
+
+
+const joinFunc = async (eventId: string, eventModel: any, user: SimpleUser, wantToJoin: boolean) => {
+  const evt = await eventModel.findById(eventId);
+  if (!evt) {
+    return new NotFoundError({
+      message: `Event with id ${eventId} not found`,
+    });
+  }
+
+  const partIndex = findParticipantIndex(user.username, evt.participants);
+  const isAlreadyParticipating = partIndex >= 0;
+
+  if (wantToJoin && isAlreadyParticipating) {
+    return evt;
+  }
+  if (!wantToJoin && !isAlreadyParticipating) {
+    return evt;
+  }
+
+  // Add
+  if (wantToJoin) {
+    evt.participants.push(user);
+    const updated = await evt.save();
+    return updated;
+  }
+
+  // Remove
+  const reducedParts = remove(partIndex, 1, evt.participants);
+  evt.participants = reducedParts;
+  const updated = await evt.save();
+  return updated;
+};
+
 
 export const EventInput = inputObjectType({
   name: 'EventData',
@@ -117,33 +161,15 @@ export const Mutation = objectType({
         event: EventInput,
         addMe: booleanArg({ default: false }),
       },
-      async resolve(_, { addMe, event }, { mongoose, accessToken }) {
-        const { EventModel, UserModel } = mongoose;
-        const sub = await fetchAuth0Subject(accessToken);
-        console.log('sub', sub);
-        if (!sub) {
-          return new Auth0Error({
-            message: 'No userinfo available',
-          })
-        }
-
-
-        const user = await UserModel.findOne({ auth0Id: sub })
-        if (!user) {
-          return new Error('No user found in db');
-        }
-
-        const me = {
-          username: user.username,
-          userId: user.id,
-        }
+      async resolve(_, { addMe, event }, { mongoose, user }) {
+        const { EventModel } = mongoose;
 
         const eventWithCreator = {
           ...event,
-          creator: me,
+          creator: user,
         }
 
-        const withMe = addMe ? assoc('participants', [me], eventWithCreator) : eventWithCreator
+        const withMe = addMe ? assoc('participants', [user], eventWithCreator) : eventWithCreator
 
         return EventModel.create(withMe);
       }
@@ -162,52 +188,26 @@ export const Mutation = objectType({
       }
     })
 
-    // t.crud.updateOneEvent({
-    //   alias: 'updateEvent',
-    // });
-    // t.crud.deleteOneEvent({
-    //   alias: 'deleteEvent',
-    // });
-    // Prevent duplicate joins
-    // t.field('joinEvent', {
-    //   type: 'Event',
-    //   args: {
-    //     eventId: idArg(),
-    //     username: stringArg(),
-    //   },
-    //   resolve: (_, { eventId, username }, ctx) => {
-    //     return ctx.photon.events.update({
-    //       where: { id: eventId },
-    //       data: {
-    //         participants: {
-    //           connect: { username },
-    //         },
-    //       },
-    //     });
-    //   },
-    // });
+    t.field('joinEvent', {
+      type: Event,
+      args: {
+        eventId: idArg({ required: true }),
+      },
+      resolve: async (_, { eventId }, { mongoose, user }) => {
+        const { EventModel } = mongoose;
+        return await joinFunc(eventId, EventModel, user, true);
+      }
+    });
 
-    // t.field('unjoinEvent', {
-    //   type: 'Event',
-    //   args: {
-    //     eventId: idArg(),
-    //     username: stringArg(),
-    //   },
-    //   resolve: (_, { eventId, username }, ctx) => {
-    //     return ctx.photon.events.update({
-    //       where: { id: eventId },
-    //       data: {
-    //         participants: {
-    //           disconnect: { username },
-    //         },
-    //       },
-    //     });
-    //   },
-    // });
-
-
-
-
-    // });
+    t.field('unjoinEvent', {
+      type: Event,
+      args: {
+        eventId: idArg({ required: true }),
+      },
+      resolve: async (_, { eventId }, { mongoose, user }) => {
+        const { EventModel } = mongoose;
+        return await joinFunc(eventId, EventModel, user, false);
+      },
+    });
   },
 });

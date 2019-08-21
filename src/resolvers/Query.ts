@@ -24,8 +24,7 @@ export const Query = objectType({
       args: {
         limit: intArg({ default: 0 }),
       },
-      async resolve(_, { limit = 0 }, { mongoose, accessToken }) {
-        console.log('AccessTOKEN.......', accessToken);
+      async resolve(_, { limit = 0 }, { mongoose }) {
         const { EventModel } = mongoose;
         const events = await EventModel.find({ date: { $gte: new Date() } }).sort('date').limit(limit);
         return events;

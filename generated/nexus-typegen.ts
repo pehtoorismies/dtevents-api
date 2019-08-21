@@ -107,8 +107,10 @@ export interface NexusGenFieldTypes {
   Mutation: { // field return type
     createEvent: NexusGenRootTypes['Event']; // Event!
     deleteEvent: boolean; // Boolean!
+    joinEvent: NexusGenRootTypes['Event']; // Event!
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
     signup: NexusGenRootTypes['User']; // User!
+    unjoinEvent: NexusGenRootTypes['Event']; // Event!
   }
   Query: { // field return type
     findEvent: NexusGenRootTypes['Event']; // Event!
@@ -140,6 +142,9 @@ export interface NexusGenArgTypes {
     deleteEvent: { // args
       id: string; // ID!
     }
+    joinEvent: { // args
+      eventId: string; // ID!
+    }
     login: { // args
       password: string; // String!
       usernameOrEmail: string; // String!
@@ -150,6 +155,9 @@ export interface NexusGenArgTypes {
       password: string; // String!
       registerSecret: string; // String!
       username: string; // String!
+    }
+    unjoinEvent: { // args
+      eventId: string; // ID!
     }
   }
   Query: {

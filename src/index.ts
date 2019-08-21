@@ -6,7 +6,7 @@ import { formatError } from 'apollo-errors';
 // import { Context } from './types';
 import resolvers from './resolvers';
 import { UserSchema, EventSchema } from './db-schema'
-import { requestScopes, permissions, accessToken } from './middleware';
+import { requestScopes, permissions, accessToken, addUserData } from './middleware';
 const { AuthPayload, User, DateTime, Mutation, Query, Event, SimpleUser } = resolvers;
 
 const startServer = () => {
@@ -49,7 +49,7 @@ const startServer = () => {
         EventModel: model('Event', EventSchema),
       }
     }),
-    middlewares: [accessToken, requestScopes, permissions],
+    middlewares: [accessToken, requestScopes, addUserData, permissions],
     // middlewares: [accessToken],
   });
 

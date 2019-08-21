@@ -17,3 +17,5 @@ export const AuthorizationError = create(
   'Not enough privileges',
 );
 export const JWTError = create('JWTError', 'JWT error');
+export const NotFoundError = create('NotFoundError', 'Record not found');
+

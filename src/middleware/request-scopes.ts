@@ -43,9 +43,12 @@ const requestScopes = async (
       algorithms: ['RS256'],
     });
     const scopes: string[] = getScopes(token.scope);
+    const sub = R.path(['payload', 'sub'], decodedToken)
+
     const updatedContext = {
       ...context,
       scopes,
+      sub
     };
     const result = await resolve(parent, args, updatedContext, info);
     return result;
