@@ -24,7 +24,7 @@ export const getMatchingPubKey = async (kid: string) => {
   const key = R.find(R.propEq('kid', kid), data.keys);
 
   const pubkey = key.x5c[0];
-   
+
   const cert = `-----BEGIN CERTIFICATE-----\n${pubkey}\n-----END CERTIFICATE-----`;
   kidCache[kid] = cert;
   return cert;

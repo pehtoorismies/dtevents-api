@@ -1,13 +1,30 @@
 import { makeSchema } from 'nexus';
-import { connect, model } from 'mongoose';
+import { connection, connect, model } from 'mongoose';
 import { GraphQLServer } from 'graphql-yoga';
 import { join } from 'path';
 import { formatError } from 'apollo-errors';
 // import { Context } from './types';
 import resolvers from './resolvers';
-import { UserSchema, EventSchema } from './db-schema'
-import { requestScopes, permissions, accessToken, addUserData } from './middleware';
-const { AuthPayload, User, DateTime, Mutation, Query, Event, SimpleUser } = resolvers;
+import { UserSchema, EventSchema } from './db-schema';
+import {
+  requestScopes,
+  permissions,
+  accessToken,
+  addUserData,
+} from './middleware';
+import { config } from './config';
+
+const {
+  AuthPayload,
+  User,
+  DateTime,
+  Mutation,
+  Query,
+  Event,
+  SimpleUser,
+} = resolvers;
+
+const { mongoUrl } = config;
 
 const startServer = () => {
   const options = {
@@ -15,7 +32,7 @@ const startServer = () => {
     endpoint: '/graphql',
     subscriptions: '/subscriptions',
     playground: '/playground',
-    getEndpoint: true,// enable for liveness/readiness probes
+    getEndpoint: true, // enable for liveness/readiness probes
     formatError,
   };
   const schema = makeSchema({
@@ -39,45 +56,53 @@ const startServer = () => {
     // },
   });
 
-
-
   const server = new GraphQLServer({
     schema,
     context: req => ({
-      ...req, mongoose: {
+      ...req,
+      mongoose: {
         UserModel: model('User', UserSchema),
         EventModel: model('Event', EventSchema),
-      }
+      },
     }),
     middlewares: [accessToken, requestScopes, addUserData, permissions],
     // middlewares: [accessToken],
   });
 
   server.start(options, ({ port }) =>
-    console.log(
-      `🚀🚀🚀🚀🚀🚀🚀 Server started on port ${port} 🚀🚀🚀🚀🚀🚀🚀`,
-    ),
+    console.log(`🚀🚀🚀🚀🚀🚀🚀 Server started on port ${port} 🚀🚀🚀🚀🚀🚀🚀`),
   );
-}
+};
 
 
-const createServer = async () => {
-  try {
-    await connect('mongodb://localhost/dt65', { useNewUrlParser: true, autoIndex: false, dbName: 'dt65' });
-    startServer();
+// Mongo events
 
-  } catch (error) {
-    console.error(error);
-  }
-}
+connection.on('connecting', () => {
+  console.log('connecting to mongo');
+});
 
-
-createServer();
+connection.on('connected', () => {
+  startServer();
+});
 
 
-
-
-
+connect(
+  mongoUrl,
+  {
+    useNewUrlParser: true,
+    autoIndex: false,
+    reconnectInterval: 500,
+    reconnectTries: Number.MAX_VALUE,
+    bufferMaxEntries: 0,
+  },
+).then(
+  () => {
+    console.log('Ready');
+  },
+  err => {
+    console.error(err);
+  },
+);
 
 
 

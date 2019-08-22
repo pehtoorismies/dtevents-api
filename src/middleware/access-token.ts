@@ -21,7 +21,7 @@ const accessToken = async (
 ) => {
   const authHeader = context.request.get('Authorization');
   const jwtToken = getBearerToken(authHeader);
-  
+
   if (!jwtToken) {
     const result = await resolve(parent, args, context, info);
     return result;
@@ -29,9 +29,9 @@ const accessToken = async (
   const newContext = {
     ...context,
     accessToken: jwtToken,
-  }
-  
-  return await resolve(parent, args, newContext, info)  
+  };
+
+  return await resolve(parent, args, newContext, info);
 };
 
 export default accessToken;

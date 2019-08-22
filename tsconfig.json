@@ -2,13 +2,14 @@
   "compilerOptions": {
     "sourceMap": true,
     "outDir": "dist",
-    "lib": ["esnext", "dom"],
+    "lib": ["es2018"],
+    "module": "commonjs",
+    "target": "es2018",
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "strict": true, // `strict` is commented because of this issue: https://github.com/prisma/prisma/issues/3774; all its options except `strictNullChecks` & `strictPropertyInitialization` are explicitly set below.
     "noUnusedLocals": true, // @generated creates a import { core } from "nexus" which is never used
     "skipLibCheck": true // `skipLibCheck` is enabled until this is issue is fixed: https://github.com/prisma/nexus-prisma/issues/82
-  
   },
   "exclude": [
     "node_modules",

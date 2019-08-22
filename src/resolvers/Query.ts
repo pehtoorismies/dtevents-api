@@ -8,13 +8,13 @@ export const Query = objectType({
     // TODO: fix readiness
     t.field('readiness', {
       type: 'Boolean',
-      resolve: (_, { }, ctx) => {
+      resolve: (_, {}, ctx) => {
         return true;
       },
     });
     t.field('liveness', {
       type: 'Boolean',
-      resolve: (_, { }, ctx) => {
+      resolve: (_, {}, ctx) => {
         return true;
       },
     });
@@ -26,9 +26,11 @@ export const Query = objectType({
       },
       async resolve(_, { limit = 0 }, { mongoose }) {
         const { EventModel } = mongoose;
-        const events = await EventModel.find({ date: { $gte: new Date() } }).sort('date').limit(limit);
+        const events = await EventModel.find({ date: { $gte: new Date() } })
+          .sort('date')
+          .limit(limit);
         return events;
-      }
+      },
     });
 
     t.field('findEvent', {
@@ -40,8 +42,8 @@ export const Query = objectType({
         const { EventModel } = mongoose;
         const event = await EventModel.findById(id);
         return event;
-      }
-    })
+      },
+    });
 
     // t.crud.findManyEvent({
     //   alias: 'allEvents',

@@ -11,4 +11,4 @@ export const EVENT_TYPES = [
   'TrackRunning',
   'Triathlon',
   'Ultras',
-]
+];

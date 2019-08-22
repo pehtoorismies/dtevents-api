@@ -10,11 +10,11 @@ export const EventType = enumType({
 export const Event = objectType({
   name: 'Event',
   definition(t) {
-    t.string("id", { description: "Id of the event" });
+    t.string('id', { description: 'Id of the event' });
     t.string('title');
     t.string('subtitle');
     t.boolean('race');
-    t.field("type", {
+    t.field('type', {
       type: EventType,
     });
     t.date('date');
@@ -23,13 +23,11 @@ export const Event = objectType({
     t.date('createdAt');
     t.date('updatedAt');
 
-    t.list.field("participants", {
+    t.list.field('participants', {
       type: SimpleUser,
-
     });
-    t.field("creator", {
+    t.field('creator', {
       type: SimpleUser,
     });
   },
 });
-

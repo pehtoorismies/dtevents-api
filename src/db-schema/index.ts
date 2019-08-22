@@ -18,6 +18,7 @@ export const UserSchema = new Schema({
     type: String,
     validate: {
       validator: (email: string) => EmailValidator.validate(email),
+      // @ts-ignore: Don't know how to fix
       message: (props: any) => `${props.value} is not a valid email!`,
     },
     index: true,

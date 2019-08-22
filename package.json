@@ -11,15 +11,19 @@
   },
   "devDependencies": {
     "@types/auth0": "^2.9.19",
+    "@types/dotenv": "^6.1.1",
+    "@types/graphql-iso-date": "^3.3.1",
     "@types/jsonwebtoken": "^8.3.2",
+    "@types/mongoose": "^5.5.13",
     "@types/ramda": "^0.26.18",
     "@types/request-promise": "^4.1.44",
+    "prettier": "^1.18.2",
     "ts-node": "^8.3.0",
     "ts-node-dev": "^1.0.0-pre.40",
+    "tslint": "^5.19.0",
     "typescript": "^3.5.3"
   },
   "dependencies": {
-    "@types/mongoose": "^5.5.13",
     "apollo-errors": "^1.9.0",
     "auth0": "^2.18.0",
     "dotenv": "^8.1.0",
@@ -34,8 +38,5 @@
     "ramda": "^0.26.1",
     "ramda-adjunct": "^2.18.0",
     "request-promise": "^4.2.4"
-  },
-  "resolutions": {
-    "graphql-middleware": "3.0.1"
   }
 }
