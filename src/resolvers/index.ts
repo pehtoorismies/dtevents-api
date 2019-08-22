@@ -1,18 +1,20 @@
 import { AuthPayload } from './AuthPayload';
+import { DateTime } from './DateTime';
 import { Event } from './Event';
-import { EventType } from './EventType';
+import { EventTypeEnum } from './EventTypeEnum';
 import { Query } from './Query';
 import { Mutation } from './Mutation';
-import { User } from './User';
+import { User, SimpleUser } from './User';
 
 const resolvers = {
   Query,
   User,
   Event,
-  EventType,
-  // Post,
+  EventTypeEnum,
+  DateTime,
   Mutation,
   AuthPayload,
+  SimpleUser
 };
 
 export default resolvers;

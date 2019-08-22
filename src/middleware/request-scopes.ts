@@ -4,18 +4,6 @@ import { getMatchingPubKey, getScopes } from '../util';
 import { config } from '../config';
 import { JWTError } from '../errors';
 
-const getBearerToken = (header?: string) => {
-  if (!header) {
-    return null;
-  }
-
-  return R.pipe(
-    R.split('Bearer'),
-    R.last,
-    R.trim,
-  )(header);
-};
-
 const getKID = R.path(['header', 'kid']);
 
 const requestScopes = async (
@@ -25,40 +13,42 @@ const requestScopes = async (
   context: any,
   info: any,
 ) => {
-  const authHeader = context.request.get('Authorization');
-
-  const jwtToken = getBearerToken(authHeader);
-  if (!jwtToken) {
+  const { accessToken } = context;
+  if (!accessToken) {
     const result = await resolve(parent, args, context, info);
     return result;
   }
 
-  const decodedToken = jwt.decode(jwtToken, { complete: true });
-
+  const decodedToken = jwt.decode(accessToken, { complete: true });
+  
   if (!decodedToken) {
     return new JWTError({
       message: 'Malformed JWT',
     });
   }
   const kid = String(getKID(decodedToken));
-
+  
   if (!kid) {
     return new JWTError({
       message: 'Kid not found in JWT',
     });
   }
+  
   const pubkey = await getMatchingPubKey(kid);
-
+  
   try {
-    const token: any = jwt.verify(jwtToken, pubkey, {
+    const token: any = jwt.verify(accessToken, pubkey, {
       audience: config.auth.jwtAudience,
       issuer: `https://${config.auth.domain}/`,
       algorithms: ['RS256'],
     });
     const scopes: string[] = getScopes(token.scope);
+    const sub = R.path(['payload', 'sub'], decodedToken)
+
     const updatedContext = {
       ...context,
       scopes,
+      sub
     };
     const result = await resolve(parent, args, updatedContext, info);
     return result;

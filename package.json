@@ -7,33 +7,36 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node-dev --no-notify --respawn --transpileOnly ./src",
     "build": "tsc",
-    "start-prod": "node dist/src",
-    "postinstall": "prisma2 generate"
+    "start-prod": "node dist/src"
   },
   "devDependencies": {
     "@types/auth0": "^2.9.19",
+    "@types/dotenv": "^6.1.1",
+    "@types/graphql-iso-date": "^3.3.1",
     "@types/jsonwebtoken": "^8.3.2",
+    "@types/mongoose": "^5.5.13",
     "@types/ramda": "^0.26.18",
     "@types/request-promise": "^4.1.44",
+    "prettier": "^1.18.2",
     "ts-node": "^8.3.0",
     "ts-node-dev": "^1.0.0-pre.40",
+    "tslint": "^5.19.0",
     "typescript": "^3.5.3"
   },
   "dependencies": {
-    "@prisma/nexus": "^0.0.1",
     "apollo-errors": "^1.9.0",
     "auth0": "^2.18.0",
-    "dotenv": "^8.0.0",
+    "dotenv": "^8.1.0",
+    "email-validator": "^2.0.4",
+    "graphql-iso-date": "^3.6.1",
     "graphql-shield": "^6.0.4",
     "graphql-yoga": "^1.18.1",
     "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.6.10",
     "nexus": "^0.12.0-beta.6",
     "nexus-prisma": "^0.3.7",
     "ramda": "^0.26.1",
     "ramda-adjunct": "^2.18.0",
     "request-promise": "^4.2.4"
-  },
-  "resolutions": {
-    "graphql-middleware": "3.0.1"
   }
 }

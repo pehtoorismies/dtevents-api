@@ -1,20 +1,61 @@
-import { objectType } from '@prisma/nexus';
+import { intArg, objectType, idArg } from 'nexus';
+import { Event } from './Event';
 
 export const Query = objectType({
   name: 'Query',
   description: 'Queries',
   definition(t) {
-    t.crud.findManyEvent({
-      alias: 'allEvents',
+    // TODO: fix readiness
+    t.field('readiness', {
+      type: 'Boolean',
+      resolve: (_, {}, ctx) => {
+        return true;
+      },
     });
-    t.crud.findOneEvent({
-      alias: 'event',
+    t.field('liveness', {
+      type: 'Boolean',
+      resolve: (_, {}, ctx) => {
+        return true;
+      },
     });
-    t.crud.findManyUser({
-      alias: 'allUsers',
+
+    t.list.field('findManyEvents', {
+      type: Event,
+      args: {
+        limit: intArg({ default: 0 }),
+      },
+      async resolve(_, { limit = 0 }, { mongoose }) {
+        const { EventModel } = mongoose;
+        const events = await EventModel.find({ date: { $gte: new Date() } })
+          .sort('date')
+          .limit(limit);
+        return events;
+      },
     });
-    t.crud.findOneUser({
-      alias: 'user',
+
+    t.field('findEvent', {
+      type: Event,
+      args: {
+        id: idArg({ required: true }),
+      },
+      async resolve(_, { id }, { mongoose }) {
+        const { EventModel } = mongoose;
+        const event = await EventModel.findById(id);
+        return event;
+      },
     });
+
+    // t.crud.findManyEvent({
+    //   alias: 'allEvents',
+    // });
+    // t.crud.findOneEvent({
+    //   alias: 'event',
+    // });
+    // t.crud.findManyUser({
+    //   alias: 'allUsers',
+    // });
+    // t.crud.findOneUser({
+    //   alias: 'user',
+    // });
   },
 });

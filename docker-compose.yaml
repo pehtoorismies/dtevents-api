@@ -1,35 +1,24 @@
 version: '3.7'
 services:
-  mysql:
-    container_name: mysql
+  mongo:
+    image: mongo:4.0.0
     ports:
-      - '3306:3306'
-    image: mysql:5.7
-    restart: always
-    environment:
-      MYSQL_DATABASE: 'db'
-      MYSQL_USER: 'user'
-      MYSQL_PASSWORD: 'password'
-      MYSQL_ROOT_PASSWORD: 'password'
+      - '27017:27017'
     volumes:
-      - mysql:/var/lib/mysql
+      - mongo:/data/mongo
   backend:
     env_file:
       - .env
-    # environment:
-      # - MYSQL_URL=mysql://user:password@mysql:3306/db?sslmode=prefer
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/dt65
     links:
-      - mysql
+      - mongo
     depends_on:
-      - mysql
+      - mongo
     container_name: backend
     ports:
       - '4000:4000'
     build: .
-    # volumes:
-    #   - ./backend:/app
-    #   - /app/node_modules
-    #   - /app/prisma
-  
-volumes: #define our mysql volume used above
-  mysql:
+ 
+volumes: #define mongo volume used above
+  mongo:

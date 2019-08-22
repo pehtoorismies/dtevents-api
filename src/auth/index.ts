@@ -1,6 +1,4 @@
 import { ManagementClient, AuthenticationClient } from 'auth0';
-// import * as R from 'ramda';
-// import * as jwt from 'jsonwebtoken';
 import { config } from '../config';
 
 const { domain, clientId, clientSecret } = config.auth;

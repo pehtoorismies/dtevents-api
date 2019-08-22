@@ -8,40 +8,40 @@ type AuthPayload {
   idToken: String!
 }
 
-"""DateTime"""
-scalar DateTime
+"""
+A date string, such as 2007-12-03, compliant with the `full-date` format
+outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for
+representation of dates and times using the Gregorian calendar.
+"""
+scalar Date
 
 type Event {
-  address: String
-  createdAt: DateTime!
-  date: DateTime!
-  description: String
-  id: ID!
-  participants(after: String, before: String, first: Int, last: Int, skip: Int): [User!]
+  createdAt: Date!
+  creator: SimpleUser!
+  date: Date!
+  description: String!
+
+  """Id of the event"""
+  id: String!
+  participants: [SimpleUser!]!
   race: Boolean!
   subtitle: String!
-  time: String
+  time: String!
   title: String!
-  type: String!
-  updatedAt: DateTime!
+  type: EventType!
+  updatedAt: Date!
 }
 
-input EventCreateInput {
-  address: String
-  createdAt: DateTime
-  date: DateTime!
+input EventData {
+  date: String!
   description: String
-  id: ID
-  participants: UserCreateManyWithoutParticipantsInput
   race: Boolean
-  subtitle: String!
+  subtitle: String
   time: String
   title: String!
   type: String!
-  updatedAt: DateTime
 }
 
-"""Event Types"""
 enum EventType {
   Cycling
   Karonkka
@@ -57,158 +57,37 @@ enum EventType {
   Ultras
 }
 
-input EventUpdateInput {
-  address: String
-  createdAt: DateTime
-  date: DateTime
-  description: String
-  id: ID
-  participants: UserUpdateManyWithoutEventsInput
-  race: Boolean
-  subtitle: String
-  time: String
-  title: String
-  type: String
-  updatedAt: DateTime
-}
-
-input EventWhereUniqueInput {
-  id: ID
-}
-
 type Mutation {
-  createEvent(data: EventCreateInput!): Event!
-  deleteEvent(where: EventWhereUniqueInput!): Event
-  joinEvent(eventId: ID, username: String): Event!
-  login(password: String, username: String): AuthPayload!
-  signup(email: String, name: String, password: String, registerSecret: String, username: String): User!
-  unjoinEvent(eventId: ID, username: String): Event!
-  updateEvent(data: EventUpdateInput!, where: EventWhereUniqueInput!): Event
-}
-
-input MutationUpdateOneEventFilter {
-  every: MutationUpdateOneEventWhereInput
-  none: MutationUpdateOneEventWhereInput
-  some: MutationUpdateOneEventWhereInput
-}
-
-input MutationUpdateOneEventWhereInput {
-  AND: [MutationUpdateOneEventWhereInput!]
-  auth0Id: StringFilter
-  email: StringFilter
-  events: MutationUpdateOneEventFilter
-  id: StringFilter
-  name: NullableStringFilter
-  NOT: [MutationUpdateOneEventWhereInput!]
-  OR: [MutationUpdateOneEventWhereInput!]
-  username: StringFilter
-}
-
-input NullableStringFilter {
-  contains: String
-  endsWith: String
-  equals: String
-  gt: String
-  gte: String
-  in: [String!]
-  lt: String
-  lte: String
-  not: String
-  notIn: [String!]
-  startsWith: String
+  createEvent(addMe: Boolean = false, event: EventData): Event!
+  deleteEvent(id: ID!): Boolean!
+  joinEvent(eventId: ID!): Event!
+  login(password: String!, usernameOrEmail: String!): AuthPayload!
+  signup(email: String!, name: String!, password: String!, registerSecret: String!, username: String!): User!
+  unjoinEvent(eventId: ID!): Event!
 }
 
 """Queries"""
 type Query {
-  allEvents(after: String, before: String, first: Int, last: Int, skip: Int): [Event!]
-  allUsers(after: String, before: String, first: Int, last: Int, skip: Int): [User!]
-  event(where: EventWhereUniqueInput!): Event
-  user(where: UserWhereUniqueInput!): User
+  findEvent(id: ID!): Event!
+  findManyEvents(limit: Int = 0): [Event!]!
+  liveness: Boolean!
+  readiness: Boolean!
 }
 
-input StringFilter {
-  contains: String
-  endsWith: String
-  equals: String
-  gt: String
-  gte: String
-  in: [String!]
-  lt: String
-  lte: String
-  not: String
-  notIn: [String!]
-  startsWith: String
+type SimpleUser {
+  """Id of the user"""
+  userId: String!
+  username: String!
 }
 
 type User {
   auth0Id: String!
+  createdAt: Date!
   email: String!
-  events(after: String, before: String, first: Int, last: Int, skip: Int): [Event!]
-  id: ID!
-  name: String
+
+  """Id of the user"""
+  id: String!
+  name: String!
+  updatedAt: Date!
   username: String!
-}
-
-input UserCreateManyWithoutParticipantsInput {
-  connect: [UserWhereUniqueInput!]
-  create: [UserCreateWithoutEventsInput!]
-}
-
-input UserCreateWithoutEventsInput {
-  auth0Id: String!
-  email: String!
-  id: ID
-  name: String
-  username: String!
-}
-
-input UserUpdateManyDataInput {
-  auth0Id: String
-  email: String
-  id: ID
-  name: String
-  username: String
-}
-
-input UserUpdateManyWithoutEventsInput {
-  connect: [UserWhereUniqueInput!]
-  create: [UserCreateWithoutEventsInput!]
-  delete: [UserWhereUniqueInput!]
-  deleteMany: [MutationUpdateOneEventWhereInput!]
-  disconnect: [UserWhereUniqueInput!]
-  set: [UserWhereUniqueInput!]
-  update: [UserUpdateWithWhereUniqueWithoutEventsInput!]
-  updateMany: [UserUpdateManyWithWhereNestedInput!]
-  upsert: [UserUpsertWithWhereUniqueWithoutEventsInput!]
-}
-
-input UserUpdateManyWithWhereNestedInput {
-  data: UserUpdateManyDataInput!
-  where: MutationUpdateOneEventWhereInput!
-}
-
-input UserUpdateWithoutEventsDataInput {
-  auth0Id: String
-  email: String
-  id: ID
-  name: String
-  username: String
-}
-
-input UserUpdateWithWhereUniqueWithoutEventsInput {
-  data: UserUpdateWithoutEventsDataInput!
-  where: UserWhereUniqueInput!
-}
-
-input UserUpsertWithWhereUniqueWithoutEventsInput {
-  create: UserCreateWithoutEventsInput!
-  update: UserUpdateWithoutEventsDataInput!
-  where: UserWhereUniqueInput!
-}
-
-input UserWhereUniqueInput {
-  auth0Id: String
-  email: String
-  id: ID
-  username: String
 }

@@ -1,17 +1,13 @@
 import * as dotenv from 'dotenv';
+import { AuthConfig } from './types';
 
 dotenv.config();
 
-interface Auth {
-  domain: string;
-  clientId: string;
-  clientSecret: string;
-  jwtAudience: string;
-}
+const mongoUrl = process.env.MONGO_URL || 'mongodb://localhost:27017/dt65';
 
 const registerSecret: string = process.env.REGISTER_SECRET || 'secret';
 
-const auth: Auth = {
+const auth: AuthConfig = {
   domain: process.env.AUTH_DOMAIN || 'dev-dt65.eu.auth0.com',
   clientId: process.env.AUTH_CLIENT_ID || 'clientId',
   clientSecret: process.env.AUTH_CLIENT_SECRET || 'secret',
@@ -21,6 +17,7 @@ const auth: Auth = {
 const config = {
   auth,
   registerSecret,
+  mongoUrl,
 };
 
 export { config };
