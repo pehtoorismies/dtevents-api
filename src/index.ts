@@ -74,17 +74,22 @@ const startServer = () => {
   );
 };
 
-
 // Mongo events
 
 connection.on('connecting', () => {
   console.log('connecting to mongo');
 });
+connection.on('disconnected', () => {
+  console.log('-> lost connection');
+});
+
+connection.on('reconnect', () => {
+  console.log('-> reconnected');
+});
 
 connection.on('connected', () => {
   startServer();
 });
-
 
 connect(
   mongoUrl,
@@ -103,6 +108,3 @@ connect(
     console.error(err);
   },
 );
-
-
-
