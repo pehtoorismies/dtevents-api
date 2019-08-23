@@ -25,7 +25,7 @@ steps:
   #     branch:
   #       only:
   #         - "master"
-    stage: "push"
+    # stage: "push"
   parallel_push:
     type: "parallel"
     steps:
