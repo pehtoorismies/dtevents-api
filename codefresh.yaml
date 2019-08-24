@@ -8,13 +8,13 @@ steps:
   main_clone:
     type: "git-clone"
     description: "Cloning main repository..."
-    repo: "pehtoorismies/dtevents-api"
+    repo: "pehtoorismies/dt65-events-api"
     revision: "${{CF_BRANCH}}"
     stage: "clone"
   build:
     title: "Building Docker Image"
     type: "build"
-    image_name: "pehtoorismies/dtevents-api"
+    image_name: "pehtoorismies/dt65-events-api"
     tag: "${{CF_BRANCH_TAG_NORMALIZED}}"
     dockerfile: "Dockerfile"
     stage: "build"
@@ -48,7 +48,7 @@ steps:
       push:
         title: "Pushing image to dockerhub"
         type: "push"
-        image_name: "pehtoorismies/dtevents-api"
+        image_name: "pehtoorismies/dt65-events-api"
         registry: "dockerhub"
         candidate: "${{build}}"
         tags:
