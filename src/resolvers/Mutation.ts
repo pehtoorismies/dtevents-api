@@ -14,8 +14,12 @@ interface SimpleUser {
 }
 
 const fetchUserEmail = async (username: string, UserModel: any) => {
-  const { email } = await UserModel.findOne({ 'username': username }).select({ email: 1 });
-  return email;
+  const user = await UserModel.findOne({ 'username': username }).select({ email: 1 });
+  if (!user) {
+    throw new NotFoundError({message: `No user found '${username}`});
+    
+  }
+  return user.email;
 }
 
 const findParticipantIndex = (username: string, participants: SimpleUser[]) => {
