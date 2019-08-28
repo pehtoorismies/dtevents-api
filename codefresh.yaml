@@ -33,5 +33,5 @@ steps:
     registry: "dockerhub"
     candidate: "${{build}}"
     tags:
-      - "${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_BRANCH_TAG_NORMALIZED}}"
+      - "${{CF_BRANCH_TAG_NORMALIZED}}-${{CF_SHORT_REVISION}}"
     stage: "push"
