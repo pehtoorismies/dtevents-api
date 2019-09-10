@@ -1,12 +1,20 @@
-import { idArg, objectType, stringArg, booleanArg, inputObjectType } from 'nexus';
 import * as EmailValidator from 'email-validator';
-import { contains, assoc, findIndex, propEq, remove } from 'ramda';
-import { loginAuthZeroUser, createAuthZeroUser } from '../auth';
-import { config } from '../config';
-import { UserInputError, Auth0Error, NotFoundError } from '../errors';
+
+import { Auth0Error, NotFoundError, UserInputError } from '../errors';
+import { assoc, contains, findIndex, propEq, remove } from 'ramda';
+import {
+  booleanArg,
+  idArg,
+  inputObjectType,
+  objectType,
+  stringArg,
+} from 'nexus';
+import { createAuthZeroUser, loginAuthZeroUser } from '../auth';
+
 import { AuthPayload } from './AuthPayload';
 import { Event } from './Event';
 import { SimpleUser } from '../db-schema';
+import { config } from '../config';
 
 interface SimpleUser {
   username: string;
@@ -14,20 +22,25 @@ interface SimpleUser {
 }
 
 const fetchUserEmail = async (username: string, UserModel: any) => {
-  const user = await UserModel.findOne({ 'username': username }).select({ email: 1 });
+  const user = await UserModel.findOne({ username: username }).select({
+    email: 1,
+  });
   if (!user) {
-    throw new NotFoundError({message: `No user found '${username}`});
-    
+    throw new NotFoundError({ message: `No user found '${username}` });
   }
   return user.email;
-}
+};
 
 const findParticipantIndex = (username: string, participants: SimpleUser[]) => {
   return findIndex(propEq('username', username))(participants);
-}
+};
 
-
-const joinFunc = async (eventId: string, eventModel: any, user: SimpleUser, wantToJoin: boolean) => {
+const joinFunc = async (
+  eventId: string,
+  eventModel: any,
+  user: SimpleUser,
+  wantToJoin: boolean,
+) => {
   const evt = await eventModel.findById(eventId);
   if (!evt) {
     return new NotFoundError({
@@ -59,26 +72,24 @@ const joinFunc = async (eventId: string, eventModel: any, user: SimpleUser, want
   return updated;
 };
 
-
 export const EventInput = inputObjectType({
   name: 'EventData',
   definition(t) {
     t.string('title', { required: true });
     t.string('subtitle');
-    t.boolean('race')
+    t.boolean('race');
     t.string('type', { required: true });
     t.string('date', { required: true });
-    t.string('time')
-    t.string('description')
+    t.string('time');
+    t.string('description');
   },
 });
 
-
 export const Mutation = objectType({
-  name: "Mutation",
+  name: 'Mutation',
   definition(t) {
-    t.field("signup", {
-      type: "User",
+    t.field('signup', {
+      type: 'User',
       args: {
         email: stringArg({ required: true }),
         username: stringArg({ required: true }),
@@ -86,11 +97,16 @@ export const Mutation = objectType({
         name: stringArg({ required: true }),
         registerSecret: stringArg({ required: true }),
       },
-      async resolve(_, { email, username, password, name, registerSecret }, { mongoose }) {
+      async resolve(
+        _,
+        { email, username, password, name, registerSecret },
+        { mongoose },
+      ) {
         if (config.registerSecret !== registerSecret) {
           return new UserInputError({
             data: {
-              registerSecret: 'Väärä rekisteröintikoodi',
+              field: 'registerSecret',
+              message: 'Väärä rekisteröintikoodi',
             },
           });
         }
@@ -98,18 +114,29 @@ export const Mutation = objectType({
         if (!EmailValidator.validate(email)) {
           return new UserInputError({
             data: {
-              email: 'Email väärässä muodossa',
+              field: 'email',
+              message: 'Email väärässä muodossa',
             },
           });
         }
 
-        if (!username || !password) {
+        if (!username) {
           return new UserInputError({
             data: {
-              msg: 'Puuttuvia arvoja',
+              field: 'username',
+              message: 'Käyttäjätunnus puuttuu',
             },
           });
         }
+        if (!password) {
+          return new UserInputError({
+            data: {
+              field: 'password',
+              message: 'Salasana puuttuu',
+            },
+          });
+        }
+
         const auth0User = await createAuthZeroUser(email, username, password);
 
         if (!auth0User) {
@@ -121,7 +148,13 @@ export const Mutation = objectType({
         }
         const { user_id: auth0Id } = auth0User;
         const { UserModel } = mongoose;
-        const createdUser = await UserModel.create({ email, username, password, name, auth0Id });
+        const createdUser = await UserModel.create({
+          email,
+          username,
+          password,
+          name,
+          auth0Id,
+        });
 
         return createdUser;
       },
@@ -137,25 +170,39 @@ export const Mutation = objectType({
         if (!usernameOrEmail) {
           throw new UserInputError({
             data: {
-              usernameOrEmail: 'Käyttäjätunnus puuttuu,'
+              field: 'usernameOrEmail',
+              message: 'Käyttäjätunnus puuttuu',
             },
-          })
+          });
         }
         const isEmail = contains('@', usernameOrEmail);
+        console.log('isEmail', isEmail);
+        console.log('validate', !EmailValidator.validate(usernameOrEmail))
         if (isEmail && !EmailValidator.validate(usernameOrEmail)) {
           return new UserInputError({
             data: {
-              email: 'Email väärässä muodossa',
+              field: 'email',
+              message: 'Email väärässä muodossa',
             },
           });
         }
         const { UserModel } = mongoose;
 
-        const userEmail = isEmail ? usernameOrEmail : await fetchUserEmail(usernameOrEmail, UserModel);
-
-        const authZeroUser = await loginAuthZeroUser(userEmail, password);
-        return authZeroUser;
-
+        const userEmail = isEmail
+          ? usernameOrEmail
+          : await fetchUserEmail(usernameOrEmail, UserModel);
+        try {
+          const authZeroUser = await loginAuthZeroUser(userEmail, password);
+          return authZeroUser;
+        } catch (error) {
+          const errorMsg = JSON.parse(error.message);
+          console.log(errorMsg)
+          return new Auth0Error({
+            data: {
+              message: errorMsg.error_description,
+            },
+          });
+        }
       },
     });
 
@@ -171,12 +218,14 @@ export const Mutation = objectType({
         const eventWithCreator = {
           ...event,
           creator: user,
-        }
+        };
 
-        const withMe = addMe ? assoc('participants', [user], eventWithCreator) : eventWithCreator
+        const withMe = addMe
+          ? assoc('participants', [user], eventWithCreator)
+          : eventWithCreator;
 
         return EventModel.create(withMe);
-      }
+      },
     });
 
     t.field('deleteEvent', {
@@ -189,8 +238,8 @@ export const Mutation = objectType({
         const res = await EventModel.deleteOne({ _id: id });
         const { deletedCount } = res;
         return deletedCount === 1;
-      }
-    })
+      },
+    });
 
     t.field('joinEvent', {
       type: Event,
@@ -200,7 +249,7 @@ export const Mutation = objectType({
       resolve: async (_, { eventId }, { mongoose, user }) => {
         const { EventModel } = mongoose;
         return await joinFunc(eventId, EventModel, user, true);
-      }
+      },
     });
 
     t.field('unjoinEvent', {

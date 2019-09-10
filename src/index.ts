@@ -1,18 +1,19 @@
-import { makeSchema } from 'nexus';
-import { connection, connect, model } from 'mongoose';
-import { GraphQLServer } from 'graphql-yoga';
-import { join } from 'path';
-import { formatError } from 'apollo-errors';
-// import { Context } from './types';
-import resolvers from './resolvers';
-import { UserSchema, EventSchema } from './db-schema';
+import { EventSchema, UserSchema } from './db-schema';
 import {
-  requestScopes,
-  permissions,
   accessToken,
   addUserData,
+  permissions,
+  requestScopes,
 } from './middleware';
+import { connect, connection, model } from 'mongoose';
+
+import { GraphQLServer } from 'graphql-yoga';
 import { config } from './config';
+import { formatError } from 'apollo-errors';
+import { join } from 'path';
+import { makeSchema } from 'nexus';
+// import { Context } from './types';
+import resolvers from './resolvers';
 
 const {
   AuthPayload,

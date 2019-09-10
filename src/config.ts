@@ -1,9 +1,10 @@
 import * as dotenv from 'dotenv';
+
 import { AuthConfig } from './types';
 
 dotenv.config();
 
-const mongoUrl = process.env.MONGO_URL || 'mongodb://localhost:27017/dt65';
+const mongoUrl = process.env.MONGO_URL || 'mongodb://localhost:27017';
 
 const registerSecret: string = process.env.REGISTER_SECRET || 'secret';
 
