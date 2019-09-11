@@ -13,13 +13,8 @@ import { createAuthZeroUser, loginAuthZeroUser } from '../auth';
 
 import { AuthPayload } from './AuthPayload';
 import { Event } from './Event';
-import { SimpleUser } from '../db-schema';
+import { ISimpleUser } from '../types';
 import { config } from '../config';
-
-interface SimpleUser {
-  username: string;
-  userId: string;
-}
 
 const fetchUserEmail = async (username: string, UserModel: any) => {
   const user = await UserModel.findOne({ username: username }).select({
@@ -31,14 +26,14 @@ const fetchUserEmail = async (username: string, UserModel: any) => {
   return user.email;
 };
 
-const findParticipantIndex = (username: string, participants: SimpleUser[]) => {
+const findParticipantIndex = (username: string, participants: ISimpleUser[]) => {
   return findIndex(propEq('username', username))(participants);
 };
 
 const joinFunc = async (
   eventId: string,
   eventModel: any,
-  user: SimpleUser,
+  user: any,// TODO: fixme
   wantToJoin: boolean,
 ) => {
   const evt = await eventModel.findById(eventId);
@@ -48,7 +43,12 @@ const joinFunc = async (
     });
   }
 
-  const partIndex = findParticipantIndex(user.username, evt.participants);
+  const simpleUser = {
+    userId: user.id,
+    username: user.user.username
+  }
+
+  const partIndex = findParticipantIndex(simpleUser.username, evt.participants);
   const isAlreadyParticipating = partIndex >= 0;
 
   if (wantToJoin && isAlreadyParticipating) {
@@ -60,7 +60,7 @@ const joinFunc = async (
 
   // Add
   if (wantToJoin) {
-    evt.participants.push(user);
+    evt.participants.push(simpleUser);
     const updated = await evt.save();
     return updated;
   }

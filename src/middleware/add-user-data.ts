@@ -19,10 +19,7 @@ const fetchUser = async (
   }
   const newContext = {
     ...context,
-    user: {
-      username: user.username,
-      userId: user.id,
-    },
+    user,
   };
   const result = await resolve(root, args, newContext, info);
   return result;
@@ -33,7 +30,7 @@ const addUserData = {
     // allUsers: rules.isUserReader,
     // allEvents: rules.isEventReader,
     // event: rules.isEventReader,
-    // user: rules.isUserReader,
+    me: fetchUser,
   },
   Mutation: {
     createEvent: fetchUser,

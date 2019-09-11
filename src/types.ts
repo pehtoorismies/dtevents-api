@@ -4,3 +4,8 @@ export interface AuthConfig {
   clientSecret: string;
   jwtAudience: string;
 }
+
+export interface ISimpleUser {
+  username: string;
+  userId: string;
+}

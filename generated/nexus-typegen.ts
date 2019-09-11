@@ -116,6 +116,7 @@ export interface NexusGenFieldTypes {
     findEvent: NexusGenRootTypes['Event']; // Event!
     findManyEvents: NexusGenRootTypes['Event'][]; // [Event!]!
     liveness: boolean; // Boolean!
+    me: NexusGenRootTypes['User']; // User!
     readiness: boolean; // Boolean!
   }
   SimpleUser: { // field return type

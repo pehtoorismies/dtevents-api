@@ -1,6 +1,7 @@
-import { rule, shield } from 'graphql-shield';
 import * as R from 'ramda';
 import * as RA from 'ramda-adjunct';
+
+import { rule, shield } from 'graphql-shield';
 
 interface Context {
   scopes?: string[];
@@ -20,6 +21,12 @@ const rules = {
   isUserReader: rule()((parent, args, context) => {
     return verifyRole('read:users', context);
   }),
+  isMeReader: rule()((parent, args, context) => {
+    return verifyRole('read:me', context);
+  }),
+  isMeWriter: rule()((parent, args, context) => {
+    return verifyRole('write:me', context);
+  }),
   isEventReader: rule()(async (parent, { id }, context) => {
     return verifyRole('read:events', context);
   }),
@@ -34,13 +41,14 @@ const permissions = shield({
     // allEvents: rules.isEventReader,
     // event: rules.isEventReader,
     // user: rules.isUserReader,
+    me: rules.isMeReader,
   },
   Mutation: {
     createEvent: rules.isEventWriter,
     // deleteEvent: rules.isEventWriter,
     // updateEvent: rules.isEventWriter,
-    // joinEvent: rules.isEventWriter,
-    // unjoinEvent: rules.isEventWriter,
+    joinEvent: rules.isEventWriter,
+    unjoinEvent: rules.isEventWriter,
   },
 });
 export default permissions;

@@ -1,5 +1,7 @@
-import { intArg, objectType, idArg } from 'nexus';
+import { idArg, intArg, objectType } from 'nexus';
+
 import { Event } from './Event';
+import { User } from './User';
 
 export const Query = objectType({
   name: 'Query',
@@ -45,17 +47,11 @@ export const Query = objectType({
       },
     });
 
-    // t.crud.findManyEvent({
-    //   alias: 'allEvents',
-    // });
-    // t.crud.findOneEvent({
-    //   alias: 'event',
-    // });
-    // t.crud.findManyUser({
-    //   alias: 'allUsers',
-    // });
-    // t.crud.findOneUser({
-    //   alias: 'user',
-    // });
+    t.field('me', {
+      type: User,
+      async resolve(_, __, { user }) {
+        return user;
+      },
+    });
   },
 });
