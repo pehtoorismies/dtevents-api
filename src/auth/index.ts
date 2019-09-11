@@ -1,4 +1,5 @@
-import { ManagementClient, AuthenticationClient } from 'auth0';
+import { AuthenticationClient, ManagementClient } from 'auth0';
+
 import { config } from '../config';
 
 const { domain, clientId, clientSecret } = config.auth;
@@ -14,7 +15,7 @@ const loginAuthZeroUser = async (username: string, password: string) => {
     password,
     username,
     // @ts-ignore: Don't know how to fix
-    scope: 'read:events write:events openid profile',
+    scope: 'read:events write:events read:me write:me openid profile',
     audience: 'https://graphql-dev.downtown65.com',
   });
 
