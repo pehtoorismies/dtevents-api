@@ -16,6 +16,7 @@ declare global {
   }
 }
 
+
 declare global {
   interface NexusGen extends NexusGenTypes {}
 }

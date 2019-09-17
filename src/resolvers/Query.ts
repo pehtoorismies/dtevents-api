@@ -1,8 +1,5 @@
 import { idArg, intArg, objectType } from 'nexus';
 
-import { Event } from './Event';
-import { User } from './User';
-
 export const Query = objectType({
   name: 'Query',
   description: 'Queries',
@@ -22,7 +19,7 @@ export const Query = objectType({
     });
 
     t.list.field('findManyEvents', {
-      type: Event,
+      type: 'Event',
       args: {
         limit: intArg({ default: 0 }),
       },
@@ -36,7 +33,7 @@ export const Query = objectType({
     });
 
     t.field('findEvent', {
-      type: Event,
+      type: 'Event',
       args: {
         id: idArg({ required: true }),
       },
@@ -48,7 +45,7 @@ export const Query = objectType({
     });
 
     t.field('me', {
-      type: User,
+      type: 'User',
       async resolve(_, __, { user }) {
         return user;
       },

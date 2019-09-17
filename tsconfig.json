@@ -24,9 +24,5 @@
     "noUnusedLocals": true,
     "skipLibCheck": false
   },
-  "exclude": [
-    "node_modules",
-    "dist",
-    "data"
-  ]
+  "include": ["src", "generated"]
 }

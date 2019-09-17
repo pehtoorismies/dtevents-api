@@ -17,6 +17,7 @@
     "@types/mongoose": "^5.5.13",
     "@types/ramda": "^0.26.18",
     "@types/request-promise": "^4.1.44",
+    "@types/ws": "^6.0.3",
     "prettier": "^1.18.2",
     "ts-node": "^8.3.0",
     "ts-node-dev": "^1.0.0-pre.40",

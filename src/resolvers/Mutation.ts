@@ -16,8 +16,8 @@ import {
 import { path } from 'ramda';
 import { createAuthZeroUser, loginAuthZeroUser } from '../auth';
 
-import { AuthPayload } from './AuthPayload';
-import { Event } from './Event';
+// import { AuthPayload } from './AuthPayload';
+// import { Event } from './Event';
 import { ISimpleUser } from '../types';
 import { config } from '../config';
 
@@ -192,7 +192,7 @@ export const Mutation = objectType({
     });
 
     t.field('login', {
-      type: AuthPayload,
+      type: 'AuthPayload',
       args: {
         usernameOrEmail: stringArg({ required: true }),
         password: stringArg({ required: true }),
@@ -247,7 +247,7 @@ export const Mutation = objectType({
     });
 
     t.field('createEvent', {
-      type: Event,
+      type: 'Event',
       args: {
         event: EventInput,
         addMe: booleanArg({ default: false }),
@@ -282,7 +282,7 @@ export const Mutation = objectType({
     });
 
     t.field('joinEvent', {
-      type: Event,
+      type: 'Event',
       args: {
         eventId: idArg({ required: true }),
       },
@@ -293,7 +293,7 @@ export const Mutation = objectType({
     });
 
     t.field('unjoinEvent', {
-      type: Event,
+      type: 'Event',
       args: {
         eventId: idArg({ required: true }),
       },
