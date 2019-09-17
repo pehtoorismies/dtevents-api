@@ -1,6 +1,10 @@
 import * as EmailValidator from 'email-validator';
-
-import { Auth0Error, NotFoundError, UserInputError } from '../errors';
+import {
+  Auth0Error,
+  NotFoundError,
+  UserInputError,
+  ServerError,
+} from '../errors';
 import { assoc, contains, findIndex, propEq, remove } from 'ramda';
 import {
   booleanArg,
@@ -9,6 +13,7 @@ import {
   objectType,
   stringArg,
 } from 'nexus';
+import { path } from 'ramda';
 import { createAuthZeroUser, loginAuthZeroUser } from '../auth';
 
 import { AuthPayload } from './AuthPayload';
@@ -16,24 +21,27 @@ import { Event } from './Event';
 import { ISimpleUser } from '../types';
 import { config } from '../config';
 
-const fetchUserEmail = async (username: string, UserModel: any) => {
+const fetchUserEmail = async (
+  username: string,
+  UserModel: any,
+): Promise<string | undefined> => {
   const user = await UserModel.findOne({ username: username }).select({
     email: 1,
   });
-  if (!user) {
-    throw new NotFoundError({ message: `No user found '${username}` });
-  }
-  return user.email;
+  return path(['email'], user);
 };
 
-const findParticipantIndex = (username: string, participants: ISimpleUser[]) => {
+const findParticipantIndex = (
+  username: string,
+  participants: ISimpleUser[],
+) => {
   return findIndex(propEq('username', username))(participants);
 };
 
 const joinFunc = async (
   eventId: string,
   eventModel: any,
-  user: any,// TODO: fixme
+  user: any, // TODO: fixme
   wantToJoin: boolean,
 ) => {
   const evt = await eventModel.findById(eventId);
@@ -45,8 +53,8 @@ const joinFunc = async (
 
   const simpleUser = {
     userId: user.id,
-    username: user.user.username
-  }
+    username: user.user.username,
+  };
 
   const partIndex = findParticipantIndex(simpleUser.username, evt.participants);
   const isAlreadyParticipating = partIndex >= 0;
@@ -137,26 +145,49 @@ export const Mutation = objectType({
           });
         }
 
-        const auth0User = await createAuthZeroUser(email, username, password);
+        try {
+          const auth0User = await createAuthZeroUser(email, username, password);
+          const { auth0UserId, error } = auth0User;
+          if (error) {
+            return new Auth0Error({
+              data: {
+                message: 'Auth0 ei voinut luoda käyttäjää',
+                internalData: {
+                  error,
+                },
+              },
+            });
+          }
+          if (!auth0UserId) {
+            return new ServerError({
+              data: {
+                message: 'Auth0 palautti tyhjän käyttäjän',
+              },
+            });
+          }
 
-        if (!auth0User) {
-          return new Auth0Error({
+          const { UserModel } = mongoose;
+          const createdUser = await UserModel.create({
+            email,
+            username,
+            password,
+            name,
+            auth0Id: auth0UserId,
+          });
+
+          return createdUser;
+        } catch (error) {
+          console.error('Error when registering');
+          console.error(error);
+          return new ServerError({
             data: {
-              msg: 'Auth0 ei voinut luoda käyttäjää',
+              message: 'Käyttäjää ei voitu luoda',
+              internalData: {
+                error,
+              },
             },
           });
         }
-        const { user_id: auth0Id } = auth0User;
-        const { UserModel } = mongoose;
-        const createdUser = await UserModel.create({
-          email,
-          username,
-          password,
-          name,
-          auth0Id,
-        });
-
-        return createdUser;
       },
     });
 
@@ -176,12 +207,11 @@ export const Mutation = objectType({
           });
         }
         const isEmail = contains('@', usernameOrEmail);
-        console.log('isEmail', isEmail);
-        console.log('validate', !EmailValidator.validate(usernameOrEmail))
+
         if (isEmail && !EmailValidator.validate(usernameOrEmail)) {
           return new UserInputError({
             data: {
-              field: 'email',
+              field: 'usernameOrEmail',
               message: 'Email väärässä muodossa',
             },
           });
@@ -191,18 +221,28 @@ export const Mutation = objectType({
         const userEmail = isEmail
           ? usernameOrEmail
           : await fetchUserEmail(usernameOrEmail, UserModel);
-        try {
-          const authZeroUser = await loginAuthZeroUser(userEmail, password);
-          return authZeroUser;
-        } catch (error) {
-          const errorMsg = JSON.parse(error.message);
-          console.log(errorMsg)
-          return new Auth0Error({
+
+        if (!userEmail) {
+          return new UserInputError({
             data: {
-              message: errorMsg.error_description,
+              field: 'usernameOrEmail',
+              message: 'Tarkista tunnus tai sähköposti',
             },
           });
         }
+
+        const { user, error } = await loginAuthZeroUser(userEmail, password);
+        if (error) {
+          return new Auth0Error({
+            data: {
+              message: 'Kirjautumisvirhe',
+              internalData: {
+                error,
+              },
+            },
+          });
+        }
+        return user;
       },
     });
 

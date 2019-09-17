@@ -1,5 +1,5 @@
 import { Schema } from 'mongoose';
-import * as EmailValidator from 'email-validator';
+import EmailValidator from 'email-validator';
 import { EVENT_TYPES } from '../constants';
 
 const timestamps = {

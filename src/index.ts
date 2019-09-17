@@ -27,15 +27,24 @@ const {
 
 const { mongoUrl } = config;
 
+const serverOptions = {
+  port: 4000,
+  endpoint: '/graphql',
+  subscriptions: '/subscriptions',
+  playground: '/playground',
+  getEndpoint: true, // enable for liveness/readiness probes
+  formatError,
+};
+
+const mongoOptions = {
+  useNewUrlParser: true,
+  autoIndex: false,
+  reconnectInterval: 500,
+  reconnectTries: Number.MAX_VALUE,
+  bufferMaxEntries: 10,
+};
+
 const startServer = () => {
-  const options = {
-    port: 4000,
-    endpoint: '/graphql',
-    subscriptions: '/subscriptions',
-    playground: '/playground',
-    getEndpoint: true, // enable for liveness/readiness probes
-    formatError,
-  };
   const schema = makeSchema({
     types: [AuthPayload, Event, User, DateTime, Mutation, Query, SimpleUser],
     outputs: {
@@ -70,10 +79,12 @@ const startServer = () => {
     // middlewares: [accessToken],
   });
 
-  server.start(options, ({ port }) =>
+  server.start(serverOptions, ({ port }) =>
     console.log(`🚀🚀🚀🚀🚀🚀🚀 Server started on port ${port} 🚀🚀🚀🚀🚀🚀🚀`),
   );
 };
+
+
 
 // Mongo events
 
@@ -89,18 +100,12 @@ connection.on('reconnect', () => {
 });
 
 connection.on('connected', () => {
-  startServer();
+  console.log('-> connected');
 });
 
 connect(
   mongoUrl,
-  {
-    useNewUrlParser: true,
-    autoIndex: false,
-    reconnectInterval: 500,
-    reconnectTries: Number.MAX_VALUE,
-    bufferMaxEntries: 0,
-  },
+  mongoOptions,
 ).then(
   () => {
     console.log('Ready');
@@ -109,3 +114,6 @@ connect(
     console.error(err);
   },
 );
+
+startServer();
+

@@ -1,5 +1,5 @@
-import * as R from 'ramda';
-import * as RA from 'ramda-adjunct';
+import R from 'ramda';
+import RA from 'ramda-adjunct';
 
 import { rule, shield } from 'graphql-shield';
 

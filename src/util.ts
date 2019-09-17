@@ -1,5 +1,5 @@
-import * as rp from 'request-promise';
-import * as R from 'ramda';
+import rp from 'request-promise';
+import R from 'ramda';
 import { config } from './config';
 
 const isEmailOrOpenId = (n: string) => n === 'email' || n === 'openid';
