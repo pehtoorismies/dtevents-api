@@ -47,12 +47,12 @@ export interface NexusGenRootTypes {
     createdAt: any; // Date!
     creator: NexusGenRootTypes['SimpleUser']; // SimpleUser!
     date: any; // Date!
-    description: string; // String!
+    description?: string | null; // String
     id: string; // String!
     participants: NexusGenRootTypes['SimpleUser'][]; // [SimpleUser!]!
     race: boolean; // Boolean!
-    subtitle: string; // String!
-    time: string; // String!
+    subtitle?: string | null; // String
+    time?: string | null; // String
     title: string; // String!
     type: NexusGenEnums['EventType']; // EventType!
     updatedAt: any; // Date!
@@ -60,7 +60,7 @@ export interface NexusGenRootTypes {
   Mutation: {};
   Query: {};
   SimpleUser: { // root type
-    userId: string; // String!
+    _id: string; // String!
     username: string; // String!
   }
   User: { // root type
@@ -95,12 +95,12 @@ export interface NexusGenFieldTypes {
     createdAt: any; // Date!
     creator: NexusGenRootTypes['SimpleUser']; // SimpleUser!
     date: any; // Date!
-    description: string; // String!
+    description: string | null; // String
     id: string; // String!
     participants: NexusGenRootTypes['SimpleUser'][]; // [SimpleUser!]!
     race: boolean; // Boolean!
-    subtitle: string; // String!
-    time: string; // String!
+    subtitle: string | null; // String
+    time: string | null; // String
     title: string; // String!
     type: NexusGenEnums['EventType']; // EventType!
     updatedAt: any; // Date!
@@ -121,7 +121,7 @@ export interface NexusGenFieldTypes {
     readiness: boolean; // Boolean!
   }
   SimpleUser: { // field return type
-    userId: string; // String!
+    _id: string; // String!
     username: string; // String!
   }
   User: { // field return type

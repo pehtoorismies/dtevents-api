@@ -15,9 +15,6 @@ import {
 } from 'nexus';
 import { path } from 'ramda';
 import { createAuthZeroUser, loginAuthZeroUser } from '../auth';
-
-// import { AuthPayload } from './AuthPayload';
-// import { Event } from './Event';
 import { ISimpleUser } from '../types';
 import { config } from '../config';
 
@@ -28,6 +25,9 @@ const fetchUserEmail = async (
   const user = await UserModel.findOne({ username: username }).select({
     email: 1,
   });
+
+  console.log('user for username', username);
+  console.log(user);
   return path(['email'], user);
 };
 
@@ -252,7 +252,11 @@ export const Mutation = objectType({
         event: EventInput,
         addMe: booleanArg({ default: false }),
       },
-      async resolve(_, { addMe, event }, { mongoose, user }) {
+      async resolve(
+        _,
+        { addMe, event },
+        { mongoose, user }: { mongoose: any; user: ISimpleUser },
+      ) {
         const { EventModel } = mongoose;
 
         const eventWithCreator = {

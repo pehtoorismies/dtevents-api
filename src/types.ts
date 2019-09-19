@@ -7,7 +7,7 @@ export interface AuthConfig {
 
 export interface ISimpleUser {
   username: string;
-  userId: string;
+  id: string;
 }
 
 interface IAuth0Response {

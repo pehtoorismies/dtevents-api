@@ -16,7 +16,7 @@ export const User = objectType({
 export const SimpleUser = objectType({
   name: 'SimpleUser',
   definition(t) {
-    t.string('userId', { description: 'Id of the user' });
+    t.string('_id', { description: 'Id of the user' });
     t.string('username');
   },
 });

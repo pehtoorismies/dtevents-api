@@ -1,7 +1,6 @@
 import { objectType, enumType } from 'nexus';
 import { EVENT_TYPES } from '../constants';
 
-
 export const EventType = enumType({
   name: 'EventType',
   members: EVENT_TYPES,
@@ -12,14 +11,14 @@ export const Event = objectType({
   definition(t) {
     t.string('id', { description: 'Id of the event' });
     t.string('title');
-    t.string('subtitle');
+    t.string('subtitle', { nullable: true });
     t.boolean('race');
     t.field('type', {
       type: EventType,
     });
     t.date('date');
-    t.string('time');
-    t.string('description');
+    t.string('time', { nullable: true });
+    t.string('description', { nullable: true });
     t.date('createdAt');
     t.date('updatedAt');
 

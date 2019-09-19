@@ -36,7 +36,7 @@ export const UserSchema = new Schema({
 
 export const SimpleUser = new Schema({
   username: String,
-  userId: String
+  id: String
 });
 
 

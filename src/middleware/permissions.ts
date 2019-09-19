@@ -1,6 +1,5 @@
 import R from 'ramda';
-import RA from 'ramda-adjunct';
-
+import { isNilOrEmpty } from 'ramda-adjunct';
 import { rule, shield } from 'graphql-shield';
 
 interface Context {
@@ -8,12 +7,13 @@ interface Context {
 }
 
 export const verifyRole = (role: string, context: Context): boolean => {
-  console.log('Verify role', role)
+  console.log(`Verify roles '${role}'`);
   const scopes = context.scopes || [];
-  
-  if (RA.isNilOrEmpty(role)) {
+
+  if (isNilOrEmpty(role)) {
     return true;
   }
+
   return R.findIndex(R.equals(role))(scopes) >= 0;
 };
 
@@ -38,8 +38,8 @@ const rules = {
 const permissions = shield({
   Query: {
     // allUsers: rules.isUserReader,
-    // allEvents: rules.isEventReader,
-    // event: rules.isEventReader,
+    findManyEvents: rules.isEventReader,
+    findEvent: rules.isEventReader,
     // user: rules.isUserReader,
     me: rules.isMeReader,
   },

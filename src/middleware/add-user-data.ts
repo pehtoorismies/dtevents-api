@@ -17,6 +17,7 @@ const fetchUser = async (
   if (!user) {
     return new Error('Middleware error. No user found in db');
   }
+  
   const newContext = {
     ...context,
     user,
@@ -29,7 +30,7 @@ const addUserData = {
   Query: {
     // allUsers: rules.isUserReader,
     // allEvents: rules.isEventReader,
-    // event: rules.isEventReader,
+    // event: §
     me: fetchUser,
   },
   Mutation: {
