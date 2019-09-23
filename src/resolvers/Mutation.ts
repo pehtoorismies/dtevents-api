@@ -38,48 +38,6 @@ const findParticipantIndex = (
   return findIndex(propEq('username', username))(participants);
 };
 
-const joinFunc = async (
-  eventId: string,
-  eventModel: any,
-  user: any, // TODO: fixme
-  wantToJoin: boolean,
-) => {
-  const evt = await eventModel.findById(eventId);
-  if (!evt) {
-    return new NotFoundError({
-      message: `Event with id ${eventId} not found`,
-    });
-  }
-
-  const simpleUser = {
-    userId: user.id,
-    username: user.user.username,
-  };
-
-  const partIndex = findParticipantIndex(simpleUser.username, evt.participants);
-  const isAlreadyParticipating = partIndex >= 0;
-
-  if (wantToJoin && isAlreadyParticipating) {
-    return evt;
-  }
-  if (!wantToJoin && !isAlreadyParticipating) {
-    return evt;
-  }
-
-  // Add
-  if (wantToJoin) {
-    evt.participants.push(simpleUser);
-    const updated = await evt.save();
-    return updated;
-  }
-
-  // Remove
-  const reducedParts = remove(partIndex, 1, evt.participants);
-  evt.participants = reducedParts;
-  const updated = await evt.save();
-  return updated;
-};
-
 export const EventInput = inputObjectType({
   name: 'EventData',
   definition(t) {
@@ -285,25 +243,39 @@ export const Mutation = objectType({
       },
     });
 
-    t.field('joinEvent', {
+    t.field('toggleJoinEvent', {
       type: 'Event',
       args: {
         eventId: idArg({ required: true }),
       },
       resolve: async (_, { eventId }, { mongoose, user }) => {
         const { EventModel } = mongoose;
-        return await joinFunc(eventId, EventModel, user, true);
-      },
-    });
+        const evt = await EventModel.findById(eventId);
 
-    t.field('unjoinEvent', {
-      type: 'Event',
-      args: {
-        eventId: idArg({ required: true }),
-      },
-      resolve: async (_, { eventId }, { mongoose, user }) => {
-        const { EventModel } = mongoose;
-        return await joinFunc(eventId, EventModel, user, false);
+        if (!evt) {
+          return new NotFoundError({
+            message: `Event with id ${eventId} not found`,
+          });
+        }
+      
+        const partIndex = findParticipantIndex(user.username, evt.participants);
+        
+        const isAlreadyParticipating = partIndex >= 0;
+        if (isAlreadyParticipating) {
+
+          const reducedParts = remove(partIndex, 1, evt.participants);
+          evt.participants = reducedParts;
+          const updated = await evt.save();
+          return updated;
+        } else {
+
+          evt.participants.push({
+            username: user.username,
+            _id: user.id,
+          });
+          const updated = await evt.save();
+          return updated;
+        }
       },
     });
   },

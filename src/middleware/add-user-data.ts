@@ -37,8 +37,7 @@ const addUserData = {
     createEvent: fetchUser,
     // deleteEvent: rules.isEventWriter,
     // updateEvent: rules.isEventWriter,
-    joinEvent: fetchUser,
-    unjoinEvent: fetchUser,
+    toggleJoinEvent: fetchUser,
   },
 };
 

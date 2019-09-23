@@ -1,4 +1,5 @@
 import { idArg, intArg, objectType } from 'nexus';
+import startOfToday from 'date-fns/startOfToday'
 
 export const Query = objectType({
   name: 'Query',
@@ -25,7 +26,8 @@ export const Query = objectType({
       },
       async resolve(_, { limit = 0 }, { mongoose }) {
         const { EventModel } = mongoose;
-        const events = await EventModel.find({ date: { $gte: new Date() } })
+        
+        const events = await EventModel.find({ date: { $gte: startOfToday() } })
           .sort('date')
           .limit(limit);
         return events;

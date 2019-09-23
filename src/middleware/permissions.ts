@@ -7,7 +7,6 @@ interface Context {
 }
 
 export const verifyRole = (role: string, context: Context): boolean => {
-  console.log(`Verify roles '${role}'`);
   const scopes = context.scopes || [];
 
   if (isNilOrEmpty(role)) {
@@ -47,8 +46,7 @@ const permissions = shield({
     createEvent: rules.isEventWriter,
     // deleteEvent: rules.isEventWriter,
     // updateEvent: rules.isEventWriter,
-    joinEvent: rules.isEventWriter,
-    unjoinEvent: rules.isEventWriter,
+    toggleJoinEvent: rules.isEventWriter,
   },
 });
 export default permissions;

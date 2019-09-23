@@ -29,6 +29,7 @@
   "dependencies": {
     "apollo-errors": "^1.9.0",
     "auth0": "^2.18.0",
+    "date-fns": "^2.2.1",
     "dotenv": "^8.1.0",
     "email-validator": "^2.0.4",
     "graphql-iso-date": "^3.6.1",

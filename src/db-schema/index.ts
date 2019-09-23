@@ -3,7 +3,7 @@ import EmailValidator from 'email-validator';
 import { EVENT_TYPES } from '../constants';
 
 const timestamps = {
-  createdAt: 'created_at', updatedAt: 'updatedAt'
+  createdAt: 'createdAt', updatedAt: 'updatedAt'
 }
 
 // USER

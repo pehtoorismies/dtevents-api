@@ -60,10 +60,9 @@ enum EventType {
 type Mutation {
   createEvent(addMe: Boolean = false, event: EventData): Event!
   deleteEvent(id: ID!): Boolean!
-  joinEvent(eventId: ID!): Event!
   login(password: String!, usernameOrEmail: String!): AuthPayload!
   signup(email: String!, name: String!, password: String!, registerSecret: String!, username: String!): User!
-  unjoinEvent(eventId: ID!): Event!
+  toggleJoinEvent(eventId: ID!): Event!
 }
 
 """Queries"""
