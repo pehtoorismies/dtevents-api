@@ -14,7 +14,7 @@ import {
   stringArg,
 } from 'nexus';
 import { path } from 'ramda';
-import { createAuthZeroUser, loginAuthZeroUser } from '../auth';
+import { createAuthZeroUser, loginAuthZeroUser, requestChangePasswordEmail } from '../auth';
 import { ISimpleUser } from '../types';
 import { config } from '../config';
 
@@ -204,6 +204,26 @@ export const Mutation = objectType({
       },
     });
 
+    t.field('forgotPassword', {
+      type: 'Boolean',
+      args: {
+        email: stringArg({ required: true }),
+      },
+      async resolve(_, { email }, { mongoose }) {
+        if (!email) {
+          throw new UserInputError({
+            data: {
+              field: 'email',
+              message: 'Sähköposti puuttuu',
+            },
+          });
+        }
+        // fire and forget
+        requestChangePasswordEmail(email);
+        return true;
+      },
+    });
+
     t.field('createEvent', {
       type: 'Event',
       args: {
@@ -257,18 +277,16 @@ export const Mutation = objectType({
             message: `Event with id ${eventId} not found`,
           });
         }
-      
+
         const partIndex = findParticipantIndex(user.username, evt.participants);
-        
+
         const isAlreadyParticipating = partIndex >= 0;
         if (isAlreadyParticipating) {
-
           const reducedParts = remove(partIndex, 1, evt.participants);
           evt.participants = reducedParts;
           const updated = await evt.save();
           return updated;
         } else {
-
           evt.participants.push({
             username: user.username,
             _id: user.id,

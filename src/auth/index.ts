@@ -82,4 +82,19 @@ const createAuthZeroUser = async (
   }
 };
 
-export { createAuthZeroUser, loginAuthZeroUser };
+const requestChangePasswordEmail = (email: string): boolean => {
+  // fire and forget
+  try {
+    auth0.requestChangePasswordEmail({
+      email,
+      connection: 'Username-Password-Authentication',
+    });  
+  } catch (error) {
+    console.error(error);    
+  } finally {
+    return true;
+  }
+
+};
+
+export { createAuthZeroUser, loginAuthZeroUser, requestChangePasswordEmail };

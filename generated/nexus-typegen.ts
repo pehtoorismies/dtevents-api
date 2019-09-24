@@ -108,6 +108,7 @@ export interface NexusGenFieldTypes {
   Mutation: { // field return type
     createEvent: NexusGenRootTypes['Event']; // Event!
     deleteEvent: boolean; // Boolean!
+    forgotPassword: boolean; // Boolean!
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
     signup: NexusGenRootTypes['User']; // User!
     toggleJoinEvent: NexusGenRootTypes['Event']; // Event!
@@ -142,6 +143,9 @@ export interface NexusGenArgTypes {
     }
     deleteEvent: { // args
       id: string; // ID!
+    }
+    forgotPassword: { // args
+      email: string; // String!
     }
     login: { // args
       password: string; // String!
