@@ -1,6 +1,7 @@
 import { AuthenticationClient, ManagementClient } from 'auth0';
+
 import { config } from '../config';
-import { IAuth0RegisterResponse, IAuth0LoginResponse } from '../types';
+import { IAuth0LoginResponse, IAuth0RegisterResponse } from '../types';
 
 const { domain, clientId, clientSecret, jwtAudience } = config.auth;
 

@@ -1,3 +1,10 @@
+import { formatError } from 'apollo-errors';
+import { GraphQLServer } from 'graphql-yoga';
+import { connect, connection, model } from 'mongoose';
+import { makeSchema } from 'nexus';
+import { join } from 'path';
+
+import { config } from './config';
 import { EventSchema, UserSchema } from './db-schema';
 import {
   accessToken,
@@ -5,16 +12,9 @@ import {
   permissions,
   requestScopes,
 } from './middleware';
-import { connect, connection, model } from 'mongoose';
-
-import { GraphQLServer } from 'graphql-yoga';
-import { config } from './config';
-import { formatError } from 'apollo-errors';
-import { join } from 'path';
-import { makeSchema } from 'nexus';
-// import { Context } from './types';
 import resolvers from './resolvers';
 
+// import { Context } from './types';
 const {
   AuthPayload,
   User,
@@ -84,8 +84,6 @@ const startServer = () => {
   );
 };
 
-
-
 // Mongo events
 
 connection.on('connecting', () => {
@@ -116,4 +114,3 @@ connect(
 );
 
 startServer();
-

@@ -1,6 +1,6 @@
+import { rule, shield } from 'graphql-shield';
 import R from 'ramda';
 import { isNilOrEmpty } from 'ramda-adjunct';
-import { rule, shield } from 'graphql-shield';
 
 interface Context {
   scopes?: string[];

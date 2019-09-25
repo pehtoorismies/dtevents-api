@@ -1,5 +1,6 @@
-import { Schema } from 'mongoose';
 import EmailValidator from 'email-validator';
+import { Schema } from 'mongoose';
+
 import { EVENT_TYPES } from '../constants';
 
 const timestamps = {
@@ -36,7 +37,12 @@ export const UserSchema = new Schema({
 
 export const SimpleUser = new Schema({
   username: String,
-  id: String
+  // _id: String
+});
+
+SimpleUser.virtual('id').get(function(){
+  // @ts-ignore
+  return this._id.toHexString();
 });
 
 
@@ -63,7 +69,7 @@ export const EventSchema = new Schema({
   creator: {
     type: SimpleUser,
     default: {
-      userId: 0,
+      // _id: 0,
       username: 'unknown'
     },
   },

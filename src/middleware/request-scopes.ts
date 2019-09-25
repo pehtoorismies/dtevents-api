@@ -1,10 +1,9 @@
-import R from 'ramda';
 import * as jwt from 'jsonwebtoken';
+import R from 'ramda';
 
-import { getMatchingPubKey, getScopes } from '../util';
-
-import { JWTError } from '../errors';
 import { config } from '../config';
+import { JWTError } from '../errors';
+import { getMatchingPubKey, getScopes } from '../util';
 
 const getKID = R.path(['header', 'kid']);
 

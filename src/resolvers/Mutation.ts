@@ -1,10 +1,4 @@
 import * as EmailValidator from 'email-validator';
-import {
-  Auth0Error,
-  NotFoundError,
-  UserInputError,
-  ServerError,
-} from '../errors';
 import { assoc, contains, findIndex, propEq, remove } from 'ramda';
 import {
   booleanArg,
@@ -14,9 +8,19 @@ import {
   stringArg,
 } from 'nexus';
 import { path } from 'ramda';
-import { createAuthZeroUser, loginAuthZeroUser, requestChangePasswordEmail } from '../auth';
+import {
+  createAuthZeroUser,
+  loginAuthZeroUser,
+  requestChangePasswordEmail,
+} from '../auth';
 import { ISimpleUser } from '../types';
 import { config } from '../config';
+import {
+  Auth0Error,
+  NotFoundError,
+  UserInputError,
+  ServerError,
+} from '../errors';
 
 const fetchUserEmail = async (
   username: string,
@@ -220,6 +224,7 @@ export const Mutation = objectType({
         }
         // fire and forget
         requestChangePasswordEmail(email);
+
         return true;
       },
     });

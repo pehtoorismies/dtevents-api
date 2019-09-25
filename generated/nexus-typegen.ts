@@ -60,7 +60,7 @@ export interface NexusGenRootTypes {
   Mutation: {};
   Query: {};
   SimpleUser: { // root type
-    _id: string; // String!
+    id: string; // String!
     username: string; // String!
   }
   User: { // root type
@@ -121,7 +121,7 @@ export interface NexusGenFieldTypes {
     readiness: boolean; // Boolean!
   }
   SimpleUser: { // field return type
-    _id: string; // String!
+    id: string; // String!
     username: string; // String!
   }
   User: { // field return type

@@ -1,5 +1,7 @@
+import startOfToday from 'date-fns/startOfToday';
 import { idArg, intArg, objectType } from 'nexus';
-import startOfToday from 'date-fns/startOfToday'
+
+import { NotFoundError } from '../errors';
 
 export const Query = objectType({
   name: 'Query',
@@ -26,10 +28,11 @@ export const Query = objectType({
       },
       async resolve(_, { limit = 0 }, { mongoose }) {
         const { EventModel } = mongoose;
-        
+
         const events = await EventModel.find({ date: { $gte: startOfToday() } })
           .sort('date')
           .limit(limit);
+
         return events;
       },
     });
@@ -42,6 +45,11 @@ export const Query = objectType({
       async resolve(_, { id }, { mongoose }) {
         const { EventModel } = mongoose;
         const event = await EventModel.findById(id);
+        if (!event) {
+          return new NotFoundError({
+            message: `Event with id ${id} not found`,
+          });
+        }
         return event;
       },
     });

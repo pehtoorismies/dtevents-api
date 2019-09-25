@@ -1,4 +1,5 @@
-import { objectType, enumType } from 'nexus';
+import { enumType, objectType } from 'nexus';
+
 import { EVENT_TYPES } from '../constants';
 
 export const EventType = enumType({

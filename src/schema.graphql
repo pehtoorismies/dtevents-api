@@ -77,7 +77,7 @@ type Query {
 
 type SimpleUser {
   """Id of the user"""
-  _id: String!
+  id: String!
   username: String!
 }
 
