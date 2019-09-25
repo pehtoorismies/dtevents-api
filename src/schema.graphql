@@ -63,7 +63,7 @@ type Mutation {
   forgotPassword(email: String!): Boolean!
   login(password: String!, usernameOrEmail: String!): AuthPayload!
   signup(email: String!, name: String!, password: String!, registerSecret: String!, username: String!): User!
-  toggleJoinEvent(eventId: ID!): Event!
+  toggleJoinEvent(id: ID!): Event!
 }
 
 """Queries"""

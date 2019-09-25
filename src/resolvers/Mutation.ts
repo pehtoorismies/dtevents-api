@@ -271,15 +271,15 @@ export const Mutation = objectType({
     t.field('toggleJoinEvent', {
       type: 'Event',
       args: {
-        eventId: idArg({ required: true }),
+        id: idArg({ required: true }),
       },
-      resolve: async (_, { eventId }, { mongoose, user }) => {
+      resolve: async (_, { id }, { mongoose, user }) => {
         const { EventModel } = mongoose;
-        const evt = await EventModel.findById(eventId);
+        const evt = await EventModel.findById(id);
 
         if (!evt) {
           return new NotFoundError({
-            message: `Event with id ${eventId} not found`,
+            message: `Event with id ${id} not found`,
           });
         }
 

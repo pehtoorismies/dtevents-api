@@ -159,7 +159,7 @@ export interface NexusGenArgTypes {
       username: string; // String!
     }
     toggleJoinEvent: { // args
-      eventId: string; // ID!
+      id: string; // ID!
     }
   }
   Query: {
