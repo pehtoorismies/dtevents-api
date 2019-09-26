@@ -112,6 +112,7 @@ export interface NexusGenFieldTypes {
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
     signup: NexusGenRootTypes['User']; // User!
     toggleJoinEvent: NexusGenRootTypes['Event']; // Event!
+    updateEvent: NexusGenRootTypes['Event']; // Event!
   }
   Query: { // field return type
     findEvent: NexusGenRootTypes['Event']; // Event!
@@ -159,6 +160,10 @@ export interface NexusGenArgTypes {
       username: string; // String!
     }
     toggleJoinEvent: { // args
+      id: string; // ID!
+    }
+    updateEvent: { // args
+      event?: NexusGenInputs['EventData'] | null; // EventData
       id: string; // ID!
     }
   }

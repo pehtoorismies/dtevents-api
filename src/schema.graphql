@@ -64,6 +64,7 @@ type Mutation {
   login(password: String!, usernameOrEmail: String!): AuthPayload!
   signup(email: String!, name: String!, password: String!, registerSecret: String!, username: String!): User!
   toggleJoinEvent(id: ID!): Event!
+  updateEvent(event: EventData, id: ID!): Event!
 }
 
 """Queries"""

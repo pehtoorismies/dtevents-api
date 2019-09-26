@@ -42,6 +42,7 @@ const mongoOptions = {
   reconnectInterval: 500,
   reconnectTries: Number.MAX_VALUE,
   bufferMaxEntries: 10,
+  useFindAndModify: false,
 };
 
 const startServer = () => {

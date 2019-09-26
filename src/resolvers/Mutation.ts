@@ -255,6 +255,29 @@ export const Mutation = objectType({
       },
     });
 
+    t.field('updateEvent', {
+      type: 'Event',
+      args: {
+        id: idArg({ required: true }),
+        event: EventInput,
+      },
+      async resolve(_, { event, id }, { mongoose }) {
+        const { EventModel } = mongoose;
+        const conditions = { _id: id };
+        const update = event;
+        const options = {
+          new: true,
+        };
+
+        const res = await EventModel.findOneAndUpdate(
+          conditions,
+          update,
+          options,
+        );
+        return res;
+      },
+    });
+
     t.field('deleteEvent', {
       type: 'Boolean',
       args: {
