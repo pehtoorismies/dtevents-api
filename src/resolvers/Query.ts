@@ -21,6 +21,19 @@ export const Query = objectType({
       },
     });
 
+    t.field('myPreferences', {
+      type: 'Preferences',
+      args: {},
+      async resolve(_, {}, { mongoose, user }) {
+        const { UserDetails } = mongoose;
+        const conditions = { userId: user.id };
+
+        const res = await UserDetails.findOne(conditions);
+
+        return res.preferences;
+      },
+    });
+
     t.list.field('findManyEvents', {
       type: 'Event',
       args: {

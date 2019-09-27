@@ -21,8 +21,6 @@ type Event {
   date: DateTime!
   description: String
   exactTime: Boolean
-
-  """Id of the event"""
   id: String!
   participants: [SimpleUser!]!
   race: Boolean!
@@ -65,6 +63,12 @@ type Mutation {
   signup(email: String!, name: String!, password: String!, registerSecret: String!, username: String!): User!
   toggleJoinEvent(id: ID!): Event!
   updateEvent(event: EventData, id: ID!): Event!
+  updateMyPreferences(subscribeEventCreationEmail: Boolean, subscribeWeeklyEmail: Boolean): Preferences!
+}
+
+type Preferences {
+  subscribeEventCreationEmail: Boolean!
+  subscribeWeeklyEmail: Boolean!
 }
 
 """Queries"""
@@ -73,11 +77,11 @@ type Query {
   findManyEvents(limit: Int = 0): [Event!]!
   liveness: Boolean!
   me: User!
+  myPreferences: Preferences!
   readiness: Boolean!
 }
 
 type SimpleUser {
-  """Id of the user"""
   id: String!
   username: String!
 }
@@ -86,10 +90,13 @@ type User {
   auth0Id: String!
   createdAt: DateTime!
   email: String!
-
-  """Id of the user"""
   id: String!
   name: String!
   updatedAt: DateTime!
   username: String!
+}
+
+type UserDetails {
+  preferences: Preferences!
+  userId: String!
 }

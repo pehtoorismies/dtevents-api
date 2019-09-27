@@ -41,12 +41,14 @@ const permissions = shield({
     findEvent: rules.isEventReader,
     // user: rules.isUserReader,
     me: rules.isMeReader,
+    myPreferences: rules.isMeReader,
   },
   Mutation: {
     createEvent: rules.isEventWriter,
-    // deleteEvent: rules.isEventWriter,
-    // updateEvent: rules.isEventWriter,
+    deleteEvent: rules.isEventWriter,
+    updateEvent: rules.isEventWriter,
     toggleJoinEvent: rules.isEventWriter,
+    updateMyPreferences: rules.isMeWriter,
   },
 });
 export default permissions;

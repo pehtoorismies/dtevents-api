@@ -58,6 +58,10 @@ export interface NexusGenRootTypes {
     updatedAt: any; // DateTime!
   }
   Mutation: {};
+  Preferences: { // root type
+    subscribeEventCreationEmail: boolean; // Boolean!
+    subscribeWeeklyEmail: boolean; // Boolean!
+  }
   Query: {};
   SimpleUser: { // root type
     id: string; // String!
@@ -71,6 +75,10 @@ export interface NexusGenRootTypes {
     name: string; // String!
     updatedAt: any; // DateTime!
     username: string; // String!
+  }
+  UserDetails: { // root type
+    preferences: NexusGenRootTypes['Preferences']; // Preferences!
+    userId: string; // String!
   }
   String: string;
   Int: number;
@@ -113,12 +121,18 @@ export interface NexusGenFieldTypes {
     signup: NexusGenRootTypes['User']; // User!
     toggleJoinEvent: NexusGenRootTypes['Event']; // Event!
     updateEvent: NexusGenRootTypes['Event']; // Event!
+    updateMyPreferences: NexusGenRootTypes['Preferences']; // Preferences!
+  }
+  Preferences: { // field return type
+    subscribeEventCreationEmail: boolean; // Boolean!
+    subscribeWeeklyEmail: boolean; // Boolean!
   }
   Query: { // field return type
     findEvent: NexusGenRootTypes['Event']; // Event!
     findManyEvents: NexusGenRootTypes['Event'][]; // [Event!]!
     liveness: boolean; // Boolean!
     me: NexusGenRootTypes['User']; // User!
+    myPreferences: NexusGenRootTypes['Preferences']; // Preferences!
     readiness: boolean; // Boolean!
   }
   SimpleUser: { // field return type
@@ -133,6 +147,10 @@ export interface NexusGenFieldTypes {
     name: string; // String!
     updatedAt: any; // DateTime!
     username: string; // String!
+  }
+  UserDetails: { // field return type
+    preferences: NexusGenRootTypes['Preferences']; // Preferences!
+    userId: string; // String!
   }
 }
 
@@ -166,6 +184,10 @@ export interface NexusGenArgTypes {
       event?: NexusGenInputs['EventData'] | null; // EventData
       id: string; // ID!
     }
+    updateMyPreferences: { // args
+      subscribeEventCreationEmail?: boolean | null; // Boolean
+      subscribeWeeklyEmail?: boolean | null; // Boolean
+    }
   }
   Query: {
     findEvent: { // args
@@ -182,7 +204,7 @@ export interface NexusGenAbstractResolveReturnTypes {
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "AuthPayload" | "Event" | "Mutation" | "Query" | "SimpleUser" | "User";
+export type NexusGenObjectNames = "AuthPayload" | "Event" | "Mutation" | "Preferences" | "Query" | "SimpleUser" | "User" | "UserDetails";
 
 export type NexusGenInputNames = "EventData";
 

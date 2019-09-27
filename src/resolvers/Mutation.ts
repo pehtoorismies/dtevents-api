@@ -229,6 +229,41 @@ export const Mutation = objectType({
       },
     });
 
+    t.field('updateMyPreferences', {
+      type: 'Preferences',
+      args: {
+        subscribeEventCreationEmail: booleanArg({ required: false }),
+        subscribeWeeklyEmail: booleanArg({ required: false }),
+      },
+      async resolve(
+        _,
+        { subscribeEventCreationEmail, subscribeWeeklyEmail },
+        { mongoose, user },
+      ) {
+        const { UserDetails } = mongoose;
+        const conditions = { userId: user.id };
+
+        const update = {
+          preferences: {
+            subscribeEventCreationEmail,
+            subscribeWeeklyEmail,
+          },
+        };
+        const options = {
+          new: true,
+          upsert: true,
+        };
+
+        const res = await UserDetails.findOneAndUpdate(
+          conditions,
+          update,
+          options,
+        );
+        
+        return res.preferences;
+      },
+    });
+
     t.field('createEvent', {
       type: 'Event',
       args: {

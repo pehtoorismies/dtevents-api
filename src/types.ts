@@ -29,3 +29,8 @@ export interface IAuth0LoginResponse extends IAuth0Response {
     expiresIn: number;
   };
 }
+
+export interface IKeyValuePair {
+  key: string;
+  value: string;
+}

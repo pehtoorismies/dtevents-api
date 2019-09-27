@@ -2,19 +2,22 @@ import { AuthPayload } from './AuthPayload';
 import { DateTime } from './DateTime';
 import { Event } from './Event';
 import { EventTypeEnum } from './EventTypeEnum';
-import { Query } from './Query';
 import { Mutation } from './Mutation';
-import { User, SimpleUser } from './User';
+import { Query } from './Query';
+import { SimpleUser, User } from './User';
+import { UserDetails, Preferences } from './UserDetails';
 
 const resolvers = {
-  Query,
-  User,
+  AuthPayload,
+  DateTime,
   Event,
   EventTypeEnum,
-  DateTime,
   Mutation,
-  AuthPayload,
-  SimpleUser
+  Preferences,
+  Query,
+  SimpleUser,
+  User,
+  UserDetails,
 };
 
 export default resolvers;

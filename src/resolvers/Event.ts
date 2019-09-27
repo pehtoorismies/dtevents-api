@@ -10,7 +10,7 @@ export const EventType = enumType({
 export const Event = objectType({
   name: 'Event',
   definition(t) {
-    t.string('id', { description: 'Id of the event' });
+    t.string('id');
     t.string('title');
     t.string('subtitle', { nullable: true });
     t.boolean('race');

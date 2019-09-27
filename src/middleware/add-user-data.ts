@@ -13,6 +13,7 @@ const fetchUser = async (
   if (!sub) {
     return new Error('Middleware error, no sub found');
   }
+
   const user = await UserModel.findOne({ auth0Id: sub });
   if (!user) {
     return new Error('Middleware error. No user found in db');
@@ -28,16 +29,13 @@ const fetchUser = async (
 
 const addUserData = {
   Query: {
-    // allUsers: rules.isUserReader,
-    // allEvents: rules.isEventReader,
-    // event: §
     me: fetchUser,
+    myPreferences: fetchUser,
   },
   Mutation: {
     createEvent: fetchUser,
-    // deleteEvent: rules.isEventWriter,
-    // updateEvent: rules.isEventWriter,
     toggleJoinEvent: fetchUser,
+    updateMyPreferences: fetchUser,
   },
 };
 
