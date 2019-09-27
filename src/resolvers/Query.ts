@@ -21,8 +21,8 @@ export const Query = objectType({
       },
     });
 
-    t.field('myPreferences', {
-      type: 'Preferences',
+    t.field('myUserDetails', {
+      type: 'UserDetails',
       args: {},
       async resolve(_, {}, { mongoose, user }) {
         const { UserDetails } = mongoose;
@@ -30,7 +30,7 @@ export const Query = objectType({
 
         const res = await UserDetails.findOne(conditions);
 
-        return res.preferences;
+        return res;
       },
     });
 

@@ -230,7 +230,7 @@ export const Mutation = objectType({
     });
 
     t.field('updateMyPreferences', {
-      type: 'Preferences',
+      type: 'UserDetails',
       args: {
         subscribeEventCreationEmail: booleanArg({ required: false }),
         subscribeWeeklyEmail: booleanArg({ required: false }),
@@ -260,7 +260,7 @@ export const Mutation = objectType({
           options,
         );
         
-        return res.preferences;
+        return res;
       },
     });
 

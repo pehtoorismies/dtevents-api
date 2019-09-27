@@ -63,7 +63,7 @@ type Mutation {
   signup(email: String!, name: String!, password: String!, registerSecret: String!, username: String!): User!
   toggleJoinEvent(id: ID!): Event!
   updateEvent(event: EventData, id: ID!): Event!
-  updateMyPreferences(subscribeEventCreationEmail: Boolean, subscribeWeeklyEmail: Boolean): Preferences!
+  updateMyPreferences(subscribeEventCreationEmail: Boolean, subscribeWeeklyEmail: Boolean): UserDetails!
 }
 
 type Preferences {
@@ -77,7 +77,7 @@ type Query {
   findManyEvents(limit: Int = 0): [Event!]!
   liveness: Boolean!
   me: User!
-  myPreferences: Preferences!
+  myUserDetails: UserDetails!
   readiness: Boolean!
 }
 
@@ -97,6 +97,7 @@ type User {
 }
 
 type UserDetails {
+  id: String!
   preferences: Preferences!
   userId: String!
 }

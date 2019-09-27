@@ -11,6 +11,7 @@ export const Preferences = objectType({
 export const UserDetails = objectType({
   name: 'UserDetails',
   definition(t) {
+    t.string('id');
     t.string('userId');
     t.field('preferences', {
       type: 'Preferences',

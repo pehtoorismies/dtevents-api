@@ -41,7 +41,7 @@ const permissions = shield({
     findEvent: rules.isEventReader,
     // user: rules.isUserReader,
     me: rules.isMeReader,
-    myPreferences: rules.isMeReader,
+    myUserDetails: rules.isMeReader,
   },
   Mutation: {
     createEvent: rules.isEventWriter,

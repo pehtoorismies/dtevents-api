@@ -77,6 +77,7 @@ export interface NexusGenRootTypes {
     username: string; // String!
   }
   UserDetails: { // root type
+    id: string; // String!
     preferences: NexusGenRootTypes['Preferences']; // Preferences!
     userId: string; // String!
   }
@@ -121,7 +122,7 @@ export interface NexusGenFieldTypes {
     signup: NexusGenRootTypes['User']; // User!
     toggleJoinEvent: NexusGenRootTypes['Event']; // Event!
     updateEvent: NexusGenRootTypes['Event']; // Event!
-    updateMyPreferences: NexusGenRootTypes['Preferences']; // Preferences!
+    updateMyPreferences: NexusGenRootTypes['UserDetails']; // UserDetails!
   }
   Preferences: { // field return type
     subscribeEventCreationEmail: boolean; // Boolean!
@@ -132,7 +133,7 @@ export interface NexusGenFieldTypes {
     findManyEvents: NexusGenRootTypes['Event'][]; // [Event!]!
     liveness: boolean; // Boolean!
     me: NexusGenRootTypes['User']; // User!
-    myPreferences: NexusGenRootTypes['Preferences']; // Preferences!
+    myUserDetails: NexusGenRootTypes['UserDetails']; // UserDetails!
     readiness: boolean; // Boolean!
   }
   SimpleUser: { // field return type
@@ -149,6 +150,7 @@ export interface NexusGenFieldTypes {
     username: string; // String!
   }
   UserDetails: { // field return type
+    id: string; // String!
     preferences: NexusGenRootTypes['Preferences']; // Preferences!
     userId: string; // String!
   }
