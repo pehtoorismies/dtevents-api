@@ -50,7 +50,7 @@ export const EventInput = inputObjectType({
     t.boolean('race');
     t.string('type', { required: true });
     t.string('date', { required: true });
-    t.string('time');
+    t.boolean('exactTime', { default: false });
     t.string('description');
   },
 });

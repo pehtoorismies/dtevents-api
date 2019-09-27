@@ -18,7 +18,7 @@ export const Event = objectType({
       type: EventType,
     });
     t.date('date');
-    t.string('time', { nullable: true });
+    t.boolean('exactTime', { nullable: true });
     t.string('description', { nullable: true });
     t.date('createdAt');
     t.date('updatedAt');

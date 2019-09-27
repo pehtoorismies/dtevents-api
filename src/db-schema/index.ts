@@ -63,7 +63,7 @@ export const EventSchema = new Schema({
     type: Date,
     required: true,
   },
-  time: String,
+  exactTime: Boolean,
   description: String,
   participants: [SimpleUser],
   creator: {

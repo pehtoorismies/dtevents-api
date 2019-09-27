@@ -7,12 +7,12 @@
 import { core } from "nexus"
 declare global {
   interface NexusGenCustomInputMethods<TypeName extends string> {
-    date<FieldName extends string>(fieldName: FieldName, opts?: core.ScalarInputFieldConfig<core.GetGen3<"inputTypes", TypeName, FieldName>>): void // "Date";
+    date<FieldName extends string>(fieldName: FieldName, opts?: core.ScalarInputFieldConfig<core.GetGen3<"inputTypes", TypeName, FieldName>>): void // "DateTime";
   }
 }
 declare global {
   interface NexusGenCustomOutputMethods<TypeName extends string> {
-    date<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "Date";
+    date<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "DateTime";
   }
 }
 
@@ -25,9 +25,9 @@ export interface NexusGenInputs {
   EventData: { // input type
     date: string; // String!
     description?: string | null; // String
+    exactTime?: boolean | null; // Boolean
     race?: boolean | null; // Boolean
     subtitle?: string | null; // String
-    time?: string | null; // String
     title: string; // String!
     type: string; // String!
   }
@@ -44,18 +44,18 @@ export interface NexusGenRootTypes {
     idToken: string; // String!
   }
   Event: { // root type
-    createdAt: any; // Date!
+    createdAt: any; // DateTime!
     creator: NexusGenRootTypes['SimpleUser']; // SimpleUser!
-    date: any; // Date!
+    date: any; // DateTime!
     description?: string | null; // String
+    exactTime?: boolean | null; // Boolean
     id: string; // String!
     participants: NexusGenRootTypes['SimpleUser'][]; // [SimpleUser!]!
     race: boolean; // Boolean!
     subtitle?: string | null; // String
-    time?: string | null; // String
     title: string; // String!
     type: NexusGenEnums['EventType']; // EventType!
-    updatedAt: any; // Date!
+    updatedAt: any; // DateTime!
   }
   Mutation: {};
   Query: {};
@@ -65,11 +65,11 @@ export interface NexusGenRootTypes {
   }
   User: { // root type
     auth0Id: string; // String!
-    createdAt: any; // Date!
+    createdAt: any; // DateTime!
     email: string; // String!
     id: string; // String!
     name: string; // String!
-    updatedAt: any; // Date!
+    updatedAt: any; // DateTime!
     username: string; // String!
   }
   String: string;
@@ -77,7 +77,7 @@ export interface NexusGenRootTypes {
   Float: number;
   Boolean: boolean;
   ID: string;
-  Date: any;
+  DateTime: any;
 }
 
 export interface NexusGenAllTypes extends NexusGenRootTypes {
@@ -92,18 +92,18 @@ export interface NexusGenFieldTypes {
     idToken: string; // String!
   }
   Event: { // field return type
-    createdAt: any; // Date!
+    createdAt: any; // DateTime!
     creator: NexusGenRootTypes['SimpleUser']; // SimpleUser!
-    date: any; // Date!
+    date: any; // DateTime!
     description: string | null; // String
+    exactTime: boolean | null; // Boolean
     id: string; // String!
     participants: NexusGenRootTypes['SimpleUser'][]; // [SimpleUser!]!
     race: boolean; // Boolean!
     subtitle: string | null; // String
-    time: string | null; // String
     title: string; // String!
     type: NexusGenEnums['EventType']; // EventType!
-    updatedAt: any; // Date!
+    updatedAt: any; // DateTime!
   }
   Mutation: { // field return type
     createEvent: NexusGenRootTypes['Event']; // Event!
@@ -127,11 +127,11 @@ export interface NexusGenFieldTypes {
   }
   User: { // field return type
     auth0Id: string; // String!
-    createdAt: any; // Date!
+    createdAt: any; // DateTime!
     email: string; // String!
     id: string; // String!
     name: string; // String!
-    updatedAt: any; // Date!
+    updatedAt: any; // DateTime!
     username: string; // String!
   }
 }
@@ -190,7 +190,7 @@ export type NexusGenEnumNames = "EventType";
 
 export type NexusGenInterfaceNames = never;
 
-export type NexusGenScalarNames = "Boolean" | "Date" | "Float" | "ID" | "Int" | "String";
+export type NexusGenScalarNames = "Boolean" | "DateTime" | "Float" | "ID" | "Int" | "String";
 
 export type NexusGenUnionNames = never;
 

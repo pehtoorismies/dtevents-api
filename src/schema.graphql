@@ -9,35 +9,35 @@ type AuthPayload {
 }
 
 """
-A date string, such as 2007-12-03, compliant with the `full-date` format
-outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for
-representation of dates and times using the Gregorian calendar.
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the
+`date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO
+8601 standard for representation of dates and times using the Gregorian calendar.
 """
-scalar Date
+scalar DateTime
 
 type Event {
-  createdAt: Date!
+  createdAt: DateTime!
   creator: SimpleUser!
-  date: Date!
+  date: DateTime!
   description: String
+  exactTime: Boolean
 
   """Id of the event"""
   id: String!
   participants: [SimpleUser!]!
   race: Boolean!
   subtitle: String
-  time: String
   title: String!
   type: EventType!
-  updatedAt: Date!
+  updatedAt: DateTime!
 }
 
 input EventData {
   date: String!
   description: String
+  exactTime: Boolean = false
   race: Boolean
   subtitle: String
-  time: String
   title: String!
   type: String!
 }
@@ -84,12 +84,12 @@ type SimpleUser {
 
 type User {
   auth0Id: String!
-  createdAt: Date!
+  createdAt: DateTime!
   email: String!
 
   """Id of the user"""
   id: String!
   name: String!
-  updatedAt: Date!
+  updatedAt: DateTime!
   username: String!
 }
