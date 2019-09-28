@@ -1,14 +1,15 @@
 import EmailValidator from 'email-validator';
-import { Schema } from 'mongoose';
+import { model, Schema } from 'mongoose';
 
 import { EVENT_TYPES } from '../constants';
+import { notifyEventCreationSubscribers } from '../nofications';
 
 const timestamps = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
 };
 
-export const PreferencesSchema = new Schema({
+const PreferencesSchema = new Schema({
   subscribeWeeklyEmail: {
     type: Boolean,
     default: true,
@@ -16,21 +17,21 @@ export const PreferencesSchema = new Schema({
   subscribeEventCreationEmail: {
     type: Boolean,
     default: true,
-  }
+  },
 });
 
-export const UserDetailsSchema = new Schema({
+const UserDetailsSchema = new Schema({
   userId: {
     type: String,
-      required: true,
-      index: true,
-      unique: true,
+    required: true,
+    index: true,
+    unique: true,
   },
   preferences: PreferencesSchema,
 });
 
 // USER
-export const UserSchema = new Schema(
+const UserSchema = new Schema(
   {
     auth0Id: {
       type: String,
@@ -59,18 +60,18 @@ export const UserSchema = new Schema(
   { timestamps },
 );
 
-export const SimpleUser = new Schema({
+const SimpleUserSchema = new Schema({
   username: String,
   // _id: String
 });
 
-SimpleUser.virtual('id').get(function() {
+SimpleUserSchema.virtual('id').get(function() {
   // @ts-ignore
   return this._id.toHexString();
 });
 
 // EVENT
-export const EventSchema = new Schema(
+const EventSchema = new Schema(
   {
     title: {
       type: String,
@@ -89,9 +90,9 @@ export const EventSchema = new Schema(
     },
     exactTime: Boolean,
     description: String,
-    participants: [SimpleUser],
+    participants: [SimpleUserSchema],
     creator: {
-      type: SimpleUser,
+      type: SimpleUserSchema,
       default: {
         // _id: 0,
         username: 'unknown',
@@ -100,3 +101,20 @@ export const EventSchema = new Schema(
   },
   { timestamps },
 );
+
+EventSchema.post('save', (eventDoc: any, next: any) => {
+  notifyEventCreationSubscribers(
+    model('UserDetails', UserDetailsSchema),
+    model('User', UserSchema),
+    eventDoc,
+  );
+  next();
+});
+
+export {
+  EventSchema,
+  PreferencesSchema,
+  SimpleUserSchema,
+  UserDetailsSchema,
+  UserSchema,
+};

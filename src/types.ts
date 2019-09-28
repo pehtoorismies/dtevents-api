@@ -5,6 +5,12 @@ export interface AuthConfig {
   jwtAudience: string;
 }
 
+export interface IMailgunConfig {
+  apiKey: string;
+  domain: string;
+  fromMail: string;
+}
+
 export interface ISimpleUser {
   username: string;
   id: string;
@@ -33,4 +39,18 @@ export interface IAuth0LoginResponse extends IAuth0Response {
 export interface IKeyValuePair {
   key: string;
   value: string;
+}
+
+export interface IEventEmailOptions {
+  title: string;
+  type: string;
+  date: string;
+  eventUrl: string;
+  creator: string;
+  description?: string;
+}
+
+export interface IEventEmailTemplate {
+  plainText: string;
+  mjmlText: string;
 }

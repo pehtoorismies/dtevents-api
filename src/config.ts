@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv';
 
-import { AuthConfig } from './types';
+import { AuthConfig, IMailgunConfig } from './types';
 
 dotenv.config();
 
@@ -15,10 +15,20 @@ const auth: AuthConfig = {
   jwtAudience: process.env.JWT_AUDIENCE || 'audience',
 };
 
+const mailgun: IMailgunConfig = {
+  domain: process.env.MAILGUN_DOMAIN || 'wrongDomain',
+  apiKey: process.env.MAILGUN_API_KEY || 'wrongApikey',
+  fromMail: process.env.MAILGUN_FROM || 'Kyttäki <hello@downtown65.com>',
+};
+
+const clientDomain = process.env.CLIENT_DOMAIN || `http://localhost:3000`;
+
 const config = {
   auth,
   registerSecret,
   mongoUrl,
+  mailgun,
+  clientDomain,
 };
 
 export { config };

@@ -1,5 +1,4 @@
 import * as EmailValidator from 'email-validator';
-import { assoc, contains, findIndex, propEq, remove } from 'ramda';
 import {
   booleanArg,
   idArg,
@@ -7,20 +6,21 @@ import {
   objectType,
   stringArg,
 } from 'nexus';
-import { path } from 'ramda';
+import { assoc, contains, findIndex, path, propEq, remove } from 'ramda';
+
 import {
   createAuthZeroUser,
   loginAuthZeroUser,
   requestChangePasswordEmail,
 } from '../auth';
-import { ISimpleUser } from '../types';
 import { config } from '../config';
 import {
   Auth0Error,
   NotFoundError,
-  UserInputError,
   ServerError,
+  UserInputError,
 } from '../errors';
+import { ISimpleUser } from '../types';
 
 const fetchUserEmail = async (
   username: string,
@@ -240,7 +240,7 @@ export const Mutation = objectType({
         { subscribeEventCreationEmail, subscribeWeeklyEmail },
         { mongoose, user },
       ) {
-        const { UserDetails } = mongoose;
+        const { UserDetailsModel } = mongoose;
         const conditions = { userId: user.id };
 
         const update = {
@@ -254,12 +254,12 @@ export const Mutation = objectType({
           upsert: true,
         };
 
-        const res = await UserDetails.findOneAndUpdate(
+        const res = await UserDetailsModel.findOneAndUpdate(
           conditions,
           update,
           options,
         );
-        
+
         return res;
       },
     });
@@ -286,7 +286,11 @@ export const Mutation = objectType({
           ? assoc('participants', [user], eventWithCreator)
           : eventWithCreator;
 
-        return EventModel.create(withMe);
+        const createdEvent = await EventModel.create(withMe);
+
+        // notifyEventCreationSubscribers(mongoose, createdEvent);
+
+        return createdEvent;
       },
     });
 

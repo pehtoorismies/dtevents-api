@@ -85,7 +85,7 @@ const startServer = () => {
       mongoose: {
         UserModel: model('User', UserSchema),
         EventModel: model('Event', EventSchema),
-        UserDetails: model('UserDetails', UserDetailsSchema),
+        UserDetailsModel: model('UserDetails', UserDetailsSchema),
       },
     }),
     middlewares: [accessToken, requestScopes, addUserData, permissions],

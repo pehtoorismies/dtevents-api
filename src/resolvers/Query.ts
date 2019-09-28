@@ -25,10 +25,10 @@ export const Query = objectType({
       type: 'UserDetails',
       args: {},
       async resolve(_, {}, { mongoose, user }) {
-        const { UserDetails } = mongoose;
+        const { UserDetailsModel } = mongoose;
         const conditions = { userId: user.id };
 
-        const res = await UserDetails.findOne(conditions);
+        const res = await UserDetailsModel.findOne(conditions);
 
         return res;
       },
