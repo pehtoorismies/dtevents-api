@@ -28,7 +28,13 @@ export const Query = objectType({
         const { UserDetailsModel } = mongoose;
         const conditions = { userId: user.id };
 
-        const res = await UserDetailsModel.findOne(conditions);
+        // check if details exists
+        const res = await UserDetailsModel.findOneOrCreate(conditions, conditions);
+        // if (count === 0) {
+        //   await UserDetailsModel.create(conditions);
+        // }
+
+        // const res = await UserDetailsModel.findOne(conditions);
 
         return res;
       },

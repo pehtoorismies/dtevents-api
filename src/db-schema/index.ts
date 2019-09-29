@@ -20,6 +20,7 @@ const PreferencesSchema = new Schema({
   },
 });
 
+// UserDetails
 const UserDetailsSchema = new Schema({
   userId: {
     type: String,
@@ -27,8 +28,39 @@ const UserDetailsSchema = new Schema({
     index: true,
     unique: true,
   },
-  preferences: PreferencesSchema,
+  preferences: {
+    type: PreferencesSchema,
+    default: PreferencesSchema,
+  },
 });
+
+UserDetailsSchema.statics.findOneOrCreate = function findOneOrCreate(
+  condition : any,
+  doc : any,
+) {
+  const self = this;
+  const newDocument = doc;
+  return new Promise((resolve, reject) => {
+    return self
+      .findOne(condition)
+      .then((result: any) => {
+        if (result) {
+          return resolve(result);
+        }
+        return self
+          .create(newDocument)
+          .then((result: any) => {
+            return resolve(result);
+          })
+          .catch((error: Error) => {
+            return reject(error);
+          });
+      })
+      .catch((error: Error) => {
+        return reject(error);
+      });
+  });
+};
 
 // USER
 const UserSchema = new Schema(
