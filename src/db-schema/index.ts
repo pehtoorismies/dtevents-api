@@ -1,7 +1,7 @@
 import EmailValidator from 'email-validator';
 import { model, Schema } from 'mongoose';
 
-import { EVENT_TYPES } from '../constants';
+import { EVENT_ENUMS } from '../constants';
 import { notifyEventCreationSubscribers } from '../nofications';
 
 const timestamps = {
@@ -19,48 +19,6 @@ const PreferencesSchema = new Schema({
     default: true,
   },
 });
-
-// UserDetails
-const UserDetailsSchema = new Schema({
-  userId: {
-    type: String,
-    required: true,
-    index: true,
-    unique: true,
-  },
-  preferences: {
-    type: PreferencesSchema,
-    default: PreferencesSchema,
-  },
-});
-
-UserDetailsSchema.statics.findOneOrCreate = function findOneOrCreate(
-  condition : any,
-  doc : any,
-) {
-  const self = this;
-  const newDocument = doc;
-  return new Promise((resolve, reject) => {
-    return self
-      .findOne(condition)
-      .then((result: any) => {
-        if (result) {
-          return resolve(result);
-        }
-        return self
-          .create(newDocument)
-          .then((result: any) => {
-            return resolve(result);
-          })
-          .catch((error: Error) => {
-            return reject(error);
-          });
-      })
-      .catch((error: Error) => {
-        return reject(error);
-      });
-  });
-};
 
 // USER
 const UserSchema = new Schema(
@@ -88,6 +46,10 @@ const UserSchema = new Schema(
       required: true,
     },
     name: String,
+    preferences: {
+      type: PreferencesSchema,
+      default: PreferencesSchema,
+    },
   },
   { timestamps },
 );
@@ -111,7 +73,7 @@ const EventSchema = new Schema(
     },
     type: {
       type: String,
-      enum: EVENT_TYPES,
+      enum: EVENT_ENUMS,
       required: true,
     },
     subtitle: String,
@@ -135,18 +97,8 @@ const EventSchema = new Schema(
 );
 
 EventSchema.post('save', (eventDoc: any, next: any) => {
-  notifyEventCreationSubscribers(
-    model('UserDetails', UserDetailsSchema),
-    model('User', UserSchema),
-    eventDoc,
-  );
+  notifyEventCreationSubscribers(model('User', UserSchema), eventDoc);
   next();
 });
 
-export {
-  EventSchema,
-  PreferencesSchema,
-  SimpleUserSchema,
-  UserDetailsSchema,
-  UserSchema,
-};
+export { EventSchema, PreferencesSchema, SimpleUserSchema, UserSchema };

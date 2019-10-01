@@ -1,15 +1,16 @@
-import R from 'ramda';
+import { find, pipe, prop, propEq, reject, split } from 'ramda';
 import rp from 'request-promise';
 
 import { config } from './config';
+import { IEventType } from './types';
 
 const isEmailOrOpenId = (n: string) => n === 'email' || n === 'openid';
 
 let kidCache: any = {};
 
-export const getScopes = R.pipe(
-  R.split(' '),
-  R.reject(isEmailOrOpenId),
+export const getScopes = pipe(
+  split(' '),
+  reject(isEmailOrOpenId),
 );
 
 export const getMatchingPubKey = async (kid: string) => {
@@ -22,11 +23,25 @@ export const getMatchingPubKey = async (kid: string) => {
   });
   const data = JSON.parse(jwks);
 
-  const key = R.find(R.propEq('kid', kid), data.keys);
+  const key = find(propEq('kid', kid), data.keys);
 
   const pubkey = key.x5c[0];
 
   const cert = `-----BEGIN CERTIFICATE-----\n${pubkey}\n-----END CERTIFICATE-----`;
   kidCache[kid] = cert;
   return cert;
+};
+
+export const findType = (
+  type: string,
+  eventTypes: IEventType[],
+  defaultTitle: string,
+) => {
+  const e = find(propEq('id', type), eventTypes);
+  if (e) {
+    return prop('title', e);
+  }
+  // return something
+  console.error('Not founding type ', type);
+  return defaultTitle;
 };

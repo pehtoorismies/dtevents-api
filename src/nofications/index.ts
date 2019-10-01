@@ -9,7 +9,6 @@ import { IEventEmailOptions } from '../types';
 const { clientDomain } = config;
 
 export const notifyEventCreationSubscribers = async (
-  UserDetailsModel: any,
   UserModel: any,
   eventDoc: any,
 ): Promise<void> => {
@@ -22,31 +21,20 @@ export const notifyEventCreationSubscribers = async (
     eventUrl: `${clientDomain}/events/${eventDoc._id}`,
     creator: eventDoc.creator.username,
     date,
-    type: eventDoc.type.toLowerCase(),
+    type: eventDoc.type,
   };
-  // const retVal = await sendMail(recients, eventOptions);
 
-  const userIdObjects = await UserDetailsModel.find(
+  const emailObjects = await UserModel.find(
     {
       'preferences.subscribeEventCreationEmail': true,
     },
-    { userId: 1 },
-  );
-
-  const userIds = pluck('userId')(userIdObjects);
-
-  if (!userIds || userIds.length === 0) {
-    return;
-  }
-
-  const emailObjects = await UserModel.find(
-    { _id: { $in: userIds } },
     { email: 1 },
   );
-  const recipients: string[] = pluck('email')(emailObjects);
+  
+const recipients: string[] = pluck('email')(emailObjects);
+
   if (!recipients || recipients.length === 0) {
-    console.error('cant find recipient emails for userIds');
-    console.error(userIds);
+    // no subsriptions
     return;
   }
   sendMail(recipients, eventOptions);

@@ -21,25 +21,6 @@ export const Query = objectType({
       },
     });
 
-    t.field('myUserDetails', {
-      type: 'UserDetails',
-      args: {},
-      async resolve(_, {}, { mongoose, user }) {
-        const { UserDetailsModel } = mongoose;
-        const conditions = { userId: user.id };
-
-        // check if details exists
-        const res = await UserDetailsModel.findOneOrCreate(conditions, conditions);
-        // if (count === 0) {
-        //   await UserDetailsModel.create(conditions);
-        // }
-
-        // const res = await UserDetailsModel.findOne(conditions);
-
-        return res;
-      },
-    });
-
     t.list.field('findManyEvents', {
       type: 'Event',
       args: {

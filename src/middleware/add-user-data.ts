@@ -30,7 +30,6 @@ const fetchUser = async (
 const addUserData = {
   Query: {
     me: fetchUser,
-    myUserDetails: fetchUser,
   },
   Mutation: {
     createEvent: fetchUser,

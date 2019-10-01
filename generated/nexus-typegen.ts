@@ -57,6 +57,9 @@ export interface NexusGenRootTypes {
     type: NexusGenEnums['EventType']; // EventType!
     updatedAt: any; // DateTime!
   }
+  IDPayload: { // root type
+    id: string; // String!
+  }
   Mutation: {};
   Preferences: { // root type
     subscribeEventCreationEmail: boolean; // Boolean!
@@ -73,13 +76,9 @@ export interface NexusGenRootTypes {
     email: string; // String!
     id: string; // String!
     name: string; // String!
+    preferences: NexusGenRootTypes['Preferences']; // Preferences!
     updatedAt: any; // DateTime!
     username: string; // String!
-  }
-  UserDetails: { // root type
-    id: string; // String!
-    preferences: NexusGenRootTypes['Preferences']; // Preferences!
-    userId: string; // String!
   }
   String: string;
   Int: number;
@@ -114,15 +113,18 @@ export interface NexusGenFieldTypes {
     type: NexusGenEnums['EventType']; // EventType!
     updatedAt: any; // DateTime!
   }
+  IDPayload: { // field return type
+    id: string; // String!
+  }
   Mutation: { // field return type
     createEvent: NexusGenRootTypes['Event']; // Event!
-    deleteEvent: boolean; // Boolean!
+    deleteEvent: NexusGenRootTypes['IDPayload']; // IDPayload!
     forgotPassword: boolean; // Boolean!
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
     signup: NexusGenRootTypes['User']; // User!
     toggleJoinEvent: NexusGenRootTypes['Event']; // Event!
     updateEvent: NexusGenRootTypes['Event']; // Event!
-    updateMyPreferences: NexusGenRootTypes['UserDetails']; // UserDetails!
+    updateMyPreferences: NexusGenRootTypes['User']; // User!
   }
   Preferences: { // field return type
     subscribeEventCreationEmail: boolean; // Boolean!
@@ -133,7 +135,6 @@ export interface NexusGenFieldTypes {
     findManyEvents: NexusGenRootTypes['Event'][]; // [Event!]!
     liveness: boolean; // Boolean!
     me: NexusGenRootTypes['User']; // User!
-    myUserDetails: NexusGenRootTypes['UserDetails']; // UserDetails!
     readiness: boolean; // Boolean!
   }
   SimpleUser: { // field return type
@@ -146,13 +147,9 @@ export interface NexusGenFieldTypes {
     email: string; // String!
     id: string; // String!
     name: string; // String!
+    preferences: NexusGenRootTypes['Preferences']; // Preferences!
     updatedAt: any; // DateTime!
     username: string; // String!
-  }
-  UserDetails: { // field return type
-    id: string; // String!
-    preferences: NexusGenRootTypes['Preferences']; // Preferences!
-    userId: string; // String!
   }
 }
 
@@ -206,7 +203,7 @@ export interface NexusGenAbstractResolveReturnTypes {
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "AuthPayload" | "Event" | "Mutation" | "Preferences" | "Query" | "SimpleUser" | "User" | "UserDetails";
+export type NexusGenObjectNames = "AuthPayload" | "Event" | "IDPayload" | "Mutation" | "Preferences" | "Query" | "SimpleUser" | "User";
 
 export type NexusGenInputNames = "EventData";
 

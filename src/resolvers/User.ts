@@ -1,5 +1,13 @@
 import { objectType } from 'nexus';
 
+export const Preferences = objectType({
+  name: 'Preferences',
+  definition(t) {
+    t.boolean('subscribeWeeklyEmail');
+    t.boolean('subscribeEventCreationEmail');
+  },
+});
+
 export const User = objectType({
   name: 'User',
   definition(t) {
@@ -8,6 +16,9 @@ export const User = objectType({
     t.string('email');
     t.string('username');
     t.string('name');
+    t.field('preferences', {
+      type: 'Preferences',
+    });
     t.date('createdAt');
     t.date('updatedAt');
   },

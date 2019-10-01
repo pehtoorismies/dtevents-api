@@ -1,10 +1,10 @@
 import { enumType, objectType } from 'nexus';
 
-import { EVENT_TYPES } from '../constants';
+import { EVENT_ENUMS } from '../constants';
 
 export const EventType = enumType({
   name: 'EventType',
-  members: EVENT_TYPES,
+  members: EVENT_ENUMS,
 });
 
 export const Event = objectType({
