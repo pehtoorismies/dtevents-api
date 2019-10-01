@@ -1,11 +1,10 @@
-import mailgun from 'mailgun-js';
+import mailgun, { messages } from 'mailgun-js';
 import mjml2html from 'mjml';
-import { join } from 'ramda';
 
 import { config } from '../config';
 import { EVENT_TYPES } from '../constants';
-import { IEventEmailOptions } from '../types';
-import { findType } from '../util';
+import { IEventEmailOptions, IMailRecipient } from '../types';
+import { emailList, findType, recipientVariables } from '../util';
 import creationTemplate from './eventEmail';
 
 const { mailgun: mgConfig } = config;
@@ -17,7 +16,7 @@ const mg = mailgun({
 });
 
 const sendMail = async (
-  recipients: string[],
+  recipients: IMailRecipient[],
   options: IEventEmailOptions,
 ): Promise<boolean> => {
   const { type } = options;
@@ -26,12 +25,13 @@ const sendMail = async (
 
   const typeTitle = findType(type, EVENT_TYPES, EVENT_TYPES[0].title);
 
-  const data = {
+  const data: messages.BatchData = {
     from: 'Kyttäki <hello@downtown65.com>',
-    to: join(',', recipients),
+    to: emailList(recipients),
     subject: `Uusi tapahtuma (${typeTitle})`,
     text: plainText,
     html: mailContent.html,
+    'recipient-variables': recipientVariables(recipients),
   };
 
   try {

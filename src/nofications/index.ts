@@ -1,10 +1,9 @@
 import format from 'date-fns/format';
 import { fi } from 'date-fns/locale';
-import { pluck } from 'ramda';
 
 import { config } from '../config';
 import sendMail from '../mail';
-import { IEventEmailOptions } from '../types';
+import { IEventEmailOptions, IMailRecipient } from '../types';
 
 const { clientDomain } = config;
 
@@ -24,18 +23,16 @@ export const notifyEventCreationSubscribers = async (
     type: eventDoc.type,
   };
 
-  const emailObjects = await UserModel.find(
+  const emailObjects : IMailRecipient[] = await UserModel.find(
     {
       'preferences.subscribeEventCreationEmail': true,
     },
-    { email: 1 },
+    { email: 1, name: 1 },
   );
   
-const recipients: string[] = pluck('email')(emailObjects);
-
-  if (!recipients || recipients.length === 0) {
+  if (emailObjects.length === 0) {
     // no subsriptions
     return;
   }
-  sendMail(recipients, eventOptions);
+  sendMail(emailObjects, eventOptions);
 };

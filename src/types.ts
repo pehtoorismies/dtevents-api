@@ -5,6 +5,11 @@ export interface AuthConfig {
   jwtAudience: string;
 }
 
+export interface IMailRecipient {
+  email: string;
+  name: string;
+}
+
 export interface IMailgunConfig {
   apiKey: string;
   domain: string;

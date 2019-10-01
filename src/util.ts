@@ -1,8 +1,9 @@
-import { find, pipe, prop, propEq, reject, split } from 'ramda';
+import { addIndex, find, pipe, prop, propEq, reject, split, join, pluck, reduce, assoc } from 'ramda';
 import rp from 'request-promise';
+import { messages } from 'mailgun-js';
 
 import { config } from './config';
-import { IEventType } from './types';
+import { IEventType, IMailRecipient } from './types';
 
 const isEmailOrOpenId = (n: string) => n === 'email' || n === 'openid';
 
@@ -44,4 +45,31 @@ export const findType = (
   // return something
   console.error('Not founding type ', type);
   return defaultTitle;
+};
+
+export const emailList = (recipients: IMailRecipient[]): string => {
+  return pipe(
+    // @ts-ignore
+    pluck('email'),
+    join(','),
+  )(recipients);
+};
+
+const indexedReducer = addIndex(reduce);
+
+export const recipientVariables = (
+  recipients: IMailRecipient[],
+): messages.BatchSendRecipientVars => {
+  const reducer = (acc : any, curr: IMailRecipient, id: number) => {
+    const { email, name } = curr;
+    
+    const valueObj = {
+      first: name,
+      id: String(id),
+    }
+    return assoc(email, valueObj, acc);
+  };
+  // @ts-ignore
+  return indexedReducer(reducer, {}, recipients);
+
 };
