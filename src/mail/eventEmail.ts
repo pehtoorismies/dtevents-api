@@ -1,9 +1,12 @@
+import { EVENT_TYPES } from '../constants';
 import { IEventEmailOptions, IEventEmailTemplate } from '../types';
+import { findType } from '../util';
 
 const creationTemplate = (options: IEventEmailOptions): IEventEmailTemplate => {
   const { title, type, date, eventUrl, creator, description } = options;
 
   const desc = description || 'ei tarkempaa kuvausta.';
+  const typeTitle = findType(type, EVENT_TYPES, EVENT_TYPES[0].title);
 
   const mjmlText = `
 <mjml>
@@ -25,9 +28,9 @@ const creationTemplate = (options: IEventEmailOptions): IEventEmailTemplate => {
   <mj-raw>
     <!-- Image Header -->
   </mj-raw>
-  <mj-section background-url="https://storage.googleapis.com/downtown65/events/${type}.jpg" background-size="cover" background-repeat="no-repeat">
+  <mj-section background-url="https://storage.googleapis.com/downtown65/events/${type.toLowerCase()}.jpg" background-size="cover" background-repeat="no-repeat">
     <mj-column width="600px">
-      <mj-text align="center" font-size="30px" font-weight="bold" font-family="Helvetica Neue" color="white">${type}</mj-text>
+      <mj-text align="center" font-size="30px" font-weight="bold" font-family="Helvetica Neue" color="white">${typeTitle}</mj-text>
       <mj-button background-color="#FF80EA" href="${eventUrl}">Näytä tapahtuma</mj-button>
     </mj-column>
   </mj-section>

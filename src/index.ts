@@ -5,7 +5,7 @@ import { makeSchema } from 'nexus';
 import { join } from 'path';
 
 import { config } from './config';
-import { EventSchema, UserSchema, UserDetailsSchema } from './db-schema';
+import { EventSchema, UserSchema } from './db-schema';
 import {
   accessToken,
   addUserData,
@@ -19,12 +19,12 @@ const {
   AuthPayload,
   DateTime,
   Event,
+  IDPayload,
   Mutation,
   Preferences,
   Query,
   SimpleUser,
   User,
-  UserDetails,
 } = resolvers;
 
 const { mongoUrl } = config;
@@ -49,7 +49,9 @@ const mongoOptions = {
 
 const startServer = () => {
   const schema = makeSchema({
-    types: [AuthPayload,
+    types: [
+      AuthPayload,
+      IDPayload,
       DateTime,
       Event,
       Mutation,
@@ -57,8 +59,8 @@ const startServer = () => {
       Query,
       SimpleUser,
       User,
-      UserDetails,],
-      
+    ],
+
     outputs: {
       typegen: join(__dirname, '../generated/nexus-typegen.ts'),
       schema: join(__dirname, '/schema.graphql'),
@@ -85,7 +87,6 @@ const startServer = () => {
       mongoose: {
         UserModel: model('User', UserSchema),
         EventModel: model('Event', EventSchema),
-        UserDetailsModel: model('UserDetails', UserDetailsSchema),
       },
     }),
     middlewares: [accessToken, requestScopes, addUserData, permissions],

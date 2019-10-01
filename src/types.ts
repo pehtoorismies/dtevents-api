@@ -9,6 +9,7 @@ export interface IMailgunConfig {
   apiKey: string;
   domain: string;
   fromMail: string;
+  host: string;
 }
 
 export interface ISimpleUser {
@@ -22,6 +23,11 @@ interface IAuth0Response {
     message: string;
     statusCode: number;
   };
+}
+
+export interface IEventType {
+  id: string;
+  title: string;
 }
 
 export interface IAuth0RegisterResponse extends IAuth0Response {

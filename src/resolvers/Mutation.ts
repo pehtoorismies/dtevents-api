@@ -30,8 +30,6 @@ const fetchUserEmail = async (
     email: 1,
   });
 
-  console.log('user for username', username);
-  console.log(user);
   return path(['email'], user);
 };
 
@@ -230,7 +228,7 @@ export const Mutation = objectType({
     });
 
     t.field('updateMyPreferences', {
-      type: 'UserDetails',
+      type: 'User',
       args: {
         subscribeEventCreationEmail: booleanArg({ required: false }),
         subscribeWeeklyEmail: booleanArg({ required: false }),
@@ -240,8 +238,8 @@ export const Mutation = objectType({
         { subscribeEventCreationEmail, subscribeWeeklyEmail },
         { mongoose, user },
       ) {
-        const { UserDetailsModel } = mongoose;
-        const conditions = { userId: user.id };
+        const { UserModel } = mongoose;
+        const conditions = { _id: user.id };
 
         const update = {
           preferences: {
@@ -251,10 +249,9 @@ export const Mutation = objectType({
         };
         const options = {
           new: true,
-          upsert: true,
         };
 
-        const res = await UserDetailsModel.findOneAndUpdate(
+        const res = await UserModel.findOneAndUpdate(
           conditions,
           update,
           options,
@@ -318,15 +315,21 @@ export const Mutation = objectType({
     });
 
     t.field('deleteEvent', {
-      type: 'Boolean',
+      type: 'IDPayload',
       args: {
         id: idArg({ required: true }),
       },
       async resolve(_, { id }, { mongoose }) {
         const { EventModel } = mongoose;
         const res = await EventModel.deleteOne({ _id: id });
+
         const { deletedCount } = res;
-        return deletedCount === 1;
+        if (deletedCount === 1) {
+          return { id };
+        }
+        return new NotFoundError({
+          message: `Delete failed. Event with id ${id} not found`,
+        });
       },
     });
 
