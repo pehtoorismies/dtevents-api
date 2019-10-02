@@ -2,6 +2,7 @@ import {
   IEventEmailOptions,
   IEmailTemplate,
   IWeeklyEmailOptions,
+  IWeeklyOptions,
 } from '../types';
 
 import fs from 'fs';
@@ -56,7 +57,7 @@ const createEventMail = async (
   };
 };
 
-const createWeeklyEvent = (options: IWeeklyEmailOptions) =>
+const createWeeklyEvent = (options: IWeeklyOptions) =>
   `
     ---
     ${options.title}
@@ -68,20 +69,18 @@ const createWeeklyEvent = (options: IWeeklyEmailOptions) =>
   `;
 
 const createWeeklyEmail = async (
-  options: IWeeklyEmailOptions[],
+  options: IWeeklyEmailOptions,
 ): Promise<IEmailTemplate> => {
   if (!cache.weekly) {
     const t: string = await loadTemplate('weekly_email.mjml');
     cache.weekly = t;
   }
   
-  const mjmlText = nunjucks.renderString(cache.weekly, {
-    eventOptions: options,
-  });
+  const mjmlText = nunjucks.renderString(cache.weekly, options);
   const plainText = `
     Kippis, 
 
-    ${map(createWeeklyEvent, options)}
+    ${map(createWeeklyEvent, options.eventOptions)}
   
     Admin terveisin, 
     Kyttäki

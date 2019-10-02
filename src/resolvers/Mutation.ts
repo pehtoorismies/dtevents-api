@@ -21,6 +21,7 @@ import {
   UserInputError,
 } from '../errors';
 import { ISimpleUser } from '../types';
+import { notifyEventCreationSubscribers } from '../nofications';
 
 const fetchUserEmail = async (
   username: string,
@@ -272,7 +273,7 @@ export const Mutation = objectType({
         { addMe, event },
         { mongoose, user }: { mongoose: any; user: ISimpleUser },
       ) {
-        const { EventModel } = mongoose;
+        const { EventModel, UserModel } = mongoose;
 
         const eventWithCreator = {
           ...event,
@@ -285,7 +286,7 @@ export const Mutation = objectType({
 
         const createdEvent = await EventModel.create(withMe);
 
-        // notifyEventCreationSubscribers(mongoose, createdEvent);
+        notifyEventCreationSubscribers(UserModel, createdEvent);
 
         return createdEvent;
       },

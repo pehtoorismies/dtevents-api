@@ -47,7 +47,7 @@ const sendEventCreationEmail = async (
 
 const sendWeeklyEmail = async (
   recipients: IMailRecipient[],
-  options: IWeeklyEmailOptions[],
+  options: IWeeklyEmailOptions,
 ): Promise<boolean> => {
   const { mjmlText, plainText } = await createWeeklyEmail(options);
   const mailContent = mjml2html(mjmlText);

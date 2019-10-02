@@ -58,14 +58,19 @@ export interface IEventEmailOptions {
   typeHeader: string;
   date: string;
   eventUrl: string;
+  preferencesUrl: string;
   creator: string;
   description: string;
 }
 
-export interface IWeeklyEmailOptions extends IEventEmailOptions {
+export interface IWeeklyOptions extends IEventEmailOptions {
   weekDay: string;
   participantCount: number;
   subtitle: string;
+}
+export interface IWeeklyEmailOptions {
+  eventOptions: IWeeklyOptions[];
+  preferencesUrl: string;
 }
 
 export interface IEmailTemplate {

@@ -1,8 +1,8 @@
 import EmailValidator from 'email-validator';
-import { model, Schema } from 'mongoose';
+import { Schema } from 'mongoose';
 
 import { EVENT_ENUMS } from '../constants';
-import { notifyEventCreationSubscribers } from '../nofications';
+
 
 const timestamps = {
   createdAt: 'createdAt',
@@ -95,10 +95,5 @@ const EventSchema = new Schema(
   },
   { timestamps },
 );
-
-EventSchema.post('save', (eventDoc: any, next: any) => {
-  notifyEventCreationSubscribers(model('User', UserSchema), eventDoc);
-  next();
-});
 
 export { EventSchema, PreferencesSchema, SimpleUserSchema, UserSchema };

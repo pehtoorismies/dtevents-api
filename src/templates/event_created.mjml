@@ -37,12 +37,16 @@
         <mj-text align="center" line-height="3px" font-weight="bold" font-size="20px" font-family="Helvetica Neue" color="#626262">{{creator}}</mj-text>
       </mj-column>
     </mj-section>
-    <mj-raw>
-      <!-- Icons -->
-    </mj-raw>
     <mj-section background-color="#eeeeee">
       <mj-column width="170px">
         <mj-image width="72px" src="https://storage.googleapis.com/downtown65/logos/f_logo_RGB-Blue_72.png" target="https://www.facebook.com/downtown65endurance"></mj-image>
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#eeeeee">
+      <mj-column width="400px">
+        <mj-text align="center" line-height="1px" padding="0px 14px 10px 14px" font-size="14px" font-family="Helvetica Neue" color="#07c">
+          <a href="{{preferencesUrl}}">Hallitse tilauksia</a>
+        </mj-text>
       </mj-column>
     </mj-section>
   </mj-body>

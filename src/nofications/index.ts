@@ -8,7 +8,7 @@ import { sendEventCreationEmail, sendWeeklyEmail } from '../mail';
 import {
   IEventEmailOptions,
   IMailRecipient,
-  IWeeklyEmailOptions,
+  IWeeklyOptions,
 } from '../types';
 import { findType } from '../util';
 
@@ -30,6 +30,7 @@ const mapEventOptions = (eventDoc: any): IEventEmailOptions => {
     typeHeader,
     type: type.toLowerCase(),
     description: eventDoc.description || 'ei tarkempaa kuvausta.',
+    preferencesUrl: `${clientDomain}/preferences`,
   };
 };
 
@@ -37,7 +38,6 @@ export const notifyEventCreationSubscribers = async (
   UserModel: any,
   eventDoc: any,
 ): Promise<void> => {
-  
   const eventOptions: IEventEmailOptions = mapEventOptions(eventDoc);
   const emailObjects: IMailRecipient[] = await UserModel.find(
     {
@@ -71,7 +71,7 @@ export const notifyWeeklySubscribers = async (
     },
     { email: 1, name: 1 },
   );
-  const options: IWeeklyEmailOptions[] = events.map((eventDoc: any) => {
+  const options: IWeeklyOptions[] = events.map((eventDoc: any) => {
     const weekDay = format(new Date(eventDoc.date), 'EEEE', {
       locale: fi,
     });
@@ -85,8 +85,11 @@ export const notifyWeeklySubscribers = async (
       weekDay,
       date,
       participantCount: eventDoc.participants.length,
-    }
+    };
   });
 
-  sendWeeklyEmail(emailObjects, options);
+  sendWeeklyEmail(emailObjects, {
+    eventOptions: options,
+    preferencesUrl: `${clientDomain}/preferences`,
+  });
 };
