@@ -2,10 +2,13 @@ import mailgun, { messages } from 'mailgun-js';
 import mjml2html from 'mjml';
 
 import { config } from '../config';
-import { EVENT_TYPES } from '../constants';
-import { IEventEmailOptions, IMailRecipient } from '../types';
-import { emailList, findType, recipientVariables } from '../util';
-import creationTemplate from './eventEmail';
+import {
+  IEventEmailOptions,
+  IMailRecipient,
+  IWeeklyEmailOptions,
+} from '../types';
+import { emailList, recipientVariables } from '../util';
+import { createEventMail, createWeeklyEmail } from './emailTemplate';
 
 const { mailgun: mgConfig } = config;
 
@@ -15,20 +18,18 @@ const mg = mailgun({
   host: mgConfig.host,
 });
 
-const sendMail = async (
+const sendEventCreationEmail = async (
   recipients: IMailRecipient[],
   options: IEventEmailOptions,
 ): Promise<boolean> => {
-  const { type } = options;
-  const { mjmlText, plainText } = creationTemplate(options);
+  const { typeHeader } = options;
+  const { mjmlText, plainText } = await createEventMail(options);
   const mailContent = mjml2html(mjmlText);
-
-  const typeTitle = findType(type, EVENT_TYPES, EVENT_TYPES[0].title);
 
   const data: messages.BatchData = {
     from: 'Kyttäki <hello@downtown65.com>',
     to: emailList(recipients),
-    subject: `Uusi tapahtuma (${typeTitle})`,
+    subject: `Uusi tapahtuma (${typeHeader})`,
     text: plainText,
     html: mailContent.html,
     'recipient-variables': recipientVariables(recipients),
@@ -44,4 +45,30 @@ const sendMail = async (
   }
 };
 
-export default sendMail;
+const sendWeeklyEmail = async (
+  recipients: IMailRecipient[],
+  options: IWeeklyEmailOptions[],
+): Promise<boolean> => {
+  const { mjmlText, plainText } = await createWeeklyEmail(options);
+  const mailContent = mjml2html(mjmlText);
+
+  const data: messages.BatchData = {
+    from: 'Kyttäki <hello@downtown65.com>',
+    to: emailList(recipients),
+    subject: 'Ensi viikon tapahtumat',
+    text: plainText,
+    html: mailContent.html,
+    'recipient-variables': recipientVariables(recipients),
+  };
+
+  try {
+    const resp = await mg.messages().send(data);
+    console.log(resp);
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};
+
+export { sendEventCreationEmail, sendWeeklyEmail };

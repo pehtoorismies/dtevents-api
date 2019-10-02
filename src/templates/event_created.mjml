@@ -17,24 +17,24 @@
     <mj-raw>
       <!-- Image Header -->
     </mj-raw>
-    <mj-section background-url="https://storage.googleapis.com/downtown65/events/orienteering.jpg" background-size="cover" background-repeat="no-repeat">
+    <mj-section background-url="https://storage.googleapis.com/downtown65/events/{{type}}.jpg" background-size="cover" background-repeat="no-repeat">
       <mj-column width="600px">
-        <mj-text align="center" font-size="30px" font-weight="bold" font-family="Helvetica Neue" color="white">SUUNNISTUS</mj-text>
-        <mj-button background-color="#FF80EA" href="#">Näytä tapahtuma</mj-button>
+        <mj-text align="center" font-size="30px" font-weight="bold" font-family="Helvetica Neue" color="white">{{typeHeader}}</mj-text>
+        <mj-button background-color="#FF80EA" href="{{eventUrl}}">Näytä tapahtuma</mj-button>
       </mj-column>
     </mj-section>
 
     <mj-section background-color="#eeeeee">
       <mj-column width="400px">
-        <mj-text font-size="20px" font-family="Helvetica Neue" color="#626262">TITLE</mj-text>
-        <mj-text font-style="italic" font-size="16px" font-family="Helvetica Neue" color="#626262">16.2.2020 (ti)</mj-text>
-        <mj-text color="#525252">ei tarkempaa kuvausta</mj-text>
+        <mj-text font-size="20px" font-family="Helvetica Neue" color="#626262">{{title}}</mj-text>
+        <mj-text font-style="italic" font-size="16px" font-family="Helvetica Neue" color="#626262">{{date}}</mj-text>
+        <mj-text color="#525252">{{description}}</mj-text>
       </mj-column>
     </mj-section>
     <mj-section background-color="#dfdfdf">
       <mj-column width="400px">
         <mj-text align="center" line-height="1px" font-size="14px" font-family="Helvetica Neue" color="#626262">created by</mj-text>
-        <mj-text align="center" line-height="3px" font-weight="bold" font-size="20px" font-family="Helvetica Neue" color="#626262">metsätraktori77</mj-text>
+        <mj-text align="center" line-height="3px" font-weight="bold" font-size="20px" font-family="Helvetica Neue" color="#626262">{{creator}}</mj-text>
       </mj-column>
     </mj-section>
     <mj-raw>

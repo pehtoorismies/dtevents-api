@@ -82,6 +82,7 @@ type Query {
   liveness: Boolean!
   me: User!
   readiness: Boolean!
+  sendWeeklyEmail: Boolean!
 }
 
 type SimpleUser {

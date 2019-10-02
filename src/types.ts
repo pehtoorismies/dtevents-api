@@ -55,13 +55,20 @@ export interface IKeyValuePair {
 export interface IEventEmailOptions {
   title: string;
   type: string;
+  typeHeader: string;
   date: string;
   eventUrl: string;
   creator: string;
-  description?: string;
+  description: string;
 }
 
-export interface IEventEmailTemplate {
+export interface IWeeklyEmailOptions extends IEventEmailOptions {
+  weekDay: string;
+  participantCount: number;
+  subtitle: string;
+}
+
+export interface IEmailTemplate {
   plainText: string;
   mjmlText: string;
 }

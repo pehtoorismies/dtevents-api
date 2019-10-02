@@ -2,6 +2,7 @@ import startOfToday from 'date-fns/startOfToday';
 import { idArg, intArg, objectType } from 'nexus';
 
 import { NotFoundError } from '../errors';
+import { notifyWeeklySubscribers } from '../nofications'
 
 export const Query = objectType({
   name: 'Query',
@@ -58,6 +59,15 @@ export const Query = objectType({
       type: 'User',
       async resolve(_, __, { user }) {
         return user;
+      },
+    });
+
+    t.field('sendWeeklyEmail', {
+      type: 'Boolean',
+      async resolve(_, __, { mongoose }) {
+        const { EventModel, UserModel } = mongoose;
+        notifyWeeklySubscribers(UserModel, EventModel);
+        return true;
       },
     });
   },

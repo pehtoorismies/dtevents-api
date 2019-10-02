@@ -136,6 +136,7 @@ export interface NexusGenFieldTypes {
     liveness: boolean; // Boolean!
     me: NexusGenRootTypes['User']; // User!
     readiness: boolean; // Boolean!
+    sendWeeklyEmail: boolean; // Boolean!
   }
   SimpleUser: { // field return type
     id: string; // String!
