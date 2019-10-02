@@ -36,7 +36,7 @@ const rules = {
 
 const permissions = shield({
   Query: {
-    // allUsers: rules.isUserReader,
+    sendWeeklyEmail: rules.isUserReader,
     findManyEvents: rules.isEventReader,
     findEvent: rules.isEventReader,
     // user: rules.isUserReader,
