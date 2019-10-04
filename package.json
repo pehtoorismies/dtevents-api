@@ -8,7 +8,8 @@
     "dev": "ts-node-dev --no-notify --respawn --transpileOnly ./src",
     "template-copy": "cp -r ./src/templates ./dist/src",
     "build": "tsc && yarn template-copy",
-    "start-prod": "node dist/src"
+    "start-prod": "node dist/src",
+    "import-evt": "ts-node-dev --no-notify --respawn --transpileOnly ./src/event-importer"
   },
   "devDependencies": {
     "@types/auth0": "^2.9.19",
@@ -17,6 +18,7 @@
     "@types/jest": "^24.0.18",
     "@types/jsonwebtoken": "^8.3.2",
     "@types/mailgun-js": "^0.22.3",
+    "@types/mjml": "^4.0.2",
     "@types/mongoose": "^5.5.13",
     "@types/nunjucks": "^3.1.2",
     "@types/ramda": "^0.26.18",
@@ -33,7 +35,6 @@
     "typescript": "^3.5.3"
   },
   "dependencies": {
-    "@types/mjml": "^4.0.2",
     "apollo-errors": "^1.9.0",
     "auth0": "^2.18.0",
     "date-fns": "^2.4.0",

@@ -117,6 +117,7 @@ export interface NexusGenFieldTypes {
     id: string; // String!
   }
   Mutation: { // field return type
+    batchImport: boolean; // Boolean!
     createEvent: NexusGenRootTypes['Event']; // Event!
     deleteEvent: NexusGenRootTypes['IDPayload']; // IDPayload!
     forgotPassword: boolean; // Boolean!

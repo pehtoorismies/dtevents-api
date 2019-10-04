@@ -60,6 +60,7 @@ type IDPayload {
 }
 
 type Mutation {
+  batchImport: Boolean!
   createEvent(addMe: Boolean = false, event: EventData!, notifySubscribers: Boolean = true): Event!
   deleteEvent(id: ID!): IDPayload!
   forgotPassword(email: String!): Boolean!

@@ -23,6 +23,7 @@ import {
 } from '../errors';
 import { ISimpleUser } from '../types';
 import { notifyEventCreationSubscribers } from '../nofications';
+import fetchOldEvents from '../event-importer/fetchOldEvents';
 
 const fetchUserEmail = async (
   username: string,
@@ -266,7 +267,7 @@ export const Mutation = objectType({
     t.field('createEvent', {
       type: 'Event',
       args: {
-        event: arg({ type: EventInput, required: true}),
+        event: arg({ type: EventInput, required: true }),
         addMe: booleanArg({ default: false }),
         notifySubscribers: booleanArg({ default: true }),
       },
@@ -293,6 +294,30 @@ export const Mutation = objectType({
         }
 
         return createdEvent;
+      },
+    });
+
+    t.field('batchImport', {
+      type: 'Boolean',
+      args: {},
+      async resolve(
+        _,
+        {},
+        { mongoose, user }: { mongoose: any; user: ISimpleUser },
+      ) {
+        const { EventModel } = mongoose;
+
+        const events = await fetchOldEvents();
+
+        events.forEach(async evt => {
+          const eventWithCreator = {
+            ...evt,
+            creator: user,
+          };
+          const e = await EventModel.create(eventWithCreator);
+          console.log('Added', e.title);
+        });
+        return true;
       },
     });
 
