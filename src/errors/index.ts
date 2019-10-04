@@ -18,3 +18,4 @@ export const AuthorizationError = create(
 );
 export const JWTError = create('JWTError', 'JWT error');
 export const NotFoundError = create('NotFoundError', 'Record not found');
+export const ServerError = create('ServerError', 'Internal error');

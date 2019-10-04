@@ -7,14 +7,15 @@
 import { core } from "nexus"
 declare global {
   interface NexusGenCustomInputMethods<TypeName extends string> {
-    date<FieldName extends string>(fieldName: FieldName, opts?: core.ScalarInputFieldConfig<core.GetGen3<"inputTypes", TypeName, FieldName>>): void // "Date";
+    date<FieldName extends string>(fieldName: FieldName, opts?: core.ScalarInputFieldConfig<core.GetGen3<"inputTypes", TypeName, FieldName>>): void // "DateTime";
   }
 }
 declare global {
   interface NexusGenCustomOutputMethods<TypeName extends string> {
-    date<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "Date";
+    date<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "DateTime";
   }
 }
+
 
 declare global {
   interface NexusGen extends NexusGenTypes {}
@@ -24,9 +25,9 @@ export interface NexusGenInputs {
   EventData: { // input type
     date: string; // String!
     description?: string | null; // String
+    exactTime?: boolean | null; // Boolean
     race?: boolean | null; // Boolean
     subtitle?: string | null; // String
-    time?: string | null; // String
     title: string; // String!
     type: string; // String!
   }
@@ -43,32 +44,40 @@ export interface NexusGenRootTypes {
     idToken: string; // String!
   }
   Event: { // root type
-    createdAt: any; // Date!
+    createdAt: any; // DateTime!
     creator: NexusGenRootTypes['SimpleUser']; // SimpleUser!
-    date: any; // Date!
-    description: string; // String!
+    date: any; // DateTime!
+    description?: string | null; // String
+    exactTime?: boolean | null; // Boolean
     id: string; // String!
     participants: NexusGenRootTypes['SimpleUser'][]; // [SimpleUser!]!
     race: boolean; // Boolean!
-    subtitle: string; // String!
-    time: string; // String!
+    subtitle?: string | null; // String
     title: string; // String!
     type: NexusGenEnums['EventType']; // EventType!
-    updatedAt: any; // Date!
+    updatedAt: any; // DateTime!
+  }
+  IDPayload: { // root type
+    id: string; // String!
   }
   Mutation: {};
+  Preferences: { // root type
+    subscribeEventCreationEmail: boolean; // Boolean!
+    subscribeWeeklyEmail: boolean; // Boolean!
+  }
   Query: {};
   SimpleUser: { // root type
-    userId: string; // String!
+    id: string; // String!
     username: string; // String!
   }
   User: { // root type
     auth0Id: string; // String!
-    createdAt: any; // Date!
+    createdAt: any; // DateTime!
     email: string; // String!
     id: string; // String!
     name: string; // String!
-    updatedAt: any; // Date!
+    preferences: NexusGenRootTypes['Preferences']; // Preferences!
+    updatedAt: any; // DateTime!
     username: string; // String!
   }
   String: string;
@@ -76,7 +85,7 @@ export interface NexusGenRootTypes {
   Float: number;
   Boolean: boolean;
   ID: string;
-  Date: any;
+  DateTime: any;
 }
 
 export interface NexusGenAllTypes extends NexusGenRootTypes {
@@ -91,44 +100,57 @@ export interface NexusGenFieldTypes {
     idToken: string; // String!
   }
   Event: { // field return type
-    createdAt: any; // Date!
+    createdAt: any; // DateTime!
     creator: NexusGenRootTypes['SimpleUser']; // SimpleUser!
-    date: any; // Date!
-    description: string; // String!
+    date: any; // DateTime!
+    description: string | null; // String
+    exactTime: boolean | null; // Boolean
     id: string; // String!
     participants: NexusGenRootTypes['SimpleUser'][]; // [SimpleUser!]!
     race: boolean; // Boolean!
-    subtitle: string; // String!
-    time: string; // String!
+    subtitle: string | null; // String
     title: string; // String!
     type: NexusGenEnums['EventType']; // EventType!
-    updatedAt: any; // Date!
+    updatedAt: any; // DateTime!
+  }
+  IDPayload: { // field return type
+    id: string; // String!
   }
   Mutation: { // field return type
+    batchImport: boolean; // Boolean!
     createEvent: NexusGenRootTypes['Event']; // Event!
-    deleteEvent: boolean; // Boolean!
-    joinEvent: NexusGenRootTypes['Event']; // Event!
+    deleteEvent: NexusGenRootTypes['IDPayload']; // IDPayload!
+    forgotPassword: boolean; // Boolean!
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
     signup: NexusGenRootTypes['User']; // User!
-    unjoinEvent: NexusGenRootTypes['Event']; // Event!
+    toggleJoinEvent: NexusGenRootTypes['Event']; // Event!
+    updateEvent: NexusGenRootTypes['Event']; // Event!
+    updateMyPreferences: NexusGenRootTypes['User']; // User!
+  }
+  Preferences: { // field return type
+    subscribeEventCreationEmail: boolean; // Boolean!
+    subscribeWeeklyEmail: boolean; // Boolean!
   }
   Query: { // field return type
     findEvent: NexusGenRootTypes['Event']; // Event!
     findManyEvents: NexusGenRootTypes['Event'][]; // [Event!]!
     liveness: boolean; // Boolean!
+    me: NexusGenRootTypes['User']; // User!
     readiness: boolean; // Boolean!
+    sendWeeklyEmail: boolean; // Boolean!
   }
   SimpleUser: { // field return type
-    userId: string; // String!
+    id: string; // String!
     username: string; // String!
   }
   User: { // field return type
     auth0Id: string; // String!
-    createdAt: any; // Date!
+    createdAt: any; // DateTime!
     email: string; // String!
     id: string; // String!
     name: string; // String!
-    updatedAt: any; // Date!
+    preferences: NexusGenRootTypes['Preferences']; // Preferences!
+    updatedAt: any; // DateTime!
     username: string; // String!
   }
 }
@@ -137,13 +159,14 @@ export interface NexusGenArgTypes {
   Mutation: {
     createEvent: { // args
       addMe?: boolean | null; // Boolean
-      event?: NexusGenInputs['EventData'] | null; // EventData
+      event: NexusGenInputs['EventData']; // EventData!
+      notifySubscribers?: boolean | null; // Boolean
     }
     deleteEvent: { // args
       id: string; // ID!
     }
-    joinEvent: { // args
-      eventId: string; // ID!
+    forgotPassword: { // args
+      email: string; // String!
     }
     login: { // args
       password: string; // String!
@@ -156,8 +179,16 @@ export interface NexusGenArgTypes {
       registerSecret: string; // String!
       username: string; // String!
     }
-    unjoinEvent: { // args
-      eventId: string; // ID!
+    toggleJoinEvent: { // args
+      id: string; // ID!
+    }
+    updateEvent: { // args
+      event?: NexusGenInputs['EventData'] | null; // EventData
+      id: string; // ID!
+    }
+    updateMyPreferences: { // args
+      subscribeEventCreationEmail?: boolean | null; // Boolean
+      subscribeWeeklyEmail?: boolean | null; // Boolean
     }
   }
   Query: {
@@ -175,7 +206,7 @@ export interface NexusGenAbstractResolveReturnTypes {
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "AuthPayload" | "Event" | "Mutation" | "Query" | "SimpleUser" | "User";
+export type NexusGenObjectNames = "AuthPayload" | "Event" | "IDPayload" | "Mutation" | "Preferences" | "Query" | "SimpleUser" | "User";
 
 export type NexusGenInputNames = "EventData";
 
@@ -183,7 +214,7 @@ export type NexusGenEnumNames = "EventType";
 
 export type NexusGenInterfaceNames = never;
 
-export type NexusGenScalarNames = "Boolean" | "Date" | "Float" | "ID" | "Int" | "String";
+export type NexusGenScalarNames = "Boolean" | "DateTime" | "Float" | "ID" | "Int" | "String";
 
 export type NexusGenUnionNames = never;
 

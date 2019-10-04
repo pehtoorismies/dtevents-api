@@ -1,5 +1,8 @@
-import { intArg, objectType, idArg } from 'nexus';
-import { Event } from './Event';
+import startOfToday from 'date-fns/startOfToday';
+import { idArg, intArg, objectType } from 'nexus';
+
+import { NotFoundError } from '../errors';
+import { notifyWeeklySubscribers } from '../nofications'
 
 export const Query = objectType({
   name: 'Query',
@@ -20,42 +23,52 @@ export const Query = objectType({
     });
 
     t.list.field('findManyEvents', {
-      type: Event,
+      type: 'Event',
       args: {
         limit: intArg({ default: 0 }),
       },
       async resolve(_, { limit = 0 }, { mongoose }) {
         const { EventModel } = mongoose;
-        const events = await EventModel.find({ date: { $gte: new Date() } })
+
+        const events = await EventModel.find({ date: { $gte: startOfToday() } })
           .sort('date')
           .limit(limit);
+
         return events;
       },
     });
 
     t.field('findEvent', {
-      type: Event,
+      type: 'Event',
       args: {
         id: idArg({ required: true }),
       },
       async resolve(_, { id }, { mongoose }) {
         const { EventModel } = mongoose;
         const event = await EventModel.findById(id);
+        if (!event) {
+          return new NotFoundError({
+            message: `Event with id ${id} not found`,
+          });
+        }
         return event;
       },
     });
 
-    // t.crud.findManyEvent({
-    //   alias: 'allEvents',
-    // });
-    // t.crud.findOneEvent({
-    //   alias: 'event',
-    // });
-    // t.crud.findManyUser({
-    //   alias: 'allUsers',
-    // });
-    // t.crud.findOneUser({
-    //   alias: 'user',
-    // });
+    t.field('me', {
+      type: 'User',
+      async resolve(_, __, { user }) {
+        return user;
+      },
+    });
+
+    t.field('sendWeeklyEmail', {
+      type: 'Boolean',
+      async resolve(_, __, { mongoose }) {
+        const { EventModel, UserModel } = mongoose;
+        notifyWeeklySubscribers(UserModel, EventModel);
+        return true;
+      },
+    });
   },
 });

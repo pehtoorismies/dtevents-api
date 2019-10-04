@@ -1,71 +1,99 @@
+import EmailValidator from 'email-validator';
 import { Schema } from 'mongoose';
-import * as EmailValidator from 'email-validator';
-import { EVENT_TYPES } from '../constants';
+
+import { EVENT_ENUMS } from '../constants';
+
 
 const timestamps = {
-  createdAt: 'created_at', updatedAt: 'updatedAt'
-}
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+};
 
-// USER
-export const UserSchema = new Schema({
-  auth0Id: {
-    type: String,
-    required: true,
-    index: true,
-    unique: true,
+const PreferencesSchema = new Schema({
+  subscribeWeeklyEmail: {
+    type: Boolean,
+    default: true,
   },
-  email: {
-    type: String,
-    validate: {
-      validator: (email: string) => EmailValidator.validate(email),
-      // @ts-ignore: Don't know how to fix
-      message: (props: any) => `${props.value} is not a valid email!`,
-    },
-    index: true,
-    required: true
+  subscribeEventCreationEmail: {
+    type: Boolean,
+    default: true,
   },
-  username: {
-    type: String,
-    index: true,
-    unique: true,
-    required: true
-  },
-  name: String,
-}, { timestamps });
-
-
-export const SimpleUser = new Schema({
-  username: String,
-  userId: String
 });
 
-
-// EVENT
-export const EventSchema = new Schema({
-  title: {
-    type: String,
-    required: true,
-  },
-  type: {
-    type: String,
-    enum: EVENT_TYPES,
-    required: true,
-  },
-  subtitle: String,
-  race: { type: Boolean, default: false },
-  date: {
-    type: Date,
-    required: true,
-  },
-  time: String,
-  description: String,
-  participants: [SimpleUser],
-  creator: {
-    type: SimpleUser,
-    default: {
-      userId: 0,
-      username: 'unknown'
+// USER
+const UserSchema = new Schema(
+  {
+    auth0Id: {
+      type: String,
+      required: true,
+      index: true,
+      unique: true,
+    },
+    email: {
+      type: String,
+      validate: {
+        validator: (email: string) => EmailValidator.validate(email),
+        // @ts-ignore: Don't know how to fix
+        message: (props: any) => `${props.value} is not a valid email!`,
+      },
+      index: true,
+      required: true,
+    },
+    username: {
+      type: String,
+      index: true,
+      unique: true,
+      required: true,
+    },
+    name: String,
+    preferences: {
+      type: PreferencesSchema,
+      default: PreferencesSchema,
     },
   },
+  { timestamps },
+);
 
-}, { timestamps });
+const SimpleUserSchema = new Schema({
+  username: String,
+  // _id: String
+});
+
+SimpleUserSchema.virtual('id').get(function() {
+  // @ts-ignore
+  return this._id.toHexString();
+});
+
+// EVENT
+const EventSchema = new Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+    },
+    type: {
+      type: String,
+      enum: EVENT_ENUMS,
+      required: true,
+    },
+    subtitle: String,
+    race: { type: Boolean, default: false },
+    date: {
+      type: Date,
+      required: true,
+    },
+    exactTime: Boolean,
+    description: String,
+    participants: [SimpleUserSchema],
+    creator: {
+      type: SimpleUserSchema,
+      default: {
+        // _id: 0,
+        username: 'unknown',
+      },
+    },
+  },
+  { timestamps },
+);
+
+export { EventSchema, PreferencesSchema, SimpleUserSchema, UserSchema };

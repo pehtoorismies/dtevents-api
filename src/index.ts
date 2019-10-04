@@ -1,42 +1,66 @@
-import { makeSchema } from 'nexus';
-import { connection, connect, model } from 'mongoose';
-import { GraphQLServer } from 'graphql-yoga';
-import { join } from 'path';
 import { formatError } from 'apollo-errors';
-// import { Context } from './types';
-import resolvers from './resolvers';
-import { UserSchema, EventSchema } from './db-schema';
+import { GraphQLServer } from 'graphql-yoga';
+import { connect, connection, model } from 'mongoose';
+import { makeSchema } from 'nexus';
+import { join } from 'path';
+
+import { config } from './config';
+import { EventSchema, UserSchema } from './db-schema';
 import {
-  requestScopes,
-  permissions,
   accessToken,
   addUserData,
+  permissions,
+  requestScopes,
 } from './middleware';
-import { config } from './config';
+import resolvers from './resolvers';
 
+// import { Context } from './types';
 const {
   AuthPayload,
-  User,
   DateTime,
-  Mutation,
-  Query,
   Event,
+  IDPayload,
+  Mutation,
+  Preferences,
+  Query,
   SimpleUser,
+  User,
 } = resolvers;
 
 const { mongoUrl } = config;
 
+const serverOptions = {
+  port: 4000,
+  endpoint: '/graphql',
+  subscriptions: '/subscriptions',
+  playground: '/playground',
+  getEndpoint: true, // enable for liveness/readiness probes
+  formatError,
+};
+
+const mongoOptions = {
+  useNewUrlParser: true,
+  autoIndex: false,
+  reconnectInterval: 500,
+  reconnectTries: Number.MAX_VALUE,
+  bufferMaxEntries: 10,
+  useFindAndModify: false,
+};
+
 const startServer = () => {
-  const options = {
-    port: 4000,
-    endpoint: '/graphql',
-    subscriptions: '/subscriptions',
-    playground: '/playground',
-    getEndpoint: true, // enable for liveness/readiness probes
-    formatError,
-  };
   const schema = makeSchema({
-    types: [AuthPayload, Event, User, DateTime, Mutation, Query, SimpleUser],
+    types: [
+      AuthPayload,
+      IDPayload,
+      DateTime,
+      Event,
+      Mutation,
+      Preferences,
+      Query,
+      SimpleUser,
+      User,
+    ],
+
     outputs: {
       typegen: join(__dirname, '../generated/nexus-typegen.ts'),
       schema: join(__dirname, '/schema.graphql'),
@@ -69,7 +93,7 @@ const startServer = () => {
     // middlewares: [accessToken],
   });
 
-  server.start(options, ({ port }) =>
+  server.start(serverOptions, ({ port }) =>
     console.log(`🚀🚀🚀🚀🚀🚀🚀 Server started on port ${port} 🚀🚀🚀🚀🚀🚀🚀`),
   );
 };
@@ -88,18 +112,12 @@ connection.on('reconnect', () => {
 });
 
 connection.on('connected', () => {
-  startServer();
+  console.log('-> connected');
 });
 
 connect(
   mongoUrl,
-  {
-    useNewUrlParser: true,
-    autoIndex: false,
-    reconnectInterval: 500,
-    reconnectTries: Number.MAX_VALUE,
-    bufferMaxEntries: 0,
-  },
+  mongoOptions,
 ).then(
   () => {
     console.log('Ready');
@@ -108,3 +126,5 @@ connect(
     console.error(err);
   },
 );
+
+startServer();

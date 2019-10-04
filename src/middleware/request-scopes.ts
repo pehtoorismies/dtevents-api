@@ -1,8 +1,9 @@
 import * as jwt from 'jsonwebtoken';
-import * as R from 'ramda';
-import { getMatchingPubKey, getScopes } from '../util';
+import R from 'ramda';
+
 import { config } from '../config';
 import { JWTError } from '../errors';
+import { getMatchingPubKey, getScopes } from '../util';
 
 const getKID = R.path(['header', 'kid']);
 
@@ -42,6 +43,7 @@ const requestScopes = async (
       issuer: `https://${config.auth.domain}/`,
       algorithms: ['RS256'],
     });
+    
     const scopes: string[] = getScopes(token.scope);
     const sub = R.path(['payload', 'sub'], decodedToken)
 

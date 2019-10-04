@@ -1,24 +1,25 @@
-version: '3.7'
+version: "3.7"
 services:
   mongo:
     image: mongo:4.0.0
     ports:
-      - '27017:27017'
+      - "27017:27017"
     volumes:
-      - mongo:/data/mongo
-  backend:
-    env_file:
-      - .env
-    environment:
-      - MONGO_URL=mongodb://mongo:27017/dt65
-    links:
-      - mongo
-    depends_on:
-      - mongo
-    container_name: backend
-    ports:
-      - '4000:4000'
-    build: .
- 
+      - "./data:/data/db"
+  # backend:
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     - MONGO_URL=mongodb://mongo:27017/dt65
+  #   links:
+  #     - mongo
+  #   depends_on:
+  #     - mongo
+  #   container_name: backend
+  #   ports:
+  #     - '4000:4000'
+  #   build: .
+  #   command: dev
+
 volumes: #define mongo volume used above
   mongo:

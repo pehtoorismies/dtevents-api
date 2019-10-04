@@ -13,16 +13,15 @@ const fetchUser = async (
   if (!sub) {
     return new Error('Middleware error, no sub found');
   }
+
   const user = await UserModel.findOne({ auth0Id: sub });
   if (!user) {
     return new Error('Middleware error. No user found in db');
   }
+  
   const newContext = {
     ...context,
-    user: {
-      username: user.username,
-      userId: user.id,
-    },
+    user,
   };
   const result = await resolve(root, args, newContext, info);
   return result;
@@ -30,17 +29,13 @@ const fetchUser = async (
 
 const addUserData = {
   Query: {
-    // allUsers: rules.isUserReader,
-    // allEvents: rules.isEventReader,
-    // event: rules.isEventReader,
-    // user: rules.isUserReader,
+    me: fetchUser,
   },
   Mutation: {
     createEvent: fetchUser,
-    // deleteEvent: rules.isEventWriter,
-    // updateEvent: rules.isEventWriter,
-    joinEvent: fetchUser,
-    unjoinEvent: fetchUser,
+    toggleJoinEvent: fetchUser,
+    updateMyPreferences: fetchUser,
+    batchImport: fetchUser,
   },
 };
 

@@ -8,3 +8,10 @@ export const AuthPayload = objectType({
     t.string('expiresIn');
   },
 });
+
+export const IDPayload = objectType({
+  name: 'IDPayload',
+  definition(t) {
+    t.string('id');
+  },
+});

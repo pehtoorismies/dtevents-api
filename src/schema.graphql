@@ -9,35 +9,33 @@ type AuthPayload {
 }
 
 """
-A date string, such as 2007-12-03, compliant with the `full-date` format
-outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for
-representation of dates and times using the Gregorian calendar.
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the
+`date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO
+8601 standard for representation of dates and times using the Gregorian calendar.
 """
-scalar Date
+scalar DateTime
 
 type Event {
-  createdAt: Date!
+  createdAt: DateTime!
   creator: SimpleUser!
-  date: Date!
-  description: String!
-
-  """Id of the event"""
+  date: DateTime!
+  description: String
+  exactTime: Boolean
   id: String!
   participants: [SimpleUser!]!
   race: Boolean!
-  subtitle: String!
-  time: String!
+  subtitle: String
   title: String!
   type: EventType!
-  updatedAt: Date!
+  updatedAt: DateTime!
 }
 
 input EventData {
   date: String!
   description: String
+  exactTime: Boolean = false
   race: Boolean
   subtitle: String
-  time: String
   title: String!
   type: String!
 }
@@ -57,13 +55,25 @@ enum EventType {
   Ultras
 }
 
+type IDPayload {
+  id: String!
+}
+
 type Mutation {
-  createEvent(addMe: Boolean = false, event: EventData): Event!
-  deleteEvent(id: ID!): Boolean!
-  joinEvent(eventId: ID!): Event!
+  batchImport: Boolean!
+  createEvent(addMe: Boolean = false, event: EventData!, notifySubscribers: Boolean = true): Event!
+  deleteEvent(id: ID!): IDPayload!
+  forgotPassword(email: String!): Boolean!
   login(password: String!, usernameOrEmail: String!): AuthPayload!
   signup(email: String!, name: String!, password: String!, registerSecret: String!, username: String!): User!
-  unjoinEvent(eventId: ID!): Event!
+  toggleJoinEvent(id: ID!): Event!
+  updateEvent(event: EventData, id: ID!): Event!
+  updateMyPreferences(subscribeEventCreationEmail: Boolean, subscribeWeeklyEmail: Boolean): User!
+}
+
+type Preferences {
+  subscribeEventCreationEmail: Boolean!
+  subscribeWeeklyEmail: Boolean!
 }
 
 """Queries"""
@@ -71,23 +81,23 @@ type Query {
   findEvent(id: ID!): Event!
   findManyEvents(limit: Int = 0): [Event!]!
   liveness: Boolean!
+  me: User!
   readiness: Boolean!
+  sendWeeklyEmail: Boolean!
 }
 
 type SimpleUser {
-  """Id of the user"""
-  userId: String!
+  id: String!
   username: String!
 }
 
 type User {
   auth0Id: String!
-  createdAt: Date!
+  createdAt: DateTime!
   email: String!
-
-  """Id of the user"""
   id: String!
   name: String!
-  updatedAt: Date!
+  preferences: Preferences!
+  updatedAt: DateTime!
   username: String!
 }
