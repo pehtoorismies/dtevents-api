@@ -158,7 +158,8 @@ export interface NexusGenArgTypes {
   Mutation: {
     createEvent: { // args
       addMe?: boolean | null; // Boolean
-      event?: NexusGenInputs['EventData'] | null; // EventData
+      event: NexusGenInputs['EventData']; // EventData!
+      notifySubscribers?: boolean | null; // Boolean
     }
     deleteEvent: { // args
       id: string; // ID!

@@ -5,6 +5,7 @@ import {
   inputObjectType,
   objectType,
   stringArg,
+  arg,
 } from 'nexus';
 import { assoc, contains, findIndex, path, propEq, remove } from 'ramda';
 
@@ -265,12 +266,13 @@ export const Mutation = objectType({
     t.field('createEvent', {
       type: 'Event',
       args: {
-        event: EventInput,
+        event: arg({ type: EventInput, required: true}),
         addMe: booleanArg({ default: false }),
+        notifySubscribers: booleanArg({ default: true }),
       },
       async resolve(
         _,
-        { addMe, event },
+        { addMe, event, notifySubscribers },
         { mongoose, user }: { mongoose: any; user: ISimpleUser },
       ) {
         const { EventModel, UserModel } = mongoose;
@@ -286,7 +288,9 @@ export const Mutation = objectType({
 
         const createdEvent = await EventModel.create(withMe);
 
-        notifyEventCreationSubscribers(UserModel, createdEvent);
+        if (notifySubscribers) {
+          notifyEventCreationSubscribers(UserModel, createdEvent);
+        }
 
         return createdEvent;
       },
