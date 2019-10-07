@@ -63,7 +63,7 @@ export const notifyWeeklySubscribers = async (
     date: { $gte: now, $lte: weekFromNow },
   };
 
-  const events = await EventModel.find(search);
+  const events = await EventModel.find(search).sort( { date: 1 } );
 
   const emailObjects: IMailRecipient[] = await UserModel.find(
     {
