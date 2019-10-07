@@ -24,16 +24,18 @@
         <mj-button background-color="#FF80EA" href="{{event.eventUrl}}">Näytä tapahtuma</mj-button>
       </mj-column>
     </mj-section>
-    <mj-section background-color="#eeeeee" padding="20px 0 5px 0">
-      <mj-column width="200px">
-        <mj-text font-size="20px" line-height="1px" font-family="Helvetica Neue" color="#626262">{{event.title}}</mj-text>
-        <mj-text font-style="italic" line-height="1px" font-size="16px" font-family="Helvetica Neue" color="#626262">{{event.subtitle}}</mj-text>
-      </mj-column>
-      <mj-column width="200px">
-        <mj-text font-size="20px"  line-height="1px" font-family="Helvetica Neue" color="#626262">{{event.weekDay}}</mj-text>
-        <mj-text font-style="italic" line-height="1px" font-size="16px" font-family="Helvetica Neue" color="#626262">{{event.date}}</mj-text>
+    <mj-section background-color="#eeeeee" padding="10px 0 5px 0">
+      <mj-column width="600px">
+        <mj-text font-size="16px" line-height="1px" font-family="Helvetica Neue" color="#626262">{{event.weekDay}} {{event.date}}</mj-text>
       </mj-column>
     </mj-section>
+    <mj-section background-color="#eeeeee" padding="5px 0 5px 0">
+      <mj-column width="600px">
+        <mj-text font-size="20px" font-weight="bold "line-height="1px" font-family="Helvetica Neue" color="#626262">{{event.title}}</mj-text>
+        <mj-text font-style="italic" line-height="1px" font-size="16px" font-family="Helvetica Neue" color="#626262">{{event.subtitle}}</mj-text>
+      </mj-column>
+    </mj-section>
+    
     <mj-section background-color="#eeeeee" padding="10px 0 20px 0">
       <mj-column width="400px">
         <mj-text align="center" font-size="14px" line-height="1px" font-family="Helvetica Neue" color="#626262">Osallistujia: {{event.participantCount}}</mj-text>
