@@ -31,7 +31,7 @@
     </mj-section>
     <mj-section background-color="#eeeeee" padding="5px 0 5px 0">
       <mj-column width="600px">
-        <mj-text font-size="20px" font-weight="bold "line-height="1px" font-family="Helvetica Neue" color="#626262">{{event.subtitle}}</mj-text>
+        <mj-text font-size="20px" font-weight="bold "line-height="1px" font-family="Helvetica Neue" color="#626262">{{event.title}}</mj-text>
         <mj-text font-style="italic" line-height="1px" font-size="16px" font-family="Helvetica Neue" color="#626262">{{event.subtitle}}</mj-text>
       </mj-column>
     </mj-section>
