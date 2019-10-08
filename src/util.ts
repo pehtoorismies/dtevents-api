@@ -1,6 +1,18 @@
-import { addIndex, find, pipe, prop, propEq, reject, split, join, pluck, reduce, assoc } from 'ramda';
-import rp from 'request-promise';
 import { messages } from 'mailgun-js';
+import {
+  addIndex,
+  assoc,
+  find,
+  join,
+  pipe,
+  pluck,
+  prop,
+  propEq,
+  reduce,
+  reject,
+  split,
+} from 'ramda';
+import rp from 'request-promise';
 
 import { config } from './config';
 import { IEventType, IMailRecipient } from './types';
@@ -60,16 +72,15 @@ const indexedReducer = addIndex(reduce);
 export const recipientVariables = (
   recipients: IMailRecipient[],
 ): messages.BatchSendRecipientVars => {
-  const reducer = (acc : any, curr: IMailRecipient, id: number) => {
+  const reducer = (acc: any, curr: IMailRecipient, id: number) => {
     const { email, name } = curr;
-    
+
     const valueObj = {
       first: name,
       id: String(id),
-    }
+    };
     return assoc(email, valueObj, acc);
   };
   // @ts-ignore
   return indexedReducer(reducer, {}, recipients);
-
 };

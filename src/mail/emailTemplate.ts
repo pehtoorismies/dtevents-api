@@ -1,15 +1,15 @@
+import fs from 'fs';
+import nunjucks from 'nunjucks';
+import path from 'path';
+import { map } from 'ramda';
+import util from 'util';
+
 import {
-  IEventEmailOptions,
   IEmailTemplate,
+  IEventEmailOptions,
   IWeeklyEmailOptions,
   IWeeklyOptions,
 } from '../types';
-
-import fs from 'fs';
-import util from 'util';
-import path from 'path';
-import nunjucks from 'nunjucks';
-import { map } from 'ramda';
 
 interface ICache {
   event?: string;
@@ -75,7 +75,7 @@ const createWeeklyEmail = async (
     const t: string = await loadTemplate('weekly_email.mjml');
     cache.weekly = t;
   }
-  
+
   const mjmlText = nunjucks.renderString(cache.weekly, options);
   const plainText = `
     Kippis, 

@@ -28,7 +28,7 @@
       <mj-column width="400px">
         <mj-text font-size="20px" font-family="Helvetica Neue" color="#626262">{{title}}</mj-text>
         <mj-text font-style="italic" font-size="16px" font-family="Helvetica Neue" color="#626262">{{date}}</mj-text>
-        <mj-text color="#525252">{{description}}</mj-text>
+        <mj-text color="#525252">{{description | safe}}</mj-text>
       </mj-column>
     </mj-section>
     <mj-section background-color="#dfdfdf">
