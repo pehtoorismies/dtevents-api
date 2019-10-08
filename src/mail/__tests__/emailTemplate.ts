@@ -9,8 +9,12 @@ test('Creation email', async () => {
     date: '12.2.2022 (tiistai)',
     eventUrl: '/url/',
     creator: 'metsäsika',
-    description: 'kuvaus',
-    preferencesUrl: 'do_not_care'
+    description: `<ol>
+                    <li>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</li>
+                    <li>Aliquam tincidunt mauris eu risus.</li>
+                    <li>Vestibulum auctor dapibus neque.</li>
+                  </ol>`,
+    preferencesUrl: 'do_not_care',
   };
 
   const data = await createEventMail(options);
@@ -19,7 +23,7 @@ test('Creation email', async () => {
   expect(data.mjmlText).toMatch(/skiing/);
   expect(data.mjmlText).toMatch(/Hiihto/);
   expect(data.mjmlText).toMatch(/metsäsika/);
-  expect(data.mjmlText).toMatch(/kuvaus/);
+  expect(data.mjmlText).toMatch(/<ol>/);
   expect(data.plainText).toMatch(/Kippis,/);
 });
 
@@ -37,7 +41,7 @@ test('Creation email', async () => {
         subtitle: 'subbis',
         weekDay: 'tiistai',
         participantCount: 5,
-        preferencesUrl: 'do_not_care'
+        preferencesUrl: 'do_not_care',
       },
       {
         title: 'some other',
@@ -50,7 +54,7 @@ test('Creation email', async () => {
         subtitle: 'subtitle2',
         weekDay: 'keskiviikko',
         participantCount: 6,
-        preferencesUrl: 'do_not_care'
+        preferencesUrl: 'do_not_care',
       },
     ],
     preferencesUrl: 'some_url',
