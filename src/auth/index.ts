@@ -20,7 +20,8 @@ const loginAuthZeroUser = async (
       password,
       username,
       // @ts-ignore: Don't know how to fix
-      scope: 'read:events write:events read:me write:me openid profile',
+      scope:
+        'read:events write:events read:me write:me read:users openid profile',
       audience: jwtAudience,
     });
 
@@ -89,13 +90,12 @@ const requestChangePasswordEmail = (email: string): boolean => {
     auth0.requestChangePasswordEmail({
       email,
       connection: 'Username-Password-Authentication',
-    });  
+    });
   } catch (error) {
-    console.error(error);    
+    console.error(error);
   } finally {
     return true;
   }
-
 };
 
 export { createAuthZeroUser, loginAuthZeroUser, requestChangePasswordEmail };

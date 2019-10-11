@@ -55,6 +55,16 @@ export const Query = objectType({
       },
     });
 
+    t.list.field('users', {
+      type: 'BaseUser',
+      async resolve(_, __, { mongoose }) {
+        const { UserModel } = mongoose;
+
+        const users = await UserModel.find({}).sort('username');
+        return users;
+      },
+    });
+
     t.field('me', {
       type: 'User',
       async resolve(_, __, { user }) {

@@ -31,3 +31,15 @@ export const SimpleUser = objectType({
     t.string('username');
   },
 });
+
+
+
+export const BaseUser = objectType({
+  name: 'BaseUser',
+  definition(t) {
+    t.string('id');
+    t.string('username');
+    t.string('name');
+  },
+});
+
