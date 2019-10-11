@@ -230,6 +230,36 @@ export const Mutation = objectType({
       },
     });
 
+    t.field('updateMe', {
+      type: 'User',
+      args: {
+        name: stringArg({ required: false }),
+      },
+      async resolve(
+        _,
+        { name },
+        { mongoose, user },
+      ) {
+        const { UserModel } = mongoose;
+        const conditions = { _id: user.id };
+
+        const update = {
+          name
+        };
+        const options = {
+          new: true,
+        };
+
+        const res = await UserModel.findOneAndUpdate(
+          conditions,
+          update,
+          options,
+        );
+
+        return res;
+      },
+    });
+
     t.field('updateMyPreferences', {
       type: 'User',
       args: {

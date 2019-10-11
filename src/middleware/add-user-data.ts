@@ -36,6 +36,7 @@ const addUserData = {
     toggleJoinEvent: fetchUser,
     updateMyPreferences: fetchUser,
     batchImport: fetchUser,
+    updateMe: fetchUser,
   },
 };
 

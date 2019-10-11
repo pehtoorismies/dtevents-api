@@ -49,6 +49,7 @@ const permissions = shield({
     toggleJoinEvent: rules.isEventWriter,
     updateMyPreferences: rules.isMeWriter,
     batchImport: rules.isEventWriter,
+    updateMe: rules.isMeWriter,
   },
 });
 export default permissions;

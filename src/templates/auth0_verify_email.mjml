@@ -14,22 +14,23 @@
         <mj-image width="100px" src="https://storage.googleapis.com/downtown65/logos/logo_black.png"></mj-image>
       </mj-column>
     </mj-section>
+    <mj-section background-url="https://storage.googleapis.com/downtown65/images/bike_bg.jpg" background-size="cover" background-repeat="no-repeat">
+      <mj-column width="600px">
+        <mj-text align="center" font-size="30px" font-weight="bold" font-family="Helvetica Neue" color="white">tunnus: {{user.nickname}}</mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#eeeeee">
+      <mj-column width="400px">
+        <mj-text font-size="16px" font-family="Helvetica Neue" color="#626262">Moro {{user.nickname}}. Varmista sähköpostiosoitteesi:</mj-text>
+        <mj-button background-color="#FF80EA" href="{{ url }}">Varmista sähköpostiosoite</mj-button>
+        <mj-text font-size="16px" font-family="Helvetica Neue" color="#626262">Tai alla olevasta linkistä:</mj-text>
+        <mj-text font-style="italic" font-size="16px" font-family="Helvetica Neue" color="#626262">{{ url }}</mj-text>
+        <mj-text font-size="16px" font-family="Helvetica Neue" color="#626262">Varmistuksen jälkeen voit kirjautua joko sähköpostiosoitteellasi ({{user.email}}) tai käyttäjätunnuksellasi ({{user.nickname}}).</mj-text>
+      </mj-column>
+    </mj-section>
     <mj-raw>
       <!-- Image Header -->
     </mj-raw>
-    <mj-section background-url="https://storage.googleapis.com/downtown65/images/bike_bg.jpg" background-size="cover" background-repeat="no-repeat">
-      <mj-column width="600px">
-        <mj-text align="center" font-size="30px" font-weight="bold" font-family="Helvetica Neue" color="white">Varmista sähköpostisi</mj-text>
-        <mj-button background-color="#FF80EA" href="{{ url }}">Varmista</mj-button>
-      </mj-column>
-    </mj-section>
-
-    <mj-section background-color="#eeeeee">
-      <mj-column width="400px">
-        <mj-text font-size="20px" font-family="Helvetica Neue" color="#626262">Tai alla olevasta linkistä:</mj-text>
-        <mj-text font-style="italic" font-size="16px" font-family="Helvetica Neue" color="#626262">{{ url }}</mj-text>
-      </mj-column>
-    </mj-section>
     <mj-section background-color="#dfdfdf">
       <mj-column width="400px">
         <mj-text align="center" line-height="1px" font-size="14px" font-family="Helvetica Neue" color="#626262">Admin-terveisin</mj-text>
