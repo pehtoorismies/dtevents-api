@@ -125,6 +125,7 @@ export interface NexusGenFieldTypes {
     signup: NexusGenRootTypes['User']; // User!
     toggleJoinEvent: NexusGenRootTypes['Event']; // Event!
     updateEvent: NexusGenRootTypes['Event']; // Event!
+    updateMe: NexusGenRootTypes['User']; // User!
     updateMyPreferences: NexusGenRootTypes['User']; // User!
   }
   Preferences: { // field return type
@@ -185,6 +186,9 @@ export interface NexusGenArgTypes {
     updateEvent: { // args
       event?: NexusGenInputs['EventData'] | null; // EventData
       id: string; // ID!
+    }
+    updateMe: { // args
+      name?: string | null; // String
     }
     updateMyPreferences: { // args
       subscribeEventCreationEmail?: boolean | null; // Boolean
