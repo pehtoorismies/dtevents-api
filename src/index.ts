@@ -17,6 +17,7 @@ import resolvers from './resolvers';
 // import { Context } from './types';
 const {
   AuthPayload,
+  BaseUser,
   DateTime,
   Event,
   IDPayload,
@@ -51,6 +52,7 @@ const startServer = () => {
   const schema = makeSchema({
     types: [
       AuthPayload,
+      BaseUser,
       IDPayload,
       DateTime,
       Event,
