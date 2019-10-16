@@ -14,6 +14,7 @@ import {
   loginAuthZeroUser,
   requestChangePasswordEmail,
   createUser,
+  fetchTokens,
 } from '../auth';
 import { config } from '../config';
 import {
@@ -124,7 +125,8 @@ export const Mutation = objectType({
           return errPassword;
         }
         try {
-          await createUser({ email, username, password, name });
+          const resp = await createUser({ email, username, password, name });
+          console.log('Created auth0 user: ', resp.auth0UserId);
           return true;
         } catch (error) {
           return new Auth0Error({
@@ -135,12 +137,49 @@ export const Mutation = objectType({
               },
             },
           });
-
         }
-        
-        // const { auth0UserId, error } = auth0User;
+      },
+    });
 
-        return false;
+    t.field('login_v2', {
+      type: 'AuthPayload',
+      args: {
+        usernameOrEmail: stringArg({ required: true }),
+        password: stringArg({ required: true }),
+      },
+      async resolve(_, { usernameOrEmail, password }, { mongoose }) {
+        if (!usernameOrEmail) {
+          throw new UserInputError({
+            data: {
+              field: 'usernameOrEmail',
+              message: 'Käyttäjätunnus puuttuu',
+            },
+          });
+        }
+        const isEmail = contains('@', usernameOrEmail);
+
+        if (isEmail && !EmailValidator.validate(usernameOrEmail)) {
+          return new UserInputError({
+            data: {
+              field: 'usernameOrEmail',
+              message: 'Email väärässä muodossa',
+            },
+          });
+        }
+
+        try {
+          const resp = await fetchTokens(usernameOrEmail, password);
+          return resp;
+        } catch (error) {
+          return new Auth0Error({
+            data: {
+              message: 'Kirjautumisvirhe',
+              internalData: {
+                error,
+              },
+            },
+          });
+        }
       },
     });
 

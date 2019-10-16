@@ -58,9 +58,7 @@ const axiosInstance = axios.create({
   },
 });
 
-const createUser = async (
-  user: IAuth0User,
-): Promise<IAuth0RegisterResponse> => {
+const fetchAccessToken = async (): Promise<string> => {
   const authResp = await axiosInstance.post('/oauth/token', {
     grant_type: 'client_credentials',
     client_id: clientId,
@@ -68,7 +66,13 @@ const createUser = async (
     audience: `https://${domain}/api/v2/`,
   });
 
-  const access_token = path(['data', 'access_token'], authResp);
+  return path(['data', 'access_token'], authResp) || '';
+};
+
+const createUser = async (
+  user: IAuth0User,
+): Promise<IAuth0RegisterResponse> => {
+  const accessToken = await fetchAccessToken();
 
   const data = {
     ...user,
@@ -84,13 +88,32 @@ const createUser = async (
   };
 
   Object.assign(axiosInstance.defaults, {
-    headers: { Authorization: `Bearer ${access_token}` },
+    headers: { Authorization: `Bearer ${accessToken}` },
   });
 
   const createResp = await axiosInstance.post('/api/v2/users', data);
-  console.log(createResp.data);
+  return { auth0UserId: createResp.data.userId };
+};
 
-  return { auth0UserId: '123' };
+const fetchTokens = async (
+  usernameOrEmail: string,
+  password: string,
+): Promise<{ accessToken: string; idToken: string }> => {
+  const { data } = await axiosInstance.post('/oauth/token', {
+    username: usernameOrEmail,
+    password,
+    grant_type: 'password',
+    audience: jwtAudience,
+    client_id: clientId,
+    client_secret: clientSecret,
+    scope:
+      'read:events write:events read:me write:me read:users openid profile',
+  });
+
+  return {
+    accessToken: data.access_token,
+    idToken: data.id_token,
+  };
 };
 
 const createAuthZeroUser = async (
@@ -155,4 +178,5 @@ export {
   loginAuthZeroUser,
   requestChangePasswordEmail,
   createUser,
+  fetchTokens,
 };
