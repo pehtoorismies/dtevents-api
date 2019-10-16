@@ -1,7 +1,13 @@
 import { AuthenticationClient, ManagementClient } from 'auth0';
+import axios, { AxiosRequestConfig } from 'axios';
 
 import { config } from '../config';
-import { IAuth0LoginResponse, IAuth0RegisterResponse } from '../types';
+import {
+  IAuth0LoginResponse,
+  IAuth0RegisterResponse,
+  IAuth0User,
+} from '../types';
+import { path } from 'ramda';
 
 const { domain, clientId, clientSecret, jwtAudience } = config.auth;
 
@@ -10,6 +16,8 @@ const auth0 = new AuthenticationClient({
   clientId,
   clientSecret,
 });
+
+const AUTH0_URL = `https://${domain}`;
 
 const loginAuthZeroUser = async (
   username: string,
@@ -39,6 +47,50 @@ const loginAuthZeroUser = async (
       },
     };
   }
+};
+
+const axiosInstance = axios.create({
+  baseURL: AUTH0_URL,
+  timeout: 3000,
+  headers: {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  },
+});
+
+const createUser = async (
+  user: IAuth0User,
+): Promise<IAuth0RegisterResponse> => {
+  const authResp = await axiosInstance.post('/oauth/token', {
+    grant_type: 'client_credentials',
+    client_id: clientId,
+    client_secret: clientSecret,
+    audience: `https://${domain}/api/v2/`,
+  });
+
+  const access_token = path(['data', 'access_token'], authResp);
+
+  const data = {
+    ...user,
+    user_metadata: {
+      subscribeWeeklyEmail: true,
+      subscribeEventCreationEmail: true,
+    },
+    blocked: false,
+    email_verified: false,
+    connection: 'Username-Password-Authentication',
+    verify_email: true,
+    nickname: user.username,
+  };
+
+  Object.assign(axiosInstance.defaults, {
+    headers: { Authorization: `Bearer ${access_token}` },
+  });
+
+  const createResp = await axiosInstance.post('/api/v2/users', data);
+  console.log(createResp.data);
+
+  return { auth0UserId: '123' };
 };
 
 const createAuthZeroUser = async (
@@ -98,4 +150,9 @@ const requestChangePasswordEmail = (email: string): boolean => {
   }
 };
 
-export { createAuthZeroUser, loginAuthZeroUser, requestChangePasswordEmail };
+export {
+  createAuthZeroUser,
+  loginAuthZeroUser,
+  requestChangePasswordEmail,
+  createUser,
+};

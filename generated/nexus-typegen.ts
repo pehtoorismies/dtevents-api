@@ -133,6 +133,7 @@ export interface NexusGenFieldTypes {
     forgotPassword: boolean; // Boolean!
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
     signup: NexusGenRootTypes['User']; // User!
+    signup_v2: boolean; // Boolean!
     toggleJoinEvent: NexusGenRootTypes['Event']; // Event!
     updateEvent: NexusGenRootTypes['Event']; // Event!
     updateMe: NexusGenRootTypes['User']; // User!
@@ -191,6 +192,13 @@ export interface NexusGenArgTypes {
       registerSecret: string; // String!
       username: string; // String!
     }
+    signup_v2: { // args
+      email: string; // String!
+      name: string; // String!
+      password: string; // String!
+      registerSecret: string; // String!
+      username: string; // String!
+    }
     toggleJoinEvent: { // args
       id: string; // ID!
     }
@@ -200,6 +208,7 @@ export interface NexusGenArgTypes {
     }
     updateMe: { // args
       name?: string | null; // String
+      username?: string | null; // String
     }
     updateMyPreferences: { // args
       subscribeEventCreationEmail?: boolean | null; // Boolean

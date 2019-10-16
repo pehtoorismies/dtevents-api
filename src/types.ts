@@ -77,3 +77,10 @@ export interface IEmailTemplate {
   plainText: string;
   mjmlText: string;
 }
+
+export interface IAuth0User {
+  email: string;
+  username: string;
+  password: string;
+  name: string;
+}

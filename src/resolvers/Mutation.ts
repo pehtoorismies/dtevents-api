@@ -1,11 +1,11 @@
 import * as EmailValidator from 'email-validator';
 import {
+  arg,
   booleanArg,
   idArg,
   inputObjectType,
   objectType,
   stringArg,
-  arg,
 } from 'nexus';
 import { assoc, contains, findIndex, path, propEq, remove } from 'ramda';
 
@@ -13,6 +13,7 @@ import {
   createAuthZeroUser,
   loginAuthZeroUser,
   requestChangePasswordEmail,
+  createUser,
 } from '../auth';
 import { config } from '../config';
 import {
@@ -21,9 +22,10 @@ import {
   ServerError,
   UserInputError,
 } from '../errors';
-import { ISimpleUser } from '../types';
-import { notifyEventCreationSubscribers } from '../nofications';
 import fetchOldEvents from '../event-importer/fetchOldEvents';
+import { notifyEventCreationSubscribers } from '../nofications';
+import { ISimpleUser } from '../types';
+import { filterUndefined } from '../util';
 
 const fetchUserEmail = async (
   username: string,
@@ -56,9 +58,92 @@ export const EventInput = inputObjectType({
   },
 });
 
+const createInputError = (
+  isValid: boolean,
+  errorField: string,
+  errorMessage: string,
+): any | undefined => {
+  if (!isValid) {
+    return new UserInputError({
+      data: {
+        field: errorField,
+        message: errorMessage,
+      },
+    });
+  }
+};
+
 export const Mutation = objectType({
   name: 'Mutation',
   definition(t) {
+    t.field('signup_v2', {
+      type: 'Boolean',
+      args: {
+        email: stringArg({ required: true }),
+        username: stringArg({ required: true }),
+        password: stringArg({ required: true }),
+        name: stringArg({ required: true }),
+        registerSecret: stringArg({ required: true }),
+      },
+      async resolve(
+        _,
+        { email, username, password, name, registerSecret },
+        { mongoose },
+      ) {
+        // Check input
+        const errRegisterSecret = createInputError(
+          config.registerSecret === registerSecret,
+          'registerSecret',
+          'Väärä rekisteröintikoodi',
+        );
+        if (errRegisterSecret) {
+          return errRegisterSecret;
+        }
+        const errEmail = createInputError(
+          EmailValidator.validate(email),
+          'email',
+          'Email väärässä muodossa',
+        );
+        if (errEmail) {
+          return errEmail;
+        }
+        const errUsername = createInputError(
+          !!username,
+          'username',
+          'Käyttäjätunnus puuttuu',
+        );
+        if (errUsername) {
+          return errUsername;
+        }
+        const errPassword = createInputError(
+          !!password,
+          'password',
+          'Salasana puuttuu',
+        );
+        if (errPassword) {
+          return errPassword;
+        }
+        try {
+          await createUser({ email, username, password, name });
+          return true;
+        } catch (error) {
+          return new Auth0Error({
+            data: {
+              message: error.response.data.message,
+              internalData: {
+                error,
+              },
+            },
+          });
+
+        }
+        
+        // const { auth0UserId, error } = auth0User;
+
+        return false;
+      },
+    });
+
     t.field('signup', {
       type: 'User',
       args: {
@@ -234,29 +319,45 @@ export const Mutation = objectType({
       type: 'User',
       args: {
         name: stringArg({ required: false }),
+        username: stringArg({ required: false }),
       },
-      async resolve(
-        _,
-        { name },
-        { mongoose, user },
-      ) {
-        const { UserModel } = mongoose;
+      async resolve(_, { name, username }, { mongoose, user }) {
+        // do not bother to use transactions...
+        const oldUsername = user.username;
+
+        const { UserModel, EventModel } = mongoose;
+
         const conditions = { _id: user.id };
 
-        const update = {
-          name
-        };
+        const updatetable = filterUndefined({
+          name,
+          username,
+        });
+
         const options = {
           new: true,
         };
 
-        const res = await UserModel.findOneAndUpdate(
+        const updatedUser = await UserModel.findOneAndUpdate(
           conditions,
-          update,
+          updatetable,
           options,
         );
 
-        return res;
+        if (!username || oldUsername === username) {
+          return updatedUser;
+        }
+
+        // update events
+        await EventModel.updateMany(
+          { 'participants.username': oldUsername },
+          { $set: { username: username } },
+        );
+        await EventModel.updateMany(
+          { 'creator.username': oldUsername },
+          { $set: { 'creator.username': username } },
+        );
+        return updatedUser;
       },
     });
 
