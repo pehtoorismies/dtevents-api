@@ -1,12 +1,26 @@
 import { AuthenticationClient, ManagementClient } from 'auth0';
+import { map, pickAll, pipe, values, reduce, assoc } from 'ramda';
+import { renameKeys } from 'ramda-adjunct';
+import { getFromCache, setToCache } from './cache';
 
 import { config } from '../config';
-import { IAuth0LoginResponse, IAuth0RegisterResponse } from '../types';
-import { IAuth0User, IAuth0Profile } from '../types';
-import { map, pipe, pickAll } from 'ramda';
-import { renameKeys } from 'ramda-adjunct';
+import {
+  IAuth0LoginResponse,
+  IAuth0Profile,
+  IAuth0RegisterResponse,
+  IAuth0User,
+} from '../types';
 
 const { domain, clientId, clientSecret, jwtAudience } = config.auth;
+
+const CACHE_KEY_USERS = 'users';
+
+const addUsersToCache = (users: IAuth0Profile[]) => {
+  const reducer = (acc: any, curr: IAuth0Profile) => {
+    return assoc(curr.id, curr, acc);
+  };
+  return reduce(reducer, {}, users);
+};
 
 const auth0 = new AuthenticationClient({
   domain,
@@ -54,6 +68,17 @@ const formatUsers = pipe(
 const fetchUsers = async (
   verified: boolean = true,
 ): Promise<IAuth0Profile[]> => {
+  const start = new Date().getTime();
+
+  const cachedUsers = await getFromCache(CACHE_KEY_USERS);
+
+  if (cachedUsers) {
+    const obj = JSON.parse(cachedUsers);
+    const end = new Date().getTime();
+    console.log('Duration', end - start);
+    return values(obj);
+  }
+
   const client = await auth0.clientCredentialsGrant({
     audience: `https://${domain}/api/v2/`,
     // @ts-ignore: Don't know how to fix
@@ -66,7 +91,12 @@ const fetchUsers = async (
 
   const usersResp: Array<any> = await management.getUsers();
 
-  return formatUsers(usersResp);
+  const userList: IAuth0Profile[] = formatUsers(usersResp);
+  const cached = addUsersToCache(userList);
+  await setToCache(CACHE_KEY_USERS, JSON.stringify(cached));
+  const end = new Date().getTime();
+  console.log('Duration', end - start);
+  return userList;
 };
 
 const createAuth0User = async (
