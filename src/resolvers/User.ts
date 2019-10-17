@@ -32,14 +32,14 @@ export const SimpleUser = objectType({
   },
 });
 
-
-
 export const BaseUser = objectType({
   name: 'BaseUser',
   definition(t) {
     t.string('id');
     t.string('username');
     t.string('name');
+    t.string('nickname');
+    t.string('email');
+    t.string('picture')
   },
 });
-

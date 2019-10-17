@@ -9,8 +9,11 @@ type AuthPayload {
 }
 
 type BaseUser {
+  email: String!
   id: String!
   name: String!
+  nickname: String!
+  picture: String!
   username: String!
 }
 

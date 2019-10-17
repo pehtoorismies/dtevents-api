@@ -1,6 +1,7 @@
 import startOfToday from 'date-fns/startOfToday';
 import { idArg, intArg, objectType } from 'nexus';
 
+import { fetchUsers } from '../auth';
 import { NotFoundError } from '../errors';
 import { notifyWeeklySubscribers } from '../nofications'
 
@@ -57,10 +58,8 @@ export const Query = objectType({
 
     t.list.field('users', {
       type: 'BaseUser',
-      async resolve(_, __, { mongoose }) {
-        const { UserModel } = mongoose;
-
-        const users = await UserModel.find({}).sort('username');
+      async resolve() {
+        const users = await fetchUsers();
         return users;
       },
     });

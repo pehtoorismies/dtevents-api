@@ -10,11 +10,11 @@ import {
 import { assoc, contains, findIndex, path, propEq, remove } from 'ramda';
 
 import {
-  createAuthZeroUser,
-  loginAuthZeroUser,
+  createAuth0User,
+  loginAuth0User,
   requestChangePasswordEmail,
-  createUser,
-  fetchTokens,
+  // createUser,
+  // fetchTokens,
 } from '../auth';
 import { config } from '../config';
 import {
@@ -125,7 +125,12 @@ export const Mutation = objectType({
           return errPassword;
         }
         try {
-          const resp = await createUser({ email, username, password, name });
+          const resp = await createAuth0User({
+            email,
+            username,
+            password,
+            name,
+          });
           console.log('Created auth0 user: ', resp.auth0UserId);
           return true;
         } catch (error) {
@@ -168,8 +173,8 @@ export const Mutation = objectType({
         }
 
         try {
-          const resp = await fetchTokens(usernameOrEmail, password);
-          return resp;
+          const tokens = await loginAuth0User(usernameOrEmail, password);
+          return tokens;
         } catch (error) {
           return new Auth0Error({
             data: {
@@ -233,7 +238,12 @@ export const Mutation = objectType({
         }
 
         try {
-          const auth0User = await createAuthZeroUser(email, username, password);
+          const auth0User = await createAuth0User({
+            email,
+            username,
+            password,
+            name,
+          });
           const { auth0UserId, error } = auth0User;
           if (error) {
             return new Auth0Error({
@@ -317,9 +327,10 @@ export const Mutation = objectType({
             },
           });
         }
-
-        const { user, error } = await loginAuthZeroUser(userEmail, password);
-        if (error) {
+        try {
+          const tokens = await loginAuth0User(userEmail, password);
+          return tokens;
+        } catch (error) {
           return new Auth0Error({
             data: {
               message: 'Kirjautumisvirhe',
@@ -329,7 +340,6 @@ export const Mutation = objectType({
             },
           });
         }
-        return user;
       },
     });
 

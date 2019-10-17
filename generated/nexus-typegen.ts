@@ -44,8 +44,11 @@ export interface NexusGenRootTypes {
     idToken: string; // String!
   }
   BaseUser: { // root type
+    email: string; // String!
     id: string; // String!
     name: string; // String!
+    nickname: string; // String!
+    picture: string; // String!
     username: string; // String!
   }
   Event: { // root type
@@ -105,8 +108,11 @@ export interface NexusGenFieldTypes {
     idToken: string; // String!
   }
   BaseUser: { // field return type
+    email: string; // String!
     id: string; // String!
     name: string; // String!
+    nickname: string; // String!
+    picture: string; // String!
     username: string; // String!
   }
   Event: { // field return type

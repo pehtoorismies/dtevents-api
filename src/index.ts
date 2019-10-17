@@ -12,10 +12,7 @@ import {
   permissions,
   requestScopes,
 } from './middleware';
-import resolvers from './resolvers';
-
-// import { Context } from './types';
-const {
+import {
   AuthPayload,
   BaseUser,
   DateTime,
@@ -26,7 +23,9 @@ const {
   Query,
   SimpleUser,
   User,
-} = resolvers;
+} from './resolvers';
+
+// import { Context } from './types';
 
 const { mongoUrl } = config;
 

@@ -84,3 +84,12 @@ export interface IAuth0User {
   password: string;
   name: string;
 }
+
+export interface IAuth0Profile {
+  id: string;
+  email: string;
+  username: string;
+  nickname: string;
+  name: string;
+  picture: string;
+}
