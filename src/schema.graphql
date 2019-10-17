@@ -74,9 +74,7 @@ type Mutation {
   deleteEvent(id: ID!): IDPayload!
   forgotPassword(email: String!): Boolean!
   login(password: String!, usernameOrEmail: String!): AuthPayload!
-  login_v2(password: String!, usernameOrEmail: String!): AuthPayload!
-  signup(email: String!, name: String!, password: String!, registerSecret: String!, username: String!): User!
-  signup_v2(email: String!, name: String!, password: String!, registerSecret: String!, username: String!): Boolean!
+  signup(email: String!, name: String!, password: String!, registerSecret: String!, username: String!): Boolean!
   toggleJoinEvent(id: ID!): Event!
   updateEvent(event: EventData, id: ID!): Event!
   updateMe(name: String, username: String): User!

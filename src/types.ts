@@ -92,4 +92,10 @@ export interface IAuth0Profile {
   nickname: string;
   name: string;
   picture: string;
+  createdAt: string;
+  updateAt: string;
+  preferences: {
+    subscribeEventCreationEmail: boolean;
+    subscribeWeeklyEmail: boolean;
+  }
 }

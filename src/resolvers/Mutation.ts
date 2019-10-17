@@ -28,17 +28,6 @@ import { notifyEventCreationSubscribers } from '../nofications';
 import { ISimpleUser } from '../types';
 import { filterUndefined } from '../util';
 
-const fetchUserEmail = async (
-  username: string,
-  UserModel: any,
-): Promise<string | undefined> => {
-  const user = await UserModel.findOne({ username: username }).select({
-    email: 1,
-  });
-
-  return path(['email'], user);
-};
-
 const findParticipantIndex = (
   username: string,
   participants: ISimpleUser[],
@@ -77,7 +66,7 @@ const createInputError = (
 export const Mutation = objectType({
   name: 'Mutation',
   definition(t) {
-    t.field('signup_v2', {
+    t.field('signup', {
       type: 'Boolean',
       args: {
         email: stringArg({ required: true }),
@@ -146,7 +135,7 @@ export const Mutation = objectType({
       },
     });
 
-    t.field('login_v2', {
+    t.field('login', {
       type: 'AuthPayload',
       args: {
         usernameOrEmail: stringArg({ required: true }),
@@ -174,161 +163,6 @@ export const Mutation = objectType({
 
         try {
           const tokens = await loginAuth0User(usernameOrEmail, password);
-          return tokens;
-        } catch (error) {
-          return new Auth0Error({
-            data: {
-              message: 'Kirjautumisvirhe',
-              internalData: {
-                error,
-              },
-            },
-          });
-        }
-      },
-    });
-
-    t.field('signup', {
-      type: 'User',
-      args: {
-        email: stringArg({ required: true }),
-        username: stringArg({ required: true }),
-        password: stringArg({ required: true }),
-        name: stringArg({ required: true }),
-        registerSecret: stringArg({ required: true }),
-      },
-      async resolve(
-        _,
-        { email, username, password, name, registerSecret },
-        { mongoose },
-      ) {
-        if (config.registerSecret !== registerSecret) {
-          return new UserInputError({
-            data: {
-              field: 'registerSecret',
-              message: 'Väärä rekisteröintikoodi',
-            },
-          });
-        }
-
-        if (!EmailValidator.validate(email)) {
-          return new UserInputError({
-            data: {
-              field: 'email',
-              message: 'Email väärässä muodossa',
-            },
-          });
-        }
-
-        if (!username) {
-          return new UserInputError({
-            data: {
-              field: 'username',
-              message: 'Käyttäjätunnus puuttuu',
-            },
-          });
-        }
-        if (!password) {
-          return new UserInputError({
-            data: {
-              field: 'password',
-              message: 'Salasana puuttuu',
-            },
-          });
-        }
-
-        try {
-          const auth0User = await createAuth0User({
-            email,
-            username,
-            password,
-            name,
-          });
-          const { auth0UserId, error } = auth0User;
-          if (error) {
-            return new Auth0Error({
-              data: {
-                message: 'Auth0 ei voinut luoda käyttäjää',
-                internalData: {
-                  error,
-                },
-              },
-            });
-          }
-          if (!auth0UserId) {
-            return new ServerError({
-              data: {
-                message: 'Auth0 palautti tyhjän käyttäjän',
-              },
-            });
-          }
-
-          const { UserModel } = mongoose;
-          const createdUser = await UserModel.create({
-            email,
-            username,
-            password,
-            name,
-            auth0Id: auth0UserId,
-          });
-
-          return createdUser;
-        } catch (error) {
-          console.error('Error when registering');
-          console.error(error);
-          return new ServerError({
-            data: {
-              message: 'Käyttäjää ei voitu luoda',
-              internalData: {
-                error,
-              },
-            },
-          });
-        }
-      },
-    });
-
-    t.field('login', {
-      type: 'AuthPayload',
-      args: {
-        usernameOrEmail: stringArg({ required: true }),
-        password: stringArg({ required: true }),
-      },
-      async resolve(_, { usernameOrEmail, password }, { mongoose }) {
-        if (!usernameOrEmail) {
-          throw new UserInputError({
-            data: {
-              field: 'usernameOrEmail',
-              message: 'Käyttäjätunnus puuttuu',
-            },
-          });
-        }
-        const isEmail = contains('@', usernameOrEmail);
-
-        if (isEmail && !EmailValidator.validate(usernameOrEmail)) {
-          return new UserInputError({
-            data: {
-              field: 'usernameOrEmail',
-              message: 'Email väärässä muodossa',
-            },
-          });
-        }
-        const { UserModel } = mongoose;
-
-        const userEmail = isEmail
-          ? usernameOrEmail
-          : await fetchUserEmail(usernameOrEmail, UserModel);
-
-        if (!userEmail) {
-          return new UserInputError({
-            data: {
-              field: 'usernameOrEmail',
-              message: 'Tarkista tunnus tai sähköposti',
-            },
-          });
-        }
-        try {
-          const tokens = await loginAuth0User(userEmail, password);
           return tokens;
         } catch (error) {
           return new Auth0Error({

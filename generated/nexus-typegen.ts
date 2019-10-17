@@ -138,9 +138,7 @@ export interface NexusGenFieldTypes {
     deleteEvent: NexusGenRootTypes['IDPayload']; // IDPayload!
     forgotPassword: boolean; // Boolean!
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
-    login_v2: NexusGenRootTypes['AuthPayload']; // AuthPayload!
-    signup: NexusGenRootTypes['User']; // User!
-    signup_v2: boolean; // Boolean!
+    signup: boolean; // Boolean!
     toggleJoinEvent: NexusGenRootTypes['Event']; // Event!
     updateEvent: NexusGenRootTypes['Event']; // Event!
     updateMe: NexusGenRootTypes['User']; // User!
@@ -192,18 +190,7 @@ export interface NexusGenArgTypes {
       password: string; // String!
       usernameOrEmail: string; // String!
     }
-    login_v2: { // args
-      password: string; // String!
-      usernameOrEmail: string; // String!
-    }
     signup: { // args
-      email: string; // String!
-      name: string; // String!
-      password: string; // String!
-      registerSecret: string; // String!
-      username: string; // String!
-    }
-    signup_v2: { // args
       email: string; // String!
       name: string; // String!
       password: string; // String!

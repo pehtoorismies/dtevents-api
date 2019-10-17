@@ -12,5 +12,6 @@ redisClient.on('connect', () => {
 
 const getFromCache = promisify(redisClient.get).bind(redisClient);
 const setToCache = promisify(redisClient.set).bind(redisClient);
+const deleteKey = promisify(redisClient.del).bind(redisClient);
 
-export { getFromCache, setToCache };
+export { getFromCache, setToCache, deleteKey };

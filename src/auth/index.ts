@@ -1,15 +1,11 @@
 import { AuthenticationClient, ManagementClient } from 'auth0';
-import { map, pickAll, pipe, values, reduce, assoc } from 'ramda';
+import { prop, map, pickAll, pipe, values, reduce, assoc, has } from 'ramda';
 import { renameKeys } from 'ramda-adjunct';
-import { getFromCache, setToCache } from './cache';
+import { getFromCache, setToCache, deleteKey } from './cache';
 
 import { config } from '../config';
-import {
-  IAuth0LoginResponse,
-  IAuth0Profile,
-  IAuth0RegisterResponse,
-  IAuth0User,
-} from '../types';
+import { IAuth0Profile, IAuth0RegisterResponse, IAuth0User } from '../types';
+import { NotFoundError } from '../errors';
 
 const { domain, clientId, clientSecret, jwtAudience } = config.auth;
 
@@ -31,7 +27,7 @@ const auth0 = new AuthenticationClient({
 const loginAuth0User = async (
   usernameOrEmail: string,
   password: string,
-): Promise<IAuth0LoginResponse> => {
+): Promise<{ accessToken: string; idToken: string; expiresIn: string }> => {
   const authZeroUser = await auth0.passwordGrant({
     password,
     username: usernameOrEmail,
@@ -42,11 +38,9 @@ const loginAuth0User = async (
   });
 
   return {
-    user: {
-      accessToken: authZeroUser.access_token || '',
-      idToken: authZeroUser.id_token || '',
-      expiresIn: authZeroUser.expires_in || 0,
-    },
+    accessToken: authZeroUser.access_token || '',
+    idToken: authZeroUser.id_token || '',
+    expiresIn: '0',
   };
 };
 
@@ -57,28 +51,38 @@ const AUTH_PROFILE_PROPS = [
   'nickname',
   'username',
   'picture',
+  'updated_at',
+  'created_at',
+  'user_metadata',
 ];
+
+const RENAME_KEYS = {
+  user_id: 'id',
+  created_at: 'createdAt',
+  updated_at: 'updatedAt',
+  user_metadata: 'preferences',
+};
 
 const formatUsers = pipe(
   // @ts-ignore
   map(pickAll(AUTH_PROFILE_PROPS)),
-  map(renameKeys({ user_id: 'id' })),
+  map((up: any) => {
+    if (!up.preferences) {
+      return {
+        ...up,
+        user_metadata: {
+          subscribeEventCreationEmail: 'true',
+          subscribeWeeklyEmail: 'true',
+        },
+      };
+    } else {
+     return up;
+    }
+  }),
+  map(renameKeys(RENAME_KEYS)),
 );
 
-const fetchUsers = async (
-  verified: boolean = true,
-): Promise<IAuth0Profile[]> => {
-  const start = new Date().getTime();
-
-  const cachedUsers = await getFromCache(CACHE_KEY_USERS);
-
-  if (cachedUsers) {
-    const obj = JSON.parse(cachedUsers);
-    const end = new Date().getTime();
-    console.log('Duration', end - start);
-    return values(obj);
-  }
-
+const updateUserCache = async (): Promise<any> => {
   const client = await auth0.clientCredentialsGrant({
     audience: `https://${domain}/api/v2/`,
     // @ts-ignore: Don't know how to fix
@@ -88,15 +92,46 @@ const fetchUsers = async (
     token: client.access_token,
     domain,
   });
-
   const usersResp: Array<any> = await management.getUsers();
-
   const userList: IAuth0Profile[] = formatUsers(usersResp);
   const cached = addUsersToCache(userList);
   await setToCache(CACHE_KEY_USERS, JSON.stringify(cached));
-  const end = new Date().getTime();
-  console.log('Duration', end - start);
-  return userList;
+  return cached;
+};
+
+const fetchMyProfile = async (auth0Id: string): Promise<IAuth0Profile> => {
+  
+  const hasId = has(auth0Id);
+  const cachedUsers = await getFromCache(CACHE_KEY_USERS);
+  console.log('cached users')
+  console.log(cachedUsers)
+  if (cachedUsers) {
+    const obj = JSON.parse(cachedUsers);
+    if (hasId(obj)) {
+      return prop(auth0Id, obj);
+    }
+  }
+  const refetchedUsers = await updateUserCache();
+  const obj = JSON.parse(refetchedUsers);
+  if (hasId(obj)) {
+    return prop(auth0Id, obj);
+  }
+  throw new NotFoundError('User not found in auth zero');
+};
+
+const fetchUsers = async (
+  verified: boolean = true,
+): Promise<IAuth0Profile[]> => {
+  const cachedUsers = await getFromCache(CACHE_KEY_USERS);
+
+  if (cachedUsers) {
+    const obj = JSON.parse(cachedUsers);
+    return values(obj);
+  }
+
+  const refetchedUsers = await updateUserCache();
+  const obj = JSON.parse(refetchedUsers);
+  return values(obj);
 };
 
 const createAuth0User = async (
@@ -158,4 +193,5 @@ export {
   loginAuth0User,
   requestChangePasswordEmail,
   fetchUsers,
+  fetchMyProfile,
 };
