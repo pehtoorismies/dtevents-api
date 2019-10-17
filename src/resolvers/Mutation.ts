@@ -7,12 +7,13 @@ import {
   objectType,
   stringArg,
 } from 'nexus';
-import { assoc, contains, findIndex, path, propEq, remove } from 'ramda';
+import { assoc, contains, findIndex,  propEq, remove } from 'ramda';
 
 import {
   createAuth0User,
   loginAuth0User,
   requestChangePasswordEmail,
+  updateUserProfiles
   // createUser,
   // fetchTokens,
 } from '../auth';
@@ -407,6 +408,23 @@ export const Mutation = objectType({
           });
           const updated = await evt.save();
           return updated;
+        }
+      },
+    });
+    t.field('updateAut0Users', {
+      type: 'Boolean',
+      args: {
+        
+      },
+      resolve: async (_, { id }, { mongoose }) => {
+        const { UserModel } = mongoose;
+        const users = await UserModel.find();
+        try {
+          await updateUserProfiles(users);
+          return true;  
+        } catch (error) {
+          console.error(error);
+          return false;
         }
       },
     });

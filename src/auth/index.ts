@@ -76,7 +76,7 @@ const formatUsers = pipe(
         },
       };
     } else {
-     return up;
+      return up;
     }
   }),
   map(renameKeys(RENAME_KEYS)),
@@ -100,11 +100,10 @@ const updateUserCache = async (): Promise<any> => {
 };
 
 const fetchMyProfile = async (auth0Id: string): Promise<IAuth0Profile> => {
-  
   const hasId = has(auth0Id);
   const cachedUsers = await getFromCache(CACHE_KEY_USERS);
-  console.log('cached users')
-  console.log(cachedUsers)
+  console.log('cached users');
+  console.log(cachedUsers);
   if (cachedUsers) {
     const obj = JSON.parse(cachedUsers);
     if (hasId(obj)) {
@@ -188,10 +187,45 @@ const requestChangePasswordEmail = (email: string): boolean => {
   }
 };
 
+const updateUserProfiles = async (mongoUserDocs: any[]): Promise<boolean> => {
+  const client = await auth0.clientCredentialsGrant({
+    audience: `https://${domain}/api/v2/`,
+    // @ts-ignore: Don't know how to fix
+    scope: 'read:users update:users',
+  });
+
+  const management = new ManagementClient({
+    token: client.access_token,
+    domain,
+  });
+  for (const userDoc of mongoUserDocs) {
+    const {
+      preferences: {
+        subscribeEventCreationEmail: creation,
+        subscribeWeeklyEmail: weekly,
+      },
+    } = userDoc;
+
+    await management.updateUser(
+      { id: userDoc.auth0Id },
+      {
+        name: userDoc.name,
+        user_metadata: {
+          subscribeEventCreationEmail: String(creation),
+          subscribeWeeklyEmail: String(weekly),
+        },
+      },
+    );
+  }
+
+  return false;
+};
+
 export {
   createAuth0User,
   loginAuth0User,
   requestChangePasswordEmail,
   fetchUsers,
   fetchMyProfile,
+  updateUserProfiles,
 };
