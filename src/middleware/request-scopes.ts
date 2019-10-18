@@ -46,11 +46,13 @@ const requestScopes = async (
     
     const scopes: string[] = getScopes(token.scope);
     const sub = R.path(['payload', 'sub'], decodedToken)
+    const nickname = R.path(['payload', 'https://graphql.downtown65.com/nickname'], decodedToken)
 
     const updatedContext = {
       ...context,
       scopes,
-      sub
+      sub,
+      nickname,
     };
     const result = await resolve(parent, args, updatedContext, info);
     return result;

@@ -67,12 +67,12 @@ export const Query = objectType({
 
     t.field('me', {
       type: 'User',
-      async resolve(_, __, { user }) {
-        const { auth0Id } = user;
-        const me : IAuth0Profile = await fetchMyProfile(auth0Id);
+      async resolve(_, __, { sub }) {
+        
+        const me : IAuth0Profile = await fetchMyProfile(sub);
         return {
           ...me,
-          auth0Id,
+          auth0Id: sub,
         };
       },
     });

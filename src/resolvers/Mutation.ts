@@ -200,21 +200,22 @@ export const Mutation = objectType({
         username: stringArg({ required: false }),
         nickname: stringArg({ required: false }),
       },
-      async resolve(_, { name, username, nickname }, { mongoose, user }) {
-  
+      async resolve(_, { name, username, nickname }, { mongoose, sub }) {
         // const { UserModel, EventModel } = mongoose;
-
-  
-        const { auth0Id } = user;
         const updatetable = filterUndefined({
           name,
           username,
           nickname,
         });
 
-        const auth0User = await updateProfile(auth0Id, updatetable);
-        return auth0User;
-
+        const auth0User: IAuth0Profile = await updateProfile(
+          sub,
+          updatetable,
+        );
+        return {
+          ...auth0User,
+          auth0Id: sub,
+        } 
 
         // TODO: update events if nickchanges...
 
@@ -254,18 +255,16 @@ export const Mutation = objectType({
       async resolve(
         _,
         { subscribeEventCreationEmail, subscribeWeeklyEmail },
-        { user },
+        { sub },
       ) {
-        const { auth0Id } = user;
-
-        const auth0User: IAuth0Profile = await updatePreferences(auth0Id, {
+        const auth0User: IAuth0Profile = await updatePreferences(sub, {
           subscribeEventCreationEmail,
           subscribeWeeklyEmail,
         });
 
         return {
           ...auth0User,
-          auth0Id,
+          auth0Id: sub,
         };
       },
     });
@@ -280,9 +279,18 @@ export const Mutation = objectType({
       async resolve(
         _,
         { addMe, event, notifySubscribers },
-        { mongoose, user }: { mongoose: any; user: ISimpleUser },
+        {
+          mongoose,
+          sub,
+          nickname,
+        }: { mongoose: any; sub: string; nickname: string },
       ) {
-        const { EventModel, UserModel } = mongoose;
+        const { EventModel } = mongoose;
+
+        const user = {
+          id: sub,
+          username: nickname,
+        };
 
         const eventWithCreator = {
           ...event,
@@ -295,9 +303,9 @@ export const Mutation = objectType({
 
         const createdEvent = await EventModel.create(withMe);
 
-        if (notifySubscribers) {
-          notifyEventCreationSubscribers(UserModel, createdEvent);
-        }
+        // if (notifySubscribers) {
+        //   notifyEventCreationSubscribers(UserModel, createdEvent);
+        // }
 
         return createdEvent;
       },
@@ -350,7 +358,7 @@ export const Mutation = objectType({
       args: {
         id: idArg({ required: true }),
       },
-      resolve: async (_, { id }, { mongoose, user }) => {
+      resolve: async (_, { id }, { mongoose, sub, nickname }) => {
         const { EventModel } = mongoose;
         const evt = await EventModel.findById(id);
 
@@ -359,6 +367,11 @@ export const Mutation = objectType({
             message: `Event with id ${id} not found`,
           });
         }
+
+        const user = {
+          id: sub,
+          username: nickname,
+        };
 
         const partIndex = findParticipantIndex(user.username, evt.participants);
 

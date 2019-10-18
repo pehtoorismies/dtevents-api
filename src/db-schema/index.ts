@@ -1,4 +1,4 @@
-import EmailValidator from 'email-validator';
+// import EmailValidator from 'email-validator';
 import { Schema } from 'mongoose';
 
 import { EVENT_ENUMS } from '../constants';
@@ -9,60 +9,60 @@ const timestamps = {
   updatedAt: 'updatedAt',
 };
 
-const PreferencesSchema = new Schema({
-  subscribeWeeklyEmail: {
-    type: Boolean,
-    default: true,
-  },
-  subscribeEventCreationEmail: {
-    type: Boolean,
-    default: true,
-  },
-});
+// const PreferencesSchema = new Schema({
+//   subscribeWeeklyEmail: {
+//     type: Boolean,
+//     default: true,
+//   },
+//   subscribeEventCreationEmail: {
+//     type: Boolean,
+//     default: true,
+//   },
+// });
 
 // USER
-const UserSchema = new Schema(
-  {
-    auth0Id: {
-      type: String,
-      required: true,
-      index: true,
-      unique: true,
-    },
-    email: {
-      type: String,
-      validate: {
-        validator: (email: string) => EmailValidator.validate(email),
-        // @ts-ignore: Don't know how to fix
-        message: (props: any) => `${props.value} is not a valid email!`,
-      },
-      index: true,
-      required: true,
-    },
-    username: {
-      type: String,
-      index: true,
-      unique: true,
-      required: true,
-    },
-    name: String,
-    preferences: {
-      type: PreferencesSchema,
-      default: PreferencesSchema,
-    },
-  },
-  { timestamps },
-);
+// const UserSchema = new Schema(
+//   {
+//     auth0Id: {
+//       type: String,
+//       required: true,
+//       index: true,
+//       unique: true,
+//     },
+//     email: {
+//       type: String,
+//       validate: {
+//         validator: (email: string) => EmailValidator.validate(email),
+//         // @ts-ignore: Don't know how to fix
+//         message: (props: any) => `${props.value} is not a valid email!`,
+//       },
+//       index: true,
+//       required: true,
+//     },
+//     username: {
+//       type: String,
+//       index: true,
+//       unique: true,
+//       required: true,
+//     },
+//     name: String,
+//     preferences: {
+//       type: PreferencesSchema,
+//       default: PreferencesSchema,
+//     },
+//   },
+//   { timestamps },
+// );
 
-const SimpleUserSchema = new Schema({
-  username: String,
-  // _id: String
-});
+// const SimpleUserSchema = new Schema({
+//   username: String,
+//   // _id: String
+// });
 
-SimpleUserSchema.virtual('id').get(function() {
-  // @ts-ignore
-  return this._id.toHexString();
-});
+// SimpleUserSchema.virtual('id').get(function() {
+//   // @ts-ignore
+//   return this._id.toHexString();
+// });
 
 // EVENT
 const EventSchema = new Schema(
@@ -84,16 +84,13 @@ const EventSchema = new Schema(
     },
     exactTime: Boolean,
     description: String,
-    participants: [SimpleUserSchema],
+    participants: [String],
     creator: {
-      type: SimpleUserSchema,
-      default: {
-        // _id: 0,
-        username: 'unknown',
-      },
+      type: String,
+      default: 'unknown'
     },
   },
   { timestamps },
 );
 
-export { EventSchema, PreferencesSchema, SimpleUserSchema, UserSchema };
+export { EventSchema };

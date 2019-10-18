@@ -196,6 +196,7 @@ const fetchMyProfile = async (auth0Id: string): Promise<IAuth0Profile> => {
   throw new NotFoundError('User not found in auth zero');
 };
 
+// TODO: fix cache
 const fetchUsers = async (
   verified: boolean = true,
 ): Promise<IAuth0Profile[]> => {
