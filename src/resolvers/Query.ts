@@ -4,6 +4,7 @@ import { idArg, intArg, objectType } from 'nexus';
 import { fetchUsers, fetchMyProfile } from '../auth';
 import { NotFoundError } from '../errors';
 import { notifyWeeklySubscribers } from '../nofications';
+import { IAuth0Profile } from '../types'
 
 export const Query = objectType({
   name: 'Query',
@@ -68,11 +69,10 @@ export const Query = objectType({
       type: 'User',
       async resolve(_, __, { user }) {
         const { auth0Id } = user;
-        const me = await fetchMyProfile(auth0Id);
+        const me : IAuth0Profile = await fetchMyProfile(auth0Id);
         return {
           ...me,
           auth0Id,
-          updatedAt: '123',
         };
       },
     });

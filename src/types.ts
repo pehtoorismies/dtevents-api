@@ -85,6 +85,11 @@ export interface IAuth0User {
   name: string;
 }
 
+export interface IPreferences {
+  subscribeEventCreationEmail: boolean;
+  subscribeWeeklyEmail: boolean;
+}
+
 export interface IAuth0Profile {
   id: string;
   email: string;
@@ -93,9 +98,12 @@ export interface IAuth0Profile {
   name: string;
   picture: string;
   createdAt: string;
-  updateAt: string;
-  preferences: {
-    subscribeEventCreationEmail: boolean;
-    subscribeWeeklyEmail: boolean;
-  }
+  updatedAt?: string;
+  preferences: IPreferences
+}
+
+export interface IAuth0ProfileUpdate {
+  name?: string | null;
+  username?: string | null;
+  nickname?: string | null;
 }

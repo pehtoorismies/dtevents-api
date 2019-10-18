@@ -84,8 +84,9 @@ export interface NexusGenRootTypes {
     email: string; // String!
     id: string; // String!
     name: string; // String!
+    nickname?: string | null; // String
     preferences: NexusGenRootTypes['Preferences']; // Preferences!
-    updatedAt: any; // DateTime!
+    updatedAt?: any | null; // DateTime
     username: string; // String!
   }
   String: string;
@@ -133,13 +134,13 @@ export interface NexusGenFieldTypes {
     id: string; // String!
   }
   Mutation: { // field return type
-    batchImport: boolean; // Boolean!
     createEvent: NexusGenRootTypes['Event']; // Event!
     deleteEvent: NexusGenRootTypes['IDPayload']; // IDPayload!
     forgotPassword: boolean; // Boolean!
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
     signup: boolean; // Boolean!
     toggleJoinEvent: NexusGenRootTypes['Event']; // Event!
+    updateAuth0Users: boolean; // Boolean!
     updateEvent: NexusGenRootTypes['Event']; // Event!
     updateMe: NexusGenRootTypes['User']; // User!
     updateMyPreferences: NexusGenRootTypes['User']; // User!
@@ -167,8 +168,9 @@ export interface NexusGenFieldTypes {
     email: string; // String!
     id: string; // String!
     name: string; // String!
+    nickname: string | null; // String
     preferences: NexusGenRootTypes['Preferences']; // Preferences!
-    updatedAt: any; // DateTime!
+    updatedAt: any | null; // DateTime
     username: string; // String!
   }
 }
@@ -206,11 +208,12 @@ export interface NexusGenArgTypes {
     }
     updateMe: { // args
       name?: string | null; // String
+      nickname?: string | null; // String
       username?: string | null; // String
     }
     updateMyPreferences: { // args
-      subscribeEventCreationEmail?: boolean | null; // Boolean
-      subscribeWeeklyEmail?: boolean | null; // Boolean
+      subscribeEventCreationEmail: boolean; // Boolean!
+      subscribeWeeklyEmail: boolean; // Boolean!
     }
   }
   Query: {

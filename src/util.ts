@@ -18,7 +18,7 @@ import {
 import rp from 'request-promise';
 
 import { config } from './config';
-import { IEventType, IMailRecipient } from './types';
+import { IEventType, IMailRecipient, IAuth0ProfileUpdate } from './types';
 
 const isEmailOrOpenId = (n: string) => n === 'email' || n === 'openid';
 
@@ -99,10 +99,7 @@ const getDefinedProp = pipe(
   fromPairs,
 );
 
-export const filterUndefined = (newMe: {
-  name?: string | null;
-  username?: string | null;
-}) => {
+export const filterUndefined = (newMe: IAuth0ProfileUpdate) => {
   return getDefinedProp(newMe);
 };
 

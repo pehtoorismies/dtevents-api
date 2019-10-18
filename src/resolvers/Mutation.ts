@@ -7,26 +7,20 @@ import {
   objectType,
   stringArg,
 } from 'nexus';
-import { assoc, contains, findIndex,  propEq, remove } from 'ramda';
+import { assoc, contains, findIndex, propEq, remove } from 'ramda';
 
 import {
   createAuth0User,
   loginAuth0User,
   requestChangePasswordEmail,
-  updateUserProfiles
-  // createUser,
-  // fetchTokens,
+  updatePreferences,
+  updateUserProfiles,
+  updateProfile,
 } from '../auth';
 import { config } from '../config';
-import {
-  Auth0Error,
-  NotFoundError,
-  ServerError,
-  UserInputError,
-} from '../errors';
-import fetchOldEvents from '../event-importer/fetchOldEvents';
+import { Auth0Error, NotFoundError, UserInputError } from '../errors';
 import { notifyEventCreationSubscribers } from '../nofications';
-import { ISimpleUser } from '../types';
+import { IAuth0Profile, ISimpleUser } from '../types';
 import { filterUndefined } from '../util';
 
 const findParticipantIndex = (
@@ -204,78 +198,75 @@ export const Mutation = objectType({
       args: {
         name: stringArg({ required: false }),
         username: stringArg({ required: false }),
+        nickname: stringArg({ required: false }),
       },
-      async resolve(_, { name, username }, { mongoose, user }) {
-        // do not bother to use transactions...
-        const oldUsername = user.username;
+      async resolve(_, { name, username, nickname }, { mongoose, user }) {
+  
+        // const { UserModel, EventModel } = mongoose;
 
-        const { UserModel, EventModel } = mongoose;
-
-        const conditions = { _id: user.id };
-
+  
+        const { auth0Id } = user;
         const updatetable = filterUndefined({
           name,
           username,
+          nickname,
         });
 
-        const options = {
-          new: true,
-        };
+        const auth0User = await updateProfile(auth0Id, updatetable);
+        return auth0User;
 
-        const updatedUser = await UserModel.findOneAndUpdate(
-          conditions,
-          updatetable,
-          options,
-        );
 
-        if (!username || oldUsername === username) {
-          return updatedUser;
-        }
+        // TODO: update events if nickchanges...
 
-        // update events
-        await EventModel.updateMany(
-          { 'participants.username': oldUsername },
-          { $set: { username: username } },
-        );
-        await EventModel.updateMany(
-          { 'creator.username': oldUsername },
-          { $set: { 'creator.username': username } },
-        );
-        return updatedUser;
+        // const options = {
+        //   new: true,
+        // };
+
+        // const updatedUser = await UserModel.findOneAndUpdate(
+        //   conditions,
+        //   updatetable,
+        //   options,
+        // );
+
+        // if (!username || oldUsername === username) {
+        //   return updatedUser;
+        // }
+
+        // // update events
+        // await EventModel.updateMany(
+        //   { 'participants.username': oldUsername },
+        //   { $set: { username: username } },
+        // );
+        // await EventModel.updateMany(
+        //   { 'creator.username': oldUsername },
+        //   { $set: { 'creator.username': username } },
+        // );
+        // return updatedUser;
       },
     });
 
     t.field('updateMyPreferences', {
       type: 'User',
       args: {
-        subscribeEventCreationEmail: booleanArg({ required: false }),
-        subscribeWeeklyEmail: booleanArg({ required: false }),
+        subscribeEventCreationEmail: booleanArg({ required: true }),
+        subscribeWeeklyEmail: booleanArg({ required: true }),
       },
       async resolve(
         _,
         { subscribeEventCreationEmail, subscribeWeeklyEmail },
-        { mongoose, user },
+        { user },
       ) {
-        const { UserModel } = mongoose;
-        const conditions = { _id: user.id };
+        const { auth0Id } = user;
 
-        const update = {
-          preferences: {
-            subscribeEventCreationEmail,
-            subscribeWeeklyEmail,
-          },
+        const auth0User: IAuth0Profile = await updatePreferences(auth0Id, {
+          subscribeEventCreationEmail,
+          subscribeWeeklyEmail,
+        });
+
+        return {
+          ...auth0User,
+          auth0Id,
         };
-        const options = {
-          new: true,
-        };
-
-        const res = await UserModel.findOneAndUpdate(
-          conditions,
-          update,
-          options,
-        );
-
-        return res;
       },
     });
 
@@ -309,30 +300,6 @@ export const Mutation = objectType({
         }
 
         return createdEvent;
-      },
-    });
-
-    t.field('batchImport', {
-      type: 'Boolean',
-      args: {},
-      async resolve(
-        _,
-        {},
-        { mongoose, user }: { mongoose: any; user: ISimpleUser },
-      ) {
-        const { EventModel } = mongoose;
-
-        const events = await fetchOldEvents();
-
-        events.forEach(async evt => {
-          const eventWithCreator = {
-            ...evt,
-            creator: user,
-          };
-          const e = await EventModel.create(eventWithCreator);
-          console.log('Added', e.title);
-        });
-        return true;
       },
     });
 
@@ -411,17 +378,16 @@ export const Mutation = objectType({
         }
       },
     });
-    t.field('updateAut0Users', {
+
+    t.field('updateAuth0Users', {
       type: 'Boolean',
-      args: {
-        
-      },
-      resolve: async (_, { id }, { mongoose }) => {
+      args: {},
+      resolve: async (_, {}, { mongoose }) => {
         const { UserModel } = mongoose;
         const users = await UserModel.find();
         try {
           await updateUserProfiles(users);
-          return true;  
+          return true;
         } catch (error) {
           console.error(error);
           return false;

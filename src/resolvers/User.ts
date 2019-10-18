@@ -16,11 +16,12 @@ export const User = objectType({
     t.string('email');
     t.string('username');
     t.string('name');
+    t.string('nickname', { nullable: true });
     t.field('preferences', {
       type: 'Preferences',
     });
     t.date('createdAt');
-    t.date('updatedAt');
+    t.date('updatedAt', { nullable: true });
   },
 });
 
@@ -40,6 +41,6 @@ export const BaseUser = objectType({
     t.string('name');
     t.string('nickname');
     t.string('email');
-    t.string('picture')
+    t.string('picture');
   },
 });

@@ -1,10 +1,16 @@
 import { AuthenticationClient, ManagementClient } from 'auth0';
-import { prop, map, pickAll, pipe, values, reduce, assoc, has } from 'ramda';
+import { map, pickAll, pipe, values, reduce, assoc, prop } from 'ramda';
 import { renameKeys } from 'ramda-adjunct';
-import { getFromCache, setToCache, deleteKey } from './cache';
+import { createCache } from './cache';
 
 import { config } from '../config';
-import { IAuth0Profile, IAuth0RegisterResponse, IAuth0User } from '../types';
+import {
+  IAuth0Profile,
+  IAuth0RegisterResponse,
+  IAuth0User,
+  IPreferences,
+  IAuth0ProfileUpdate,
+} from '../types';
 import { NotFoundError } from '../errors';
 
 const { domain, clientId, clientSecret, jwtAudience } = config.auth;
@@ -18,11 +24,26 @@ const addUsersToCache = (users: IAuth0Profile[]) => {
   return reduce(reducer, {}, users);
 };
 
+const { setToCache, getFromCache } = createCache();
+
 const auth0 = new AuthenticationClient({
   domain,
   clientId,
   clientSecret,
 });
+
+const getAuth0Management = async (): Promise<any> => {
+  const client = await auth0.clientCredentialsGrant({
+    audience: `https://${domain}/api/v2/`,
+    // @ts-ignore: Don't know how to fix
+    scope: 'read:users update:users',
+  });
+  const management = new ManagementClient({
+    token: client.access_token,
+    domain,
+  });
+  return management;
+};
 
 const loginAuth0User = async (
   usernameOrEmail: string,
@@ -63,6 +84,31 @@ const RENAME_KEYS = {
   user_metadata: 'preferences',
 };
 
+const format = pipe(
+  pickAll(AUTH_PROFILE_PROPS),
+  renameKeys(RENAME_KEYS),
+);
+
+const preferencesToBoolean = (preferences: any): IPreferences => {
+  const w = prop('subscribeEventCreationEmail', preferences) || 'true';
+  const c = prop('subscribeWeeklyEmail', preferences) || 'true';
+
+  return {
+    subscribeEventCreationEmail: w == 'true',
+    subscribeWeeklyEmail: c == 'true',
+  };
+};
+
+const toUserFormat = (fromAuth0: any): IAuth0Profile => {
+  const user = format(fromAuth0);
+  // @ts-ignore
+  return {
+    ...user,
+    // @ts-ignore
+    preferences: preferencesToBoolean(user.preferences),
+  };
+};
+
 const formatUsers = pipe(
   // @ts-ignore
   map(pickAll(AUTH_PROFILE_PROPS)),
@@ -83,15 +129,8 @@ const formatUsers = pipe(
 );
 
 const updateUserCache = async (): Promise<any> => {
-  const client = await auth0.clientCredentialsGrant({
-    audience: `https://${domain}/api/v2/`,
-    // @ts-ignore: Don't know how to fix
-    scope: 'read:users update:users',
-  });
-  const management = new ManagementClient({
-    token: client.access_token,
-    domain,
-  });
+  const management = await getAuth0Management();
+
   const usersResp: Array<any> = await management.getUsers();
   const userList: IAuth0Profile[] = formatUsers(usersResp);
   const cached = addUsersToCache(userList);
@@ -99,22 +138,61 @@ const updateUserCache = async (): Promise<any> => {
   return cached;
 };
 
+const updateProfile = async (
+  auth0UserId: string,
+  updateable: IAuth0ProfileUpdate,
+): Promise<IAuth0Profile> => {
+  const management = await getAuth0Management();
+  
+  const user = await management.updateUser(
+    { id: auth0UserId },
+    updateable,
+  );
+  return toUserFormat(user);
+};
+
+
+const updatePreferences = async (
+  auth0UserId: string,
+  preferences: IPreferences,
+): Promise<IAuth0Profile> => {
+  const management = await getAuth0Management();
+  
+  const user = await management.updateUser(
+    { id: auth0UserId },
+    {
+      user_metadata: {
+        subscribeEventCreationEmail: String(
+          preferences.subscribeEventCreationEmail,
+        ),
+        subscribeWeeklyEmail: String(preferences.subscribeWeeklyEmail),
+      },
+    },
+  );
+  return toUserFormat(user);
+};
+
 const fetchMyProfile = async (auth0Id: string): Promise<IAuth0Profile> => {
-  const hasId = has(auth0Id);
-  const cachedUsers = await getFromCache(CACHE_KEY_USERS);
-  console.log('cached users');
-  console.log(cachedUsers);
-  if (cachedUsers) {
-    const obj = JSON.parse(cachedUsers);
-    if (hasId(obj)) {
-      return prop(auth0Id, obj);
-    }
-  }
-  const refetchedUsers = await updateUserCache();
-  const obj = JSON.parse(refetchedUsers);
-  if (hasId(obj)) {
-    return prop(auth0Id, obj);
-  }
+  const management = await getAuth0Management();
+
+  const user = await management.getUser({ id: auth0Id });
+  // @ts-ignore
+  return toUserFormat(user);
+  // const hasId = has(auth0Id);
+  // const cachedUsers = await getFromCache(CACHE_KEY_USERS);
+  // console.log('cached users');
+  // console.log(cachedUsers);
+  // if (cachedUsers) {
+  //   const obj = JSON.parse(cachedUsers);
+  //   if (hasId(obj)) {
+  //     return prop(auth0Id, obj);
+  //   }
+  // }
+  // const refetchedUsers = await updateUserCache();
+  // const obj = JSON.parse(refetchedUsers);
+  // if (hasId(obj)) {
+  //   return prop(auth0Id, obj);
+  // }
   throw new NotFoundError('User not found in auth zero');
 };
 
@@ -136,16 +214,7 @@ const fetchUsers = async (
 const createAuth0User = async (
   user: IAuth0User,
 ): Promise<IAuth0RegisterResponse> => {
-  const client = await auth0.clientCredentialsGrant({
-    audience: `https://${domain}/api/v2/`,
-    // @ts-ignore: Don't know how to fix
-    scope: 'read:users update:users',
-  });
-
-  const management = new ManagementClient({
-    token: client.access_token,
-    domain,
-  });
+  const management = await getAuth0Management();
 
   try {
     const authZeroUser = await management.createUser({
@@ -187,17 +256,10 @@ const requestChangePasswordEmail = (email: string): boolean => {
   }
 };
 
+// TODO: remove me
 const updateUserProfiles = async (mongoUserDocs: any[]): Promise<boolean> => {
-  const client = await auth0.clientCredentialsGrant({
-    audience: `https://${domain}/api/v2/`,
-    // @ts-ignore: Don't know how to fix
-    scope: 'read:users update:users',
-  });
+  const management = await getAuth0Management();
 
-  const management = new ManagementClient({
-    token: client.access_token,
-    domain,
-  });
   for (const userDoc of mongoUserDocs) {
     const {
       preferences: {
@@ -206,19 +268,23 @@ const updateUserProfiles = async (mongoUserDocs: any[]): Promise<boolean> => {
       },
     } = userDoc;
 
-    await management.updateUser(
-      { id: userDoc.auth0Id },
-      {
-        name: userDoc.name,
-        user_metadata: {
-          subscribeEventCreationEmail: String(creation),
-          subscribeWeeklyEmail: String(weekly),
+    try {
+      await management.updateUser(
+        { id: userDoc.auth0Id },
+        {
+          name: userDoc.name,
+          user_metadata: {
+            subscribeEventCreationEmail: String(creation),
+            subscribeWeeklyEmail: String(weekly),
+          },
         },
-      },
-    );
+      );
+    } catch (error) {
+      console.log(`user does not exist in db ${userDoc.username}`);
+    }
   }
 
-  return false;
+  return true;
 };
 
 export {
@@ -228,4 +294,7 @@ export {
   fetchUsers,
   fetchMyProfile,
   updateUserProfiles,
+  toUserFormat,
+  updatePreferences,
+  updateProfile,
 };

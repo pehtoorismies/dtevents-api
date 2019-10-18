@@ -69,16 +69,16 @@ type IDPayload {
 }
 
 type Mutation {
-  batchImport: Boolean!
   createEvent(addMe: Boolean = false, event: EventData!, notifySubscribers: Boolean = true): Event!
   deleteEvent(id: ID!): IDPayload!
   forgotPassword(email: String!): Boolean!
   login(password: String!, usernameOrEmail: String!): AuthPayload!
   signup(email: String!, name: String!, password: String!, registerSecret: String!, username: String!): Boolean!
   toggleJoinEvent(id: ID!): Event!
+  updateAuth0Users: Boolean!
   updateEvent(event: EventData, id: ID!): Event!
-  updateMe(name: String, username: String): User!
-  updateMyPreferences(subscribeEventCreationEmail: Boolean, subscribeWeeklyEmail: Boolean): User!
+  updateMe(name: String, nickname: String, username: String): User!
+  updateMyPreferences(subscribeEventCreationEmail: Boolean!, subscribeWeeklyEmail: Boolean!): User!
 }
 
 type Preferences {
@@ -108,7 +108,8 @@ type User {
   email: String!
   id: String!
   name: String!
+  nickname: String
   preferences: Preferences!
-  updatedAt: DateTime!
+  updatedAt: DateTime
   username: String!
 }
