@@ -285,7 +285,7 @@ export const Mutation = objectType({
           nickname,
         }: { mongoose: any; sub: string; nickname: string },
       ) {
-        const { EventModel } = mongoose;
+        const { EventModel, UserModel } = mongoose;
 
         const user = {
           id: sub,
@@ -303,9 +303,9 @@ export const Mutation = objectType({
 
         const createdEvent = await EventModel.create(withMe);
 
-        // if (notifySubscribers) {
-        //   notifyEventCreationSubscribers(UserModel, createdEvent);
-        // }
+        if (notifySubscribers) {
+          notifyEventCreationSubscribers(UserModel, createdEvent);
+        }
 
         return createdEvent;
       },
