@@ -76,7 +76,9 @@ export interface NexusGenRootTypes {
   Query: {};
   SimpleUser: { // root type
     id: string; // String!
-    username: string; // String!
+    nickname?: string | null; // String
+    sub?: string | null; // String
+    username?: string | null; // String
   }
   User: { // root type
     auth0Id: string; // String!
@@ -160,7 +162,9 @@ export interface NexusGenFieldTypes {
   }
   SimpleUser: { // field return type
     id: string; // String!
-    username: string; // String!
+    nickname: string | null; // String
+    sub: string | null; // String
+    username: string | null; // String
   }
   User: { // field return type
     auth0Id: string; // String!

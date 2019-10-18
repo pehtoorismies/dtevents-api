@@ -28,8 +28,10 @@ export const User = objectType({
 export const SimpleUser = objectType({
   name: 'SimpleUser',
   definition(t) {
-    t.string('id');
-    t.string('username');
+    t.string('sub', { description: "Auth0 subject", nullable: true});
+    t.string('nickname', { description: "Auth0 nickname", nullable: true});
+    t.string('username', { description: "Auth0 username (backwards comp)", nullable: true});
+    t.string('id', { description: "Auth0 id (backwards comp)", nullable: false});
   },
 });
 

@@ -288,8 +288,8 @@ export const Mutation = objectType({
         const { EventModel, UserModel } = mongoose;
 
         const user = {
-          id: sub,
-          username: nickname,
+          sub,
+          nickname,
         };
 
         const eventWithCreator = {

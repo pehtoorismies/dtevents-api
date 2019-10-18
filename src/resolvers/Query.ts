@@ -53,6 +53,7 @@ export const Query = objectType({
             message: `Event with id ${id} not found`,
           });
         }
+        console.log(event);
         return event;
       },
     });

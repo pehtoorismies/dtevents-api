@@ -54,15 +54,11 @@ const timestamps = {
 //   { timestamps },
 // );
 
-// const SimpleUserSchema = new Schema({
-//   username: String,
-//   // _id: String
-// });
-
-// SimpleUserSchema.virtual('id').get(function() {
-//   // @ts-ignore
-//   return this._id.toHexString();
-// });
+const SimpleUserSchema = new Schema({
+  username: { type: String, required: false },
+  nickname: { type: String, required: false },
+  sub: { type: String, required: false },
+});
 
 // EVENT
 const EventSchema = new Schema(
@@ -84,10 +80,9 @@ const EventSchema = new Schema(
     },
     exactTime: Boolean,
     description: String,
-    participants: [String],
+    participants: [SimpleUserSchema],
     creator: {
-      type: String,
-      default: 'unknown'
+      type: SimpleUserSchema,
     },
   },
   { timestamps },
