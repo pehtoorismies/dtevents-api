@@ -1,3 +1,5 @@
+import { fetchNickname } from '../auth';
+
 const fetchUser = async (
   resolve: any,
   root: any,
@@ -5,39 +7,31 @@ const fetchUser = async (
   context: any,
   info: any,
 ) => {
-  const {
-    sub,
-    mongoose: { UserModel },
-  } = context;
+  const { sub, nickname } = context;
 
   if (!sub) {
     return new Error('Middleware error, no sub found');
   }
 
-  const user = await UserModel.findOne({ auth0Id: sub });
-  if (!user) {
-    return new Error('Middleware error. No user found in db');
+  if (nickname) {
+    return resolve(root, args, context, info);
   }
-  
+
+  // TODO: remove when everybody has nick in access token
+  const nName = await fetchNickname(sub);
   const newContext = {
     ...context,
-    user,
+    nickname: nName,
   };
   const result = await resolve(root, args, newContext, info);
   return result;
 };
 
-const addUserData = {
-  Query: {
-    me: fetchUser,
-  },
+const addUserNickname = {
   Mutation: {
     createEvent: fetchUser,
     toggleJoinEvent: fetchUser,
-    updateMyPreferences: fetchUser,
-    batchImport: fetchUser,
-    updateMe: fetchUser,
   },
 };
 
-export default addUserData;
+export { addUserNickname };

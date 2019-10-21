@@ -18,8 +18,10 @@ export interface IMailgunConfig {
 }
 
 export interface ISimpleUser {
-  username: string;
   id: string;
+  username?: string;
+  nickname: string;
+  sub: string;
 }
 
 interface IAuth0Response {
@@ -77,3 +79,46 @@ export interface IEmailTemplate {
   plainText: string;
   mjmlText: string;
 }
+
+export interface IAuth0User {
+  email: string;
+  username: string;
+  password: string;
+  name: string;
+}
+
+export interface IPreferences {
+  subscribeEventCreationEmail: boolean;
+  subscribeWeeklyEmail: boolean;
+}
+
+export interface IAuth0Profile {
+  id: string;
+  email: string;
+  username: string;
+  nickname: string;
+  name: string;
+  picture: string;
+  createdAt: string;
+  updatedAt?: string;
+  preferences: IPreferences
+}
+
+export interface IAuth0ProfileUpdate {
+  name?: string | null;
+  username?: string | null;
+  nickname?: string | null;
+}
+
+export interface IAuth0UserMetaData {
+  subscribeEventCreationEmail: string;
+  subscribeWeeklyEmail: string;
+};
+
+export interface IAuth0UserBasic {
+  name: string;
+  email: string;
+  nickname: string;
+};
+
+

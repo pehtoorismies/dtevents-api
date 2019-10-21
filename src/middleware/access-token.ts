@@ -34,4 +34,4 @@ const accessToken = async (
   return await resolve(parent, args, newContext, info);
 };
 
-export default accessToken;
+export { accessToken };

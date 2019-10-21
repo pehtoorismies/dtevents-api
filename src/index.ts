@@ -5,17 +5,14 @@ import { makeSchema } from 'nexus';
 import { join } from 'path';
 
 import { config } from './config';
-import { EventSchema, UserSchema } from './db-schema';
+import { EventSchema } from './db-schema';
 import {
   accessToken,
-  addUserData,
+  addUserNickname,
   permissions,
   requestScopes,
 } from './middleware';
-import resolvers from './resolvers';
-
-// import { Context } from './types';
-const {
+import {
   AuthPayload,
   BaseUser,
   DateTime,
@@ -26,7 +23,9 @@ const {
   Query,
   SimpleUser,
   User,
-} = resolvers;
+} from './resolvers';
+
+// import { Context } from './types';
 
 const { mongoUrl } = config;
 
@@ -87,12 +86,12 @@ const startServer = () => {
     context: req => ({
       ...req,
       mongoose: {
-        UserModel: model('User', UserSchema),
+        // UserModel: model('User', UserSchema),
         EventModel: model('Event', EventSchema),
+        connection,
       },
     }),
-    middlewares: [accessToken, requestScopes, addUserData, permissions],
-    // middlewares: [accessToken],
+    middlewares: [accessToken, requestScopes, addUserNickname, permissions],
   });
 
   server.start(serverOptions, ({ port }) =>

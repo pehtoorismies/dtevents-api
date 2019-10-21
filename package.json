@@ -24,6 +24,7 @@
     "@types/ramda": "^0.26.18",
     "@types/request-promise": "^4.1.44",
     "@types/ws": "^6.0.3",
+    "deep-equal": "^1.1.0",
     "jest": "^24.9.0",
     "prettier": "^1.18.2",
     "ts-jest": "^24.1.0",
@@ -35,8 +36,11 @@
     "typescript": "^3.5.3"
   },
   "dependencies": {
+    "@types/deep-equal": "^1.0.1",
+    "@types/redis": "^2.8.14",
     "apollo-errors": "^1.9.0",
     "auth0": "^2.18.0",
+    "axios": "^0.19.0",
     "date-fns": "^2.4.0",
     "dotenv": "^8.1.0",
     "email-validator": "^2.0.4",
@@ -53,6 +57,7 @@
     "nunjucks": "^3.2.0",
     "ramda": "^0.26.1",
     "ramda-adjunct": "^2.18.0",
+    "redis": "^2.8.0",
     "request-promise": "^4.2.4"
   }
 }

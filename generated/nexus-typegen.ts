@@ -44,8 +44,11 @@ export interface NexusGenRootTypes {
     idToken: string; // String!
   }
   BaseUser: { // root type
+    email: string; // String!
     id: string; // String!
     name: string; // String!
+    nickname: string; // String!
+    picture: string; // String!
     username: string; // String!
   }
   Event: { // root type
@@ -73,16 +76,18 @@ export interface NexusGenRootTypes {
   Query: {};
   SimpleUser: { // root type
     id: string; // String!
-    username: string; // String!
+    nickname?: string | null; // String
+    sub?: string | null; // String
+    username?: string | null; // String
   }
   User: { // root type
-    auth0Id: string; // String!
     createdAt: any; // DateTime!
     email: string; // String!
     id: string; // String!
     name: string; // String!
+    nickname?: string | null; // String
     preferences: NexusGenRootTypes['Preferences']; // Preferences!
-    updatedAt: any; // DateTime!
+    updatedAt?: any | null; // DateTime
     username: string; // String!
   }
   String: string;
@@ -105,8 +110,11 @@ export interface NexusGenFieldTypes {
     idToken: string; // String!
   }
   BaseUser: { // field return type
+    email: string; // String!
     id: string; // String!
     name: string; // String!
+    nickname: string; // String!
+    picture: string; // String!
     username: string; // String!
   }
   Event: { // field return type
@@ -127,12 +135,11 @@ export interface NexusGenFieldTypes {
     id: string; // String!
   }
   Mutation: { // field return type
-    batchImport: boolean; // Boolean!
     createEvent: NexusGenRootTypes['Event']; // Event!
     deleteEvent: NexusGenRootTypes['IDPayload']; // IDPayload!
     forgotPassword: boolean; // Boolean!
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
-    signup: NexusGenRootTypes['User']; // User!
+    signup: boolean; // Boolean!
     toggleJoinEvent: NexusGenRootTypes['Event']; // Event!
     updateEvent: NexusGenRootTypes['Event']; // Event!
     updateMe: NexusGenRootTypes['User']; // User!
@@ -153,16 +160,18 @@ export interface NexusGenFieldTypes {
   }
   SimpleUser: { // field return type
     id: string; // String!
-    username: string; // String!
+    nickname: string | null; // String
+    sub: string | null; // String
+    username: string | null; // String
   }
   User: { // field return type
-    auth0Id: string; // String!
     createdAt: any; // DateTime!
     email: string; // String!
     id: string; // String!
     name: string; // String!
+    nickname: string | null; // String
     preferences: NexusGenRootTypes['Preferences']; // Preferences!
-    updatedAt: any; // DateTime!
+    updatedAt: any | null; // DateTime
     username: string; // String!
   }
 }
@@ -181,8 +190,8 @@ export interface NexusGenArgTypes {
       email: string; // String!
     }
     login: { // args
+      email: string; // String!
       password: string; // String!
-      usernameOrEmail: string; // String!
     }
     signup: { // args
       email: string; // String!
@@ -200,10 +209,12 @@ export interface NexusGenArgTypes {
     }
     updateMe: { // args
       name?: string | null; // String
+      nickname?: string | null; // String
+      username?: string | null; // String
     }
     updateMyPreferences: { // args
-      subscribeEventCreationEmail?: boolean | null; // Boolean
-      subscribeWeeklyEmail?: boolean | null; // Boolean
+      subscribeEventCreationEmail: boolean; // Boolean!
+      subscribeWeeklyEmail: boolean; // Boolean!
     }
   }
   Query: {
