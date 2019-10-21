@@ -1,17 +1,19 @@
-import { AuthenticationClient, ManagementClient } from 'auth0';
-import { map, pickAll, pipe, values, reduce, assoc, prop } from 'ramda';
+import { AuthenticationClient, ManagementClient, UserData } from 'auth0';
+import { assoc, map, pickAll, pipe, prop, reduce, values } from 'ramda';
 import { renameKeys } from 'ramda-adjunct';
-import { createCache } from './cache';
 
 import { config } from '../config';
+import { NotFoundError } from '../errors';
 import {
   IAuth0Profile,
+  IAuth0ProfileUpdate,
   IAuth0RegisterResponse,
   IAuth0User,
+  IMailRecipient,
+  IAuth0UserMetaData,
   IPreferences,
-  IAuth0ProfileUpdate,
 } from '../types';
-import { NotFoundError } from '../errors';
+import { createCache } from './cache';
 
 const { domain, clientId, clientSecret, jwtAudience } = config.auth;
 
@@ -143,21 +145,17 @@ const updateProfile = async (
   updateable: IAuth0ProfileUpdate,
 ): Promise<IAuth0Profile> => {
   const management = await getAuth0Management();
-  
-  const user = await management.updateUser(
-    { id: auth0UserId },
-    updateable,
-  );
+
+  const user = await management.updateUser({ id: auth0UserId }, updateable);
   return toUserFormat(user);
 };
-
 
 const updatePreferences = async (
   auth0UserId: string,
   preferences: IPreferences,
 ): Promise<IAuth0Profile> => {
   const management = await getAuth0Management();
-  
+
   const user = await management.updateUser(
     { id: auth0UserId },
     {
@@ -243,6 +241,66 @@ const createAuth0User = async (
   }
 };
 
+const AUTH0_QUERY_BASE = {
+  fields: 'email,name',
+  search_engine: 'v3',
+};
+
+const pickMailRecipientFields = (
+  users: UserData<any, IAuth0UserMetaData>[],
+) => {
+  return users
+    .map((u: UserData) => {
+      return {
+        name: u.name || '',
+        email: u.email || '',
+      };
+    })
+    .filter((u: IMailRecipient) => {
+      return !!u.email;
+    });
+};
+
+const fetchCreateEventSubscribers = async (): Promise<IMailRecipient[]> => {
+  const management = await getAuth0Management();
+
+  try {
+    const q = `user_metadata.subscribeEventCreationEmail:"true"`;
+    const users: UserData<
+      any,
+      IAuth0UserMetaData
+    >[] = await management.getUsers({
+      ...AUTH0_QUERY_BASE,
+      q,
+    });
+
+    return pickMailRecipientFields(users);
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
+
+const fetchWeeklyEmailSubscribers = async (): Promise<IMailRecipient[]> => {
+  const management = await getAuth0Management();
+
+  try {
+    const q = `user_metadata.subscribeWeeklyEmail:"true"`;
+    const users: UserData<
+      any,
+      IAuth0UserMetaData
+    >[] = await management.getUsers({
+      ...AUTH0_QUERY_BASE,
+      q,
+    });
+
+    return pickMailRecipientFields(users);
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
+
 const requestChangePasswordEmail = (email: string): boolean => {
   // fire and forget
   try {
@@ -257,45 +315,15 @@ const requestChangePasswordEmail = (email: string): boolean => {
   }
 };
 
-// TODO: remove me
-const updateUserProfiles = async (mongoUserDocs: any[]): Promise<boolean> => {
-  const management = await getAuth0Management();
-
-  for (const userDoc of mongoUserDocs) {
-    const {
-      preferences: {
-        subscribeEventCreationEmail: creation,
-        subscribeWeeklyEmail: weekly,
-      },
-    } = userDoc;
-
-    try {
-      await management.updateUser(
-        { id: userDoc.auth0Id },
-        {
-          name: userDoc.name,
-          user_metadata: {
-            subscribeEventCreationEmail: String(creation),
-            subscribeWeeklyEmail: String(weekly),
-          },
-        },
-      );
-    } catch (error) {
-      console.log(`user does not exist in db ${userDoc.username}`);
-    }
-  }
-
-  return true;
-};
-
 export {
   createAuth0User,
   loginAuth0User,
   requestChangePasswordEmail,
   fetchUsers,
   fetchMyProfile,
-  updateUserProfiles,
   toUserFormat,
   updatePreferences,
   updateProfile,
+  fetchCreateEventSubscribers,
+  fetchWeeklyEmailSubscribers,
 };

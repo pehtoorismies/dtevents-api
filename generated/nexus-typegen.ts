@@ -142,7 +142,6 @@ export interface NexusGenFieldTypes {
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
     signup: boolean; // Boolean!
     toggleJoinEvent: NexusGenRootTypes['Event']; // Event!
-    updateAuth0Users: boolean; // Boolean!
     updateEvent: NexusGenRootTypes['Event']; // Event!
     updateMe: NexusGenRootTypes['User']; // User!
     updateMyPreferences: NexusGenRootTypes['User']; // User!

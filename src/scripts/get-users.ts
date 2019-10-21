@@ -52,4 +52,35 @@ const updateUsers = async () => {
   }
 };
 
-export { updateUsers };
+const setUserSubscriptionMetadata = async () => {
+  const management = await getAuth0Management();
+
+  const users = await management.getUsers();
+
+  for (const user of users) {
+    const { user_id, nickname } = user;
+
+    console.log(`Id ${user_id}: ${nickname}`);
+
+    const subsEventCreation = nickname === 'Vepe' ? 'false' : 'true';
+
+    try {
+      const u = await management.updateUser(
+        { id: user_id },
+        {
+          user_metadata: {
+            subscribeEventCreationEmail: subsEventCreation,
+            subscribeWeeklyEmail: 'true',
+          },
+        },
+      );
+      console.log(
+        `Updated user metadata ${u.user_id}: ${u.nickname}. Crea: ${subsEventCreation}`,
+      );
+    } catch (error) {
+      console.log(`user does not exist in db ${user_id}`);
+    }
+  }
+};
+
+export { updateUsers, setUserSubscriptionMetadata };

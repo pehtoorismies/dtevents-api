@@ -75,7 +75,6 @@ type Mutation {
   login(password: String!, usernameOrEmail: String!): AuthPayload!
   signup(email: String!, name: String!, password: String!, registerSecret: String!, username: String!): Boolean!
   toggleJoinEvent(id: ID!): Event!
-  updateAuth0Users: Boolean!
   updateEvent(event: EventData, id: ID!): Event!
   updateMe(name: String, nickname: String, username: String): User!
   updateMyPreferences(subscribeEventCreationEmail: Boolean!, subscribeWeeklyEmail: Boolean!): User!

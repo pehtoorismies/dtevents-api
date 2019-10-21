@@ -14,8 +14,8 @@ import {
   loginAuth0User,
   requestChangePasswordEmail,
   updatePreferences,
-  updateUserProfiles,
   updateProfile,
+  fetchCreateEventSubscribers,
 } from '../auth';
 import { config } from '../config';
 import { Auth0Error, NotFoundError, UserInputError } from '../errors';
@@ -208,14 +208,11 @@ export const Mutation = objectType({
           nickname,
         });
 
-        const auth0User: IAuth0Profile = await updateProfile(
-          sub,
-          updatetable,
-        );
+        const auth0User: IAuth0Profile = await updateProfile(sub, updatetable);
         return {
           ...auth0User,
           auth0Id: sub,
-        } 
+        };
 
         // TODO: update events if nickchanges...
 
@@ -285,7 +282,7 @@ export const Mutation = objectType({
           nickname,
         }: { mongoose: any; sub: string; nickname: string },
       ) {
-        const { EventModel, UserModel } = mongoose;
+        const { EventModel } = mongoose;
 
         const user = {
           sub,
@@ -304,7 +301,8 @@ export const Mutation = objectType({
         const createdEvent = await EventModel.create(withMe);
 
         if (notifySubscribers) {
-          notifyEventCreationSubscribers(UserModel, createdEvent);
+          const subscribedUsers = await fetchCreateEventSubscribers();
+          notifyEventCreationSubscribers(subscribedUsers, createdEvent);
         }
 
         return createdEvent;
@@ -388,22 +386,6 @@ export const Mutation = objectType({
           });
           const updated = await evt.save();
           return updated;
-        }
-      },
-    });
-
-    t.field('updateAuth0Users', {
-      type: 'Boolean',
-      args: {},
-      resolve: async (_, {}, { mongoose }) => {
-        const { UserModel } = mongoose;
-        const users = await UserModel.find();
-        try {
-          await updateUserProfiles(users);
-          return true;
-        } catch (error) {
-          console.error(error);
-          return false;
         }
       },
     });

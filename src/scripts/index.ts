@@ -1,3 +1,3 @@
-import { updateUsers } from './get-users';
+import { setUserSubscriptionMetadata } from './get-users';
 
-updateUsers();
+setUserSubscriptionMetadata();

@@ -107,3 +107,16 @@ export interface IAuth0ProfileUpdate {
   username?: string | null;
   nickname?: string | null;
 }
+
+export interface IAuth0UserMetaData {
+  subscribeEventCreationEmail: string;
+  subscribeWeeklyEmail: string;
+};
+
+export interface IAuth0UserBasic {
+  name: string;
+  email: string;
+  nickname: string;
+};
+
+

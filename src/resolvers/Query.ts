@@ -1,10 +1,15 @@
+import addWeeks from 'date-fns/addWeeks';
 import startOfToday from 'date-fns/startOfToday';
 import { idArg, intArg, objectType } from 'nexus';
 
-import { fetchUsers, fetchMyProfile } from '../auth';
+import {
+  fetchMyProfile,
+  fetchUsers,
+  fetchWeeklyEmailSubscribers,
+} from '../auth';
 import { NotFoundError } from '../errors';
 import { notifyWeeklySubscribers } from '../nofications';
-import { IAuth0Profile } from '../types'
+import { IAuth0Profile } from '../types';
 
 export const Query = objectType({
   name: 'Query',
@@ -69,8 +74,7 @@ export const Query = objectType({
     t.field('me', {
       type: 'User',
       async resolve(_, __, { sub }) {
-        
-        const me : IAuth0Profile = await fetchMyProfile(sub);
+        const me: IAuth0Profile = await fetchMyProfile(sub);
         return {
           ...me,
           auth0Id: sub,
@@ -81,8 +85,16 @@ export const Query = objectType({
     t.field('sendWeeklyEmail', {
       type: 'Boolean',
       async resolve(_, __, { mongoose }) {
-        const { EventModel, UserModel } = mongoose;
-        notifyWeeklySubscribers(UserModel, EventModel);
+        const { EventModel } = mongoose;
+        const now = new Date();
+        const weekFromNow = addWeeks(now, 1);
+        const search = {
+          date: { $gte: now, $lte: weekFromNow },
+        };
+
+        const events = await EventModel.find(search).sort({ date: 1 });
+        const weeklySubscribers = await fetchWeeklyEmailSubscribers();
+        notifyWeeklySubscribers(weeklySubscribers, events);
         return true;
       },
     });
