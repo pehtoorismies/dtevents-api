@@ -1,5 +1,5 @@
 import { AuthenticationClient, ManagementClient, UserData } from 'auth0';
-import { assoc, map, pickAll, pipe, prop, reduce, values } from 'ramda';
+import { map, pickAll, pipe, prop } from 'ramda';
 import { renameKeys } from 'ramda-adjunct';
 
 import { config } from '../config';
@@ -17,14 +17,14 @@ import {
 
 const { domain, clientId, clientSecret, jwtAudience } = config.auth;
 
-const CACHE_KEY_USERS = 'users';
+// const CACHE_KEY_USERS = 'users';
 
-const addUsersToCache = (users: IAuth0Profile[]) => {
-  const reducer = (acc: any, curr: IAuth0Profile) => {
-    return assoc(curr.id, curr, acc);
-  };
-  return reduce(reducer, {}, users);
-};
+// const addUsersToCache = (users: IAuth0Profile[]) => {
+//   const reducer = (acc: any, curr: IAuth0Profile) => {
+//     return assoc(curr.id, curr, acc);
+//   };
+//   return reduce(reducer, {}, users);
+// };
 
 // const { setToCache, getFromCache } = createCache();
 
