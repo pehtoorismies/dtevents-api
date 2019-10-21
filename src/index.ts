@@ -8,6 +8,7 @@ import { config } from './config';
 import { EventSchema } from './db-schema';
 import {
   accessToken,
+  addUserNickname,
   permissions,
   requestScopes,
 } from './middleware';
@@ -90,9 +91,7 @@ const startServer = () => {
         connection,
       },
     }),
-    // middlewares: [accessToken, requestScopes, addUserData, permissions],
-    middlewares: [accessToken, requestScopes, permissions],
-    // middlewares: [accessToken],
+    middlewares: [accessToken, requestScopes, addUserNickname, permissions],
   });
 
   server.start(serverOptions, ({ port }) =>

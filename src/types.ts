@@ -18,8 +18,10 @@ export interface IMailgunConfig {
 }
 
 export interface ISimpleUser {
-  username: string;
   id: string;
+  username?: string;
+  nickname: string;
+  sub: string;
 }
 
 interface IAuth0Response {

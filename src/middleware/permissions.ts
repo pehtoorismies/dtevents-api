@@ -51,4 +51,4 @@ const permissions = shield({
     updateMe: rules.isMeWriter,
   },
 });
-export default permissions;
+export { permissions };

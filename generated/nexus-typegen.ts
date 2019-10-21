@@ -81,7 +81,6 @@ export interface NexusGenRootTypes {
     username?: string | null; // String
   }
   User: { // root type
-    auth0Id: string; // String!
     createdAt: any; // DateTime!
     email: string; // String!
     id: string; // String!
@@ -166,7 +165,6 @@ export interface NexusGenFieldTypes {
     username: string | null; // String
   }
   User: { // field return type
-    auth0Id: string; // String!
     createdAt: any; // DateTime!
     email: string; // String!
     id: string; // String!
@@ -192,8 +190,8 @@ export interface NexusGenArgTypes {
       email: string; // String!
     }
     login: { // args
+      email: string; // String!
       password: string; // String!
-      usernameOrEmail: string; // String!
     }
     signup: { // args
       email: string; // String!

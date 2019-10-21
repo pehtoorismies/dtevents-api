@@ -1,9 +1,8 @@
 import format from 'date-fns/format';
 import { fi } from 'date-fns/locale';
-import addWeeks from 'date-fns/addWeeks';
 
-import { EVENT_TYPES } from '../constants';
 import { config } from '../config';
+import { EVENT_TYPES } from '../constants';
 import { sendEventCreationEmail, sendWeeklyEmail } from '../mail';
 import { IEventEmailOptions, IMailRecipient, IWeeklyOptions } from '../types';
 import { findType } from '../util';

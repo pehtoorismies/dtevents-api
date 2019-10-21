@@ -7,7 +7,7 @@ import {
   objectType,
   stringArg,
 } from 'nexus';
-import { assoc, contains, findIndex, propEq, remove } from 'ramda';
+import { assoc, findIndex, propEq, remove } from 'ramda';
 
 import {
   createAuth0User,
@@ -23,11 +23,8 @@ import { notifyEventCreationSubscribers } from '../nofications';
 import { IAuth0Profile, ISimpleUser } from '../types';
 import { filterUndefined } from '../util';
 
-const findParticipantIndex = (
-  username: string,
-  participants: ISimpleUser[],
-) => {
-  return findIndex(propEq('username', username))(participants);
+const findParticipantIndex = (sub: string, participants: ISimpleUser[]) => {
+  return findIndex(propEq('sub', sub))(participants);
 };
 
 export const EventInput = inputObjectType({
@@ -133,11 +130,11 @@ export const Mutation = objectType({
     t.field('login', {
       type: 'AuthPayload',
       args: {
-        usernameOrEmail: stringArg({ required: true }),
+        email: stringArg({ required: true }),
         password: stringArg({ required: true }),
       },
-      async resolve(_, { usernameOrEmail, password }, { mongoose }) {
-        if (!usernameOrEmail) {
+      async resolve(_, { email, password }) {
+        if (!email) {
           throw new UserInputError({
             data: {
               field: 'usernameOrEmail',
@@ -145,19 +142,9 @@ export const Mutation = objectType({
             },
           });
         }
-        const isEmail = contains('@', usernameOrEmail);
-
-        if (isEmail && !EmailValidator.validate(usernameOrEmail)) {
-          return new UserInputError({
-            data: {
-              field: 'usernameOrEmail',
-              message: 'Email väärässä muodossa',
-            },
-          });
-        }
 
         try {
-          const tokens = await loginAuth0User(usernameOrEmail, password);
+          const tokens = await loginAuth0User(email, password);
           return tokens;
         } catch (error) {
           return new Auth0Error({
@@ -258,11 +245,11 @@ export const Mutation = objectType({
           subscribeEventCreationEmail,
           subscribeWeeklyEmail,
         });
-
-        return {
-          ...auth0User,
-          auth0Id: sub,
-        };
+        return auth0User;
+        // return {
+        //   ...auth0User,
+        //   auth0Id: sub,
+        // };
       },
     });
 
@@ -367,11 +354,11 @@ export const Mutation = objectType({
         }
 
         const user = {
-          id: sub,
-          username: nickname,
+          sub,
+          nickname,
         };
 
-        const partIndex = findParticipantIndex(user.username, evt.participants);
+        const partIndex = findParticipantIndex(user.sub, evt.participants);
 
         const isAlreadyParticipating = partIndex >= 0;
         if (isAlreadyParticipating) {
@@ -380,10 +367,7 @@ export const Mutation = objectType({
           const updated = await evt.save();
           return updated;
         } else {
-          evt.participants.push({
-            username: user.username,
-            _id: user.id,
-          });
+          evt.participants.push(user);
           const updated = await evt.save();
           return updated;
         }

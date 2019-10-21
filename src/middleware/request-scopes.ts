@@ -21,32 +21,35 @@ const requestScopes = async (
   }
 
   const decodedToken = jwt.decode(accessToken, { complete: true });
-  
+
   if (!decodedToken) {
     return new JWTError({
       message: 'Malformed JWT',
     });
   }
   const kid = String(getKID(decodedToken));
-  
+
   if (!kid) {
     return new JWTError({
       message: 'Kid not found in JWT',
     });
   }
-  
+
   const pubkey = await getMatchingPubKey(kid);
-  
+
   try {
     const token: any = jwt.verify(accessToken, pubkey, {
       audience: config.auth.jwtAudience,
       issuer: `https://${config.auth.domain}/`,
       algorithms: ['RS256'],
     });
-    
+
     const scopes: string[] = getScopes(token.scope);
-    const sub = R.path(['payload', 'sub'], decodedToken)
-    const nickname = R.path(['payload', 'https://graphql.downtown65.com/nickname'], decodedToken)
+    const sub = R.path(['payload', 'sub'], decodedToken);
+    const nickname = R.path(
+      ['payload', 'https://graphql.downtown65.com/nickname'],
+      decodedToken,
+    );
 
     const updatedContext = {
       ...context,
@@ -68,4 +71,4 @@ const requestScopes = async (
   }
 };
 
-export default requestScopes;
+export { requestScopes };

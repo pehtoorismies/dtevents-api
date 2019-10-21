@@ -13,7 +13,7 @@ import {
   IAuth0UserMetaData,
   IPreferences,
 } from '../types';
-import { createCache } from './cache';
+// import { createCache } from './cache';
 
 const { domain, clientId, clientSecret, jwtAudience } = config.auth;
 
@@ -26,7 +26,7 @@ const addUsersToCache = (users: IAuth0Profile[]) => {
   return reduce(reducer, {}, users);
 };
 
-const { setToCache, getFromCache } = createCache();
+// const { setToCache, getFromCache } = createCache();
 
 const auth0 = new AuthenticationClient({
   domain,
@@ -48,12 +48,12 @@ const getAuth0Management = async (): Promise<any> => {
 };
 
 const loginAuth0User = async (
-  usernameOrEmail: string,
+  email: string,
   password: string,
 ): Promise<{ accessToken: string; idToken: string; expiresIn: string }> => {
   const authZeroUser = await auth0.passwordGrant({
     password,
-    username: usernameOrEmail,
+    username: email,
     // @ts-ignore: Don't know how to fix
     scope:
       'read:events write:events read:me write:me read:users openid profile',
@@ -130,15 +130,15 @@ const formatUsers = pipe(
   map(renameKeys(RENAME_KEYS)),
 );
 
-const updateUserCache = async (): Promise<any> => {
-  const management = await getAuth0Management();
+// const updateUserCache = async (): Promise<any> => {
+//   const management = await getAuth0Management();
 
-  const usersResp: Array<any> = await management.getUsers();
-  const userList: IAuth0Profile[] = formatUsers(usersResp);
-  const cached = addUsersToCache(userList);
-  await setToCache(CACHE_KEY_USERS, JSON.stringify(cached));
-  return cached;
-};
+//   const usersResp: Array<any> = await management.getUsers();
+//   const userList: IAuth0Profile[] = formatUsers(usersResp);
+//   const cached = addUsersToCache(userList);
+//   await setToCache(CACHE_KEY_USERS, JSON.stringify(cached));
+//   return cached;
+// };
 
 const updateProfile = async (
   auth0UserId: string,
@@ -198,16 +198,21 @@ const fetchMyProfile = async (auth0Id: string): Promise<IAuth0Profile> => {
 const fetchUsers = async (
   verified: boolean = true,
 ): Promise<IAuth0Profile[]> => {
-  const cachedUsers = await getFromCache(CACHE_KEY_USERS);
+    const management = await getAuth0Management();
 
-  if (cachedUsers) {
-    const obj = JSON.parse(cachedUsers);
-    return values(obj);
-  }
+  const usersResp: Array<any> = await management.getUsers();
+  const userList: IAuth0Profile[] = formatUsers(usersResp);
+  return userList;
+  // const cachedUsers = await getFromCache(CACHE_KEY_USERS);
 
-  const refetchedUsers = await updateUserCache();
-  const obj = JSON.parse(refetchedUsers);
-  return values(obj);
+  // if (cachedUsers) {
+  //   const obj = JSON.parse(cachedUsers);
+  //   return values(obj);
+  // }
+
+  // const refetchedUsers = await updateUserCache();
+  // const obj = JSON.parse(refetchedUsers);
+  // return values(obj);
 };
 
 const createAuth0User = async (
@@ -301,6 +306,10 @@ const fetchWeeklyEmailSubscribers = async (): Promise<IMailRecipient[]> => {
   }
 };
 
+const fetchNickname = async (auth0UserId: string) : Promise<string> => {
+  return 'koira';
+};
+
 const requestChangePasswordEmail = (email: string): boolean => {
   // fire and forget
   try {
@@ -326,4 +335,5 @@ export {
   updateProfile,
   fetchCreateEventSubscribers,
   fetchWeeklyEmailSubscribers,
+  fetchNickname,
 };
