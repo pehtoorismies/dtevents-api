@@ -196,10 +196,7 @@ export const Mutation = objectType({
         });
 
         const auth0User: IAuth0Profile = await updateProfile(sub, updatetable);
-        return {
-          ...auth0User,
-          auth0Id: sub,
-        };
+        return auth0User;
 
         // TODO: update events if nickchanges...
 
