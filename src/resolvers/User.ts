@@ -13,7 +13,6 @@ export const User = objectType({
   definition(t) {
     t.string('id');
     t.string('email');
-    t.string('username');
     t.string('name');
     t.string('nickname', { nullable: true });
     t.field('preferences', {
@@ -38,7 +37,6 @@ export const BaseUser = objectType({
   name: 'BaseUser',
   definition(t) {
     t.string('id');
-    t.string('username');
     t.string('name');
     t.string('nickname');
     t.string('email');

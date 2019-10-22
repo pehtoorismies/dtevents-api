@@ -1,20 +1,16 @@
 //***** START *********
 
-// var events = db.getCollection('events').find({});
-
+var events = db.getCollection('events').find({});
 
 // add fields to creators
-// events.forEach( function(evtDoc) {
-//     db.getCollection('backup').insert(evtDoc);
-//    });
+events.forEach( function(evtDoc) {
+    db.getCollection('backup').insert(evtDoc);
+   });
 
 //**** END **********
 
 //**************
 var users = db.getCollection('users').find({});
-// var events = db.getCollection('backup').find({});
-
-
 
 users.forEach( function(uDoc) {
     db.getCollection('events').update(

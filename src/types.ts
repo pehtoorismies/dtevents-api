@@ -82,7 +82,7 @@ export interface IEmailTemplate {
 
 export interface IAuth0User {
   email: string;
-  username: string;
+  nickname: string;
   password: string;
   name: string;
 }
@@ -101,7 +101,7 @@ export interface IAuth0Profile {
   picture: string;
   createdAt: string;
   updatedAt?: string;
-  preferences: IPreferences
+  preferences: IPreferences;
 }
 
 export interface IAuth0ProfileUpdate {
@@ -113,12 +113,10 @@ export interface IAuth0ProfileUpdate {
 export interface IAuth0UserMetaData {
   subscribeEventCreationEmail: string;
   subscribeWeeklyEmail: string;
-};
+}
 
 export interface IAuth0UserBasic {
   name: string;
   email: string;
   nickname: string;
-};
-
-
+}

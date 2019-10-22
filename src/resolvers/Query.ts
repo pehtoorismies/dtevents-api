@@ -58,7 +58,6 @@ export const Query = objectType({
             message: `Event with id ${id} not found`,
           });
         }
-        console.log(event);
         return event;
       },
     });
@@ -75,10 +74,7 @@ export const Query = objectType({
       type: 'User',
       async resolve(_, __, { sub }) {
         const me: IAuth0Profile = await fetchMyProfile(sub);
-        return {
-          ...me,
-          auth0Id: sub,
-        };
+        return me;
       },
     });
 

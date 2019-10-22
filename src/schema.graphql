@@ -14,7 +14,6 @@ type BaseUser {
   name: String!
   nickname: String!
   picture: String!
-  username: String!
 }
 
 """
@@ -73,10 +72,10 @@ type Mutation {
   deleteEvent(id: ID!): IDPayload!
   forgotPassword(email: String!): Boolean!
   login(email: String!, password: String!): AuthPayload!
-  signup(email: String!, name: String!, password: String!, registerSecret: String!, username: String!): Boolean!
+  signup(email: String!, name: String!, nickname: String!, password: String!, registerSecret: String!): User!
   toggleJoinEvent(id: ID!): Event!
   updateEvent(event: EventData, id: ID!): Event!
-  updateMe(name: String, nickname: String, username: String): User!
+  updateMe(name: String, nickname: String): User!
   updateMyPreferences(subscribeEventCreationEmail: Boolean!, subscribeWeeklyEmail: Boolean!): User!
 }
 
@@ -118,5 +117,4 @@ type User {
   nickname: String
   preferences: Preferences!
   updatedAt: DateTime
-  username: String!
 }

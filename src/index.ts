@@ -86,7 +86,6 @@ const startServer = () => {
     context: req => ({
       ...req,
       mongoose: {
-        // UserModel: model('User', UserSchema),
         EventModel: model('Event', EventSchema),
         connection,
       },

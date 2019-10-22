@@ -59,19 +59,15 @@ export const Mutation = objectType({
   name: 'Mutation',
   definition(t) {
     t.field('signup', {
-      type: 'Boolean',
+      type: 'User',
       args: {
         email: stringArg({ required: true }),
-        username: stringArg({ required: true }),
+        nickname: stringArg({ required: true }),
         password: stringArg({ required: true }),
         name: stringArg({ required: true }),
         registerSecret: stringArg({ required: true }),
       },
-      async resolve(
-        _,
-        { email, username, password, name, registerSecret },
-        { mongoose },
-      ) {
+      async resolve(_, { email, nickname, password, name, registerSecret }) {
         // Check input
         const errRegisterSecret = createInputError(
           config.registerSecret === registerSecret,
@@ -90,9 +86,9 @@ export const Mutation = objectType({
           return errEmail;
         }
         const errUsername = createInputError(
-          !!username,
-          'username',
-          'Käyttäjätunnus puuttuu',
+          !!nickname,
+          'nickname',
+          'Nick puuttuu',
         );
         if (errUsername) {
           return errUsername;
@@ -106,14 +102,14 @@ export const Mutation = objectType({
           return errPassword;
         }
         try {
-          const resp = await createAuth0User({
+          const createdUser = await createAuth0User({
             email,
-            username,
+            nickname,
             password,
             name,
           });
-          console.log('Created auth0 user: ', resp.auth0UserId);
-          return true;
+
+          return createdUser;
         } catch (error) {
           return new Auth0Error({
             data: {
@@ -184,46 +180,37 @@ export const Mutation = objectType({
       type: 'User',
       args: {
         name: stringArg({ required: false }),
-        username: stringArg({ required: false }),
         nickname: stringArg({ required: false }),
       },
-      async resolve(_, { name, username, nickname }, { mongoose, sub }) {
-        // const { UserModel, EventModel } = mongoose;
+      async resolve(
+        _,
+        { name, nickname },
+        { mongoose, sub, nickname: currentNickname },
+      ) {
+        const { EventModel } = mongoose;
         const updatetable = filterUndefined({
           name,
-          username,
           nickname,
         });
 
         const auth0User: IAuth0Profile = await updateProfile(sub, updatetable);
-        return auth0User;
-
-        // TODO: update events if nickchanges...
-
-        // const options = {
-        //   new: true,
-        // };
-
-        // const updatedUser = await UserModel.findOneAndUpdate(
-        //   conditions,
-        //   updatetable,
-        //   options,
-        // );
-
-        // if (!username || oldUsername === username) {
-        //   return updatedUser;
-        // }
-
+        console.log(`current: ${currentNickname} - updated: ${nickname}`);
+        if (!nickname || currentNickname === nickname) {
+          return auth0User;
+        }
+        console.log(`Update all events to: ${nickname}`);
         // // update events
-        // await EventModel.updateMany(
-        //   { 'participants.username': oldUsername },
-        //   { $set: { username: username } },
-        // );
-        // await EventModel.updateMany(
-        //   { 'creator.username': oldUsername },
-        //   { $set: { 'creator.username': username } },
-        // );
-        // return updatedUser;
+        await EventModel.updateMany(
+          { 'participants.sub': sub },
+          { $set: { 'participants.$.nickname': nickname } },
+          { multi: true, upsert: false },
+        );
+        await EventModel.updateMany(
+          { 'creator.sub': sub },
+          { $set: { 'creator.nickname': nickname } },
+          { multi: true, upsert: false },
+        );
+        return auth0User;
       },
     });
 
@@ -243,10 +230,6 @@ export const Mutation = objectType({
           subscribeWeeklyEmail,
         });
         return auth0User;
-        // return {
-        //   ...auth0User,
-        //   auth0Id: sub,
-        // };
       },
     });
 

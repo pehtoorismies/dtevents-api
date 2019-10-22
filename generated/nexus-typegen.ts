@@ -49,7 +49,6 @@ export interface NexusGenRootTypes {
     name: string; // String!
     nickname: string; // String!
     picture: string; // String!
-    username: string; // String!
   }
   Event: { // root type
     createdAt: any; // DateTime!
@@ -88,7 +87,6 @@ export interface NexusGenRootTypes {
     nickname?: string | null; // String
     preferences: NexusGenRootTypes['Preferences']; // Preferences!
     updatedAt?: any | null; // DateTime
-    username: string; // String!
   }
   String: string;
   Int: number;
@@ -115,7 +113,6 @@ export interface NexusGenFieldTypes {
     name: string; // String!
     nickname: string; // String!
     picture: string; // String!
-    username: string; // String!
   }
   Event: { // field return type
     createdAt: any; // DateTime!
@@ -139,7 +136,7 @@ export interface NexusGenFieldTypes {
     deleteEvent: NexusGenRootTypes['IDPayload']; // IDPayload!
     forgotPassword: boolean; // Boolean!
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
-    signup: boolean; // Boolean!
+    signup: NexusGenRootTypes['User']; // User!
     toggleJoinEvent: NexusGenRootTypes['Event']; // Event!
     updateEvent: NexusGenRootTypes['Event']; // Event!
     updateMe: NexusGenRootTypes['User']; // User!
@@ -172,7 +169,6 @@ export interface NexusGenFieldTypes {
     nickname: string | null; // String
     preferences: NexusGenRootTypes['Preferences']; // Preferences!
     updatedAt: any | null; // DateTime
-    username: string; // String!
   }
 }
 
@@ -196,9 +192,9 @@ export interface NexusGenArgTypes {
     signup: { // args
       email: string; // String!
       name: string; // String!
+      nickname: string; // String!
       password: string; // String!
       registerSecret: string; // String!
-      username: string; // String!
     }
     toggleJoinEvent: { // args
       id: string; // ID!
@@ -210,7 +206,6 @@ export interface NexusGenArgTypes {
     updateMe: { // args
       name?: string | null; // String
       nickname?: string | null; // String
-      username?: string | null; // String
     }
     updateMyPreferences: { // args
       subscribeEventCreationEmail: boolean; // Boolean!

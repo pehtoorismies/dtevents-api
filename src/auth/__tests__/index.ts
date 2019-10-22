@@ -21,11 +21,10 @@ test('emailList', () => {
     updated_at: '2019-10-16T18:05:09.793Z',
     user_id: 'auth0|5d9ae9cef5515f0e30d9b42a',
     user_metadata: {
-      username: 'test',
-      subscribeEventCreationEmail: 'true',
-      subscribeWeeklyEmail: 'true',
+      
+      subscribeEventCreationEmail: true,
+      subscribeWeeklyEmail: true,
     },
-    username: 'test',
     last_login: '2019-10-16T18:05:09.793Z',
     last_ip: '62.248.214.191',
     logins_count: 19,

@@ -1,5 +1,5 @@
 import { AuthenticationClient, ManagementClient, UserData } from 'auth0';
-import { map, pickAll, pipe, prop } from 'ramda';
+import { map, pickAll, pipe } from 'ramda';
 import { renameKeys } from 'ramda-adjunct';
 
 import { config } from '../config';
@@ -7,7 +7,6 @@ import { NotFoundError } from '../errors';
 import {
   IAuth0Profile,
   IAuth0ProfileUpdate,
-  IAuth0RegisterResponse,
   IAuth0User,
   IMailRecipient,
   IAuth0UserMetaData,
@@ -91,24 +90,9 @@ const format = pipe(
   renameKeys(RENAME_KEYS),
 );
 
-const preferencesToBoolean = (preferences: any): IPreferences => {
-  const w = prop('subscribeEventCreationEmail', preferences) || 'true';
-  const c = prop('subscribeWeeklyEmail', preferences) || 'true';
-
-  return {
-    subscribeEventCreationEmail: w == 'true',
-    subscribeWeeklyEmail: c == 'true',
-  };
-};
-
 const toUserFormat = (fromAuth0: any): IAuth0Profile => {
-  const user = format(fromAuth0);
   // @ts-ignore
-  return {
-    ...user,
-    // @ts-ignore
-    preferences: preferencesToBoolean(user.preferences),
-  };
+  return format(fromAuth0);
 };
 
 const formatUsers = pipe(
@@ -145,7 +129,6 @@ const updateProfile = async (
   updateable: IAuth0ProfileUpdate,
 ): Promise<IAuth0Profile> => {
   const management = await getAuth0Management();
-
   const user = await management.updateUser({ id: auth0UserId }, updateable);
   return toUserFormat(user);
 };
@@ -160,10 +143,7 @@ const updatePreferences = async (
     { id: auth0UserId },
     {
       user_metadata: {
-        subscribeEventCreationEmail: String(
-          preferences.subscribeEventCreationEmail,
-        ),
-        subscribeWeeklyEmail: String(preferences.subscribeWeeklyEmail),
+        ...preferences,
       },
     },
   );
@@ -198,7 +178,7 @@ const fetchMyProfile = async (auth0Id: string): Promise<IAuth0Profile> => {
 const fetchUsers = async (
   verified: boolean = true,
 ): Promise<IAuth0Profile[]> => {
-    const management = await getAuth0Management();
+  const management = await getAuth0Management();
 
   const usersResp: Array<any> = await management.getUsers();
   const userList: IAuth0Profile[] = formatUsers(usersResp);
@@ -215,35 +195,22 @@ const fetchUsers = async (
   // return values(obj);
 };
 
-const createAuth0User = async (
-  user: IAuth0User,
-): Promise<IAuth0RegisterResponse> => {
+const createAuth0User = async (user: IAuth0User): Promise<IAuth0Profile> => {
   const management = await getAuth0Management();
 
-  try {
-    const authZeroUser = await management.createUser({
-      connection: 'Username-Password-Authentication',
-      ...user,
-      verify_email: true,
-      email_verified: false,
-      nickname: user.username,
-      user_metadata: {
-        subscribeWeeklyEmail: true,
-        subscribeEventCreationEmail: true,
-      },
-      app_metadata: { role: 'USER' },
-    });
+  const auth0User = await management.createUser({
+    connection: 'Username-Password-Authentication',
+    ...user,
+    verify_email: true,
+    email_verified: false,
+    user_metadata: {
+      subscribeWeeklyEmail: true,
+      subscribeEventCreationEmail: true,
+    },
+    app_metadata: { role: 'USER' },
+  });
 
-    return {
-      auth0UserId: authZeroUser.user_id,
-    };
-  } catch (error) {
-    return {
-      error: {
-        ...error,
-      },
-    };
-  }
+  return toUserFormat(auth0User);
 };
 
 const AUTH0_QUERY_BASE = {
@@ -306,7 +273,7 @@ const fetchWeeklyEmailSubscribers = async (): Promise<IMailRecipient[]> => {
   }
 };
 
-const fetchNickname = async (auth0UserId: string) : Promise<string> => {
+const fetchNickname = async (auth0UserId: string): Promise<string> => {
   return 'koira';
 };
 
