@@ -9,9 +9,11 @@ type AuthPayload {
 }
 
 type BaseUser {
+  email: String!
   id: String!
   name: String!
-  username: String!
+  nickname: String!
+  picture: String!
 }
 
 """
@@ -66,16 +68,15 @@ type IDPayload {
 }
 
 type Mutation {
-  batchImport: Boolean!
   createEvent(addMe: Boolean = false, event: EventData!, notifySubscribers: Boolean = true): Event!
   deleteEvent(id: ID!): IDPayload!
   forgotPassword(email: String!): Boolean!
-  login(password: String!, usernameOrEmail: String!): AuthPayload!
-  signup(email: String!, name: String!, password: String!, registerSecret: String!, username: String!): User!
+  login(email: String!, password: String!): AuthPayload!
+  signup(email: String!, name: String!, nickname: String!, password: String!, registerSecret: String!): User!
   toggleJoinEvent(id: ID!): Event!
   updateEvent(event: EventData, id: ID!): Event!
-  updateMe(name: String): User!
-  updateMyPreferences(subscribeEventCreationEmail: Boolean, subscribeWeeklyEmail: Boolean): User!
+  updateMe(name: String, nickname: String): User!
+  updateMyPreferences(subscribeEventCreationEmail: Boolean!, subscribeWeeklyEmail: Boolean!): User!
 }
 
 type Preferences {
@@ -95,17 +96,25 @@ type Query {
 }
 
 type SimpleUser {
+  """Auth0 id (backwards comp)"""
   id: String!
-  username: String!
+
+  """Auth0 nickname"""
+  nickname: String
+
+  """Auth0 subject"""
+  sub: String
+
+  """Auth0 username (backwards comp)"""
+  username: String
 }
 
 type User {
-  auth0Id: String!
   createdAt: DateTime!
   email: String!
   id: String!
   name: String!
+  nickname: String
   preferences: Preferences!
-  updatedAt: DateTime!
-  username: String!
+  updatedAt: DateTime
 }

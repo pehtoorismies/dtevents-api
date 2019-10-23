@@ -2,7 +2,9 @@ import { messages } from 'mailgun-js';
 import {
   addIndex,
   assoc,
+  filter,
   find,
+  fromPairs,
   join,
   pipe,
   pluck,
@@ -11,11 +13,12 @@ import {
   reduce,
   reject,
   split,
+  toPairs,
 } from 'ramda';
 import rp from 'request-promise';
 
 import { config } from './config';
-import { IEventType, IMailRecipient } from './types';
+import { IEventType, IMailRecipient, IAuth0ProfileUpdate } from './types';
 
 const isEmailOrOpenId = (n: string) => n === 'email' || n === 'openid';
 
@@ -84,3 +87,19 @@ export const recipientVariables = (
   // @ts-ignore
   return indexedReducer(reducer, {}, recipients);
 };
+
+type Pair = [string, string];
+
+const valueFilter = (pair: Pair): boolean => !!pair[1];
+
+const getDefinedProp = pipe(
+  toPairs,
+  // @ts-ignore
+  filter(valueFilter),
+  fromPairs,
+);
+
+export const filterUndefined = (newMe: IAuth0ProfileUpdate) => {
+  return getDefinedProp(newMe);
+};
+
