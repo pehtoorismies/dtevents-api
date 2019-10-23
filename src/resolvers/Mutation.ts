@@ -108,12 +108,13 @@ export const Mutation = objectType({
             password,
             name,
           });
-
+          console.log('Created user');
           return createdUser;
         } catch (error) {
+          console.error(error);
           return new Auth0Error({
             data: {
-              message: error.response.data.message,
+              message: error.message,
               internalData: {
                 error,
               },
