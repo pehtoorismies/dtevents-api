@@ -274,7 +274,9 @@ const fetchWeeklyEmailSubscribers = async (): Promise<IMailRecipient[]> => {
 };
 
 const fetchNickname = async (auth0UserId: string): Promise<string> => {
-  return 'koira';
+  const management = await getAuth0Management();
+  const user = await management.getUser({ id: auth0UserId });
+  return user.nickname;
 };
 
 const requestChangePasswordEmail = (email: string): boolean => {
