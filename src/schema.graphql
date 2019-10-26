@@ -52,6 +52,7 @@ enum EventType {
   Cycling
   Karonkka
   Meeting
+  NordicWalking
   Orienteering
   Other
   Running
@@ -59,6 +60,7 @@ enum EventType {
   Spinning
   Swimming
   TrackRunning
+  TrailRunning
   Triathlon
   Ultras
 }

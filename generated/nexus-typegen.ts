@@ -34,7 +34,7 @@ export interface NexusGenInputs {
 }
 
 export interface NexusGenEnums {
-  EventType: "Cycling" | "Karonkka" | "Meeting" | "Orienteering" | "Other" | "Running" | "Skiing" | "Spinning" | "Swimming" | "TrackRunning" | "Triathlon" | "Ultras"
+  EventType: "Cycling" | "Karonkka" | "Meeting" | "NordicWalking" | "Orienteering" | "Other" | "Running" | "Skiing" | "Spinning" | "Swimming" | "TrackRunning" | "TrailRunning" | "Triathlon" | "Ultras"
 }
 
 export interface NexusGenRootTypes {

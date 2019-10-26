@@ -18,6 +18,8 @@ export const EVENT_TYPES: IEventType[] = [
   { id: 'TrackRunning', title: 'Ratajuoksu' },
   { id: 'Triathlon', title: 'Triathlon' },
   { id: 'Ultras', title: 'Ultras' },
+  { id: 'NordicWalking', title: 'Sauvakävely' },
+  { id: 'TrailRunning', title: 'Polkujuoksu' },
 ];
 
 export const EVENT_ENUMS = pluck('id')(EVENT_TYPES);
