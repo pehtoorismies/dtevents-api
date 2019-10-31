@@ -20,7 +20,7 @@ const mapEventOptions = (eventDoc: any): IEventEmailOptions => {
   return {
     title: eventDoc.title,
     eventUrl: `${clientDomain}/events/${eventDoc._id}`,
-    creator: eventDoc.creator.username,
+    creator: eventDoc.creator.nickname,
     date,
     typeHeader,
     type: type.toLowerCase(),
