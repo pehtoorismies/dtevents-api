@@ -237,7 +237,7 @@ const fetchCreateEventSubscribers = async (): Promise<IMailRecipient[]> => {
   const management = await getAuth0Management();
 
   try {
-    const q = `user_metadata.subscribeEventCreationEmail:"true"`;
+    const q = `user_metadata.subscribeEventCreationEmail:true`;
     const users: UserData<
       any,
       IAuth0UserMetaData
@@ -257,7 +257,7 @@ const fetchWeeklyEmailSubscribers = async (): Promise<IMailRecipient[]> => {
   const management = await getAuth0Management();
 
   try {
-    const q = `user_metadata.subscribeWeeklyEmail:"true"`;
+    const q = `user_metadata.subscribeWeeklyEmail:true`;
     const users: UserData<
       any,
       IAuth0UserMetaData
