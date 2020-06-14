@@ -45,6 +45,22 @@ export const Query = objectType({
       },
     });
 
+    t.list.field('findOldEvents', {
+      type: 'Event',
+      args: {
+        limit: intArg({ default: 0 }),
+      },
+      async resolve(_, { limit = 0 }, { mongoose }) {
+        const { EventModel } = mongoose;
+
+        const events = await EventModel.find({ date: { $lte: startOfToday() } })
+          .sort('date')
+          .limit(limit);
+
+        return events;
+      },
+    });
+
     t.field('findEvent', {
       type: 'Event',
       args: {

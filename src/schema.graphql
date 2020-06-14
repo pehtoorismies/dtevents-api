@@ -90,6 +90,7 @@ type Preferences {
 type Query {
   findEvent(id: ID!): Event!
   findManyEvents(limit: Int = 0): [Event!]!
+  findOldEvents(limit: Int = 0): [Event!]!
   liveness: Boolean!
   me: User!
   readiness: Boolean!

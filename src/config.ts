@@ -4,7 +4,7 @@ import { AuthConfig, IMailgunConfig } from './types';
 
 dotenv.config();
 
-const mongoUrl = process.env.MONGO_URL || 'mongodb://localhost:27017';
+const mongoUrl = process.env.MONGO_URL || 'mongodb://localhost:27017/dt65';
 
 const registerSecret: string = process.env.REGISTER_SECRET || 'secret';
 
@@ -19,7 +19,7 @@ const mailgun: IMailgunConfig = {
   domain: process.env.MAILGUN_DOMAIN || 'wrongDomain',
   apiKey: process.env.MAILGUN_API_KEY || 'wrongApikey',
   fromMail: process.env.MAILGUN_FROM || 'Kyttäki <hello@downtown65.com>',
-  host: process.env.MAILGUN_HOST || 'api.mailgun.net'
+  host: process.env.MAILGUN_HOST || 'api.mailgun.net',
 };
 
 const clientDomain = process.env.CLIENT_DOMAIN || `http://localhost:3000`;
