@@ -149,6 +149,7 @@ export interface NexusGenFieldTypes {
   Query: { // field return type
     findEvent: NexusGenRootTypes['Event']; // Event!
     findManyEvents: NexusGenRootTypes['Event'][]; // [Event!]!
+    findOldEvents: NexusGenRootTypes['Event'][]; // [Event!]!
     liveness: boolean; // Boolean!
     me: NexusGenRootTypes['User']; // User!
     readiness: boolean; // Boolean!
@@ -217,6 +218,9 @@ export interface NexusGenArgTypes {
       id: string; // ID!
     }
     findManyEvents: { // args
+      limit?: number | null; // Int
+    }
+    findOldEvents: { // args
       limit?: number | null; // Int
     }
   }
