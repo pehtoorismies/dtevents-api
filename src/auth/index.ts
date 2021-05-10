@@ -12,20 +12,8 @@ import {
   IAuth0UserMetaData,
   IPreferences,
 } from '../types';
-// import { createCache } from './cache';
 
 const { domain, clientId, clientSecret, jwtAudience } = config.auth;
-
-// const CACHE_KEY_USERS = 'users';
-
-// const addUsersToCache = (users: IAuth0Profile[]) => {
-//   const reducer = (acc: any, curr: IAuth0Profile) => {
-//     return assoc(curr.id, curr, acc);
-//   };
-//   return reduce(reducer, {}, users);
-// };
-
-// const { setToCache, getFromCache } = createCache();
 
 const auth0 = new AuthenticationClient({
   domain,
