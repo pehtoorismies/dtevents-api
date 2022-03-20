@@ -4,3 +4,4 @@ dist/
 .env.development
 data/
 redis_data/
+.idea/
